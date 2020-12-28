@@ -5,6 +5,7 @@ using System.ComponentModel.Composition;
 using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Timers;
+using Microsoft.Win32;
 
 namespace Pin80Plugin
 {
@@ -12,16 +13,19 @@ namespace Pin80Plugin
 
     public class Plugin : IDirectPlugin, IDirectPluginFrontend, IDirectPluginPinMame
     {
-        TcpClient client;
-        NetworkStream stream;
-        private System.Timers.Timer aTimer;
+        private const int ConnectTimerPeriodMs = 5000;
+        private const int ConnectTimeout = 1;
+        private const string DefaultHost = "127.0.0.1";
+        private const int DefaultPort = 2012;
 
-        List<string> log = new List<string>();
+        private TcpClient tcpClient;
+        private NetworkStream tcpStream;
+        private System.Timers.Timer connectionTimerCheck;
 
-        const bool DEBUG = false;
+        private List<string> pluginLog = new List<string>();
 
-        string romName = null;
-        string tableFilename;
+        private bool debugEnabled = false;
+        private string romName = null;
 
         #region IDirectPlugin Members
 
@@ -56,78 +60,61 @@ namespace Pin80Plugin
         /// <param name="RomName">Name of the rom.</param>
         public void PluginInit(string TableFilename, string RomName)
         {
-            logMessage("Plugin Init");
             romName = RomName;
-            tableFilename = TableFilename;
 
-            connect();
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Pin80\Plugin");
+            debugEnabled = bool.Parse(key.GetValue("loggingEnabled", "false").ToString());
+            key.Close();
 
-            if (client == null)
-            {
-                logMessage("Connect failed on startup");
-            }
-            SetTimer();
+            TCPConnect();
+            InitConnectTimer();
         }
 
-        private  void SetTimer()
+        /*
+         * Used to reconnect if we're not connected
+         */
+        private void InitConnectTimer()
         {
-            // Create a timer with a two second interval.
-            aTimer = new System.Timers.Timer(5000);
-            // Hook up the Elapsed event for the timer. 
-            aTimer.Elapsed += OnTimedEvent;
-            aTimer.AutoReset = true;
-            aTimer.Enabled = true;
+            connectionTimerCheck = new System.Timers.Timer(ConnectTimerPeriodMs);
+            connectionTimerCheck.Elapsed += OnTimedEvent;
+            connectionTimerCheck.AutoReset = true;
+            connectionTimerCheck.Enabled = true;
         }
 
-        private  void OnTimedEvent(Object source, ElapsedEventArgs e)
+        private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            logMessage("Timer Trigger");
-            if (client == null || stream == null)
+            logMessage("OnTimedEvent Trigger");
+            if (tcpClient == null || tcpStream == null)
             {
                 logMessage("Not connected, trying to connect...");
-                connect();
-            }
-            else
-            {
-                logMessage(string.Format("Client connected {0}", client.Connected));
+                TCPConnect();
             }
         }
 
         private void logMessage(string msg)
         {
-            if (DEBUG)
+            if (debugEnabled)
             {
-                log.Add(msg);
+                pluginLog.Add(msg);
             }
         }
 
-        public bool connect()
+        public bool TCPConnect()
         {
-            logMessage("Connect called");
+            logMessage("TCPConnect called");
 
             try
             {
-                //client = new TcpClient("127.0.0.1", 2012);
-                //var client = new TcpClient();
-                //if (!client.ConnectAsync("127.0.0.1", 2012).Wait(1000))
-                //{
-                //    return false;
-                //}
-                client = new TcpClient();
-                var result = client.BeginConnect("127.0.0.1", 2012, null, null);
-                var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(1));
-                if (!success)
+                tcpClient = new TcpClient();
+                var result = tcpClient.BeginConnect(DefaultHost, DefaultPort, null, null); //TODO make these config driven
+                var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(ConnectTimeout));
+                if (success)
                 {
-                    //throw new Exception("Failed to connect.");
-                    return false;
+                    tcpStream = tcpClient.GetStream();
+                    sendTableInformation();
+
+                    return true;
                 }
-
-                stream = client.GetStream();
-
-                // send info about table
-                sendTableInformation();
-
-                return true;
             }
             catch (SocketException e)
             {
@@ -145,8 +132,9 @@ namespace Pin80Plugin
         /// </summary>
         public void PluginFinish()
         {
-            stream.Close();
-            client.Close();
+            connectionTimerCheck.Stop();
+            tcpStream.Close();
+            tcpClient.Close();
         }
 
         /// <summary>
@@ -160,61 +148,48 @@ namespace Pin80Plugin
         /// <param name="Value">The value of the table element.</param>
         public void DataReceive(char TableElementTypeChar, int Number, int Value)
         {
-            if (client == null || stream == null)
+            if (tcpClient == null || tcpStream == null)
             {
-                //TODO - Limit how often we do this?
-               
-                logMessage("No connection, skipping");
-                //connect();
                 return;
             }
 
-            // Ignore some codes we don't care about
-            if (TableElementTypeChar.Equals('N') || Number < 0)
+            // Ignore some commands we don't care about
+            if (TableElementTypeChar.Equals('N'))
             {
                 return;
             }
 
             var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            string message = string.Format("VPX {0}{1} {2} {3}\n", TableElementTypeChar, Number, Value, now);
-
-            try
-            {
-                Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
-                stream.Write(data, 0, data.Length);
-            }
-            catch (SocketException e)
-            {
-                logMessage(String.Format("SocketException {0}", e));
-                connect();
-            }
-            catch (Exception e)
-            {
-                logMessage(String.Format("Something is wrong {0}", e));
-                connect();
-            }
+            string message = string.Format("VPX {0}{1} {2} {3}", TableElementTypeChar, Number, Value, now);
+            sendTCPMessage(message);
         }
         #endregion
 
-        private void sendTableInformation()
+        private void sendTCPMessage(string message)
         {
+            string messageWithNewline = message + "\n";
+
             try
             {
-                string message = string.Format("VPX INFO ROM {0}\nVPX INFO TABLE {1}", romName, tableFilename);
-
-                Byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
-                stream.Write(data, 0, data.Length);
+                Byte[] data = System.Text.Encoding.ASCII.GetBytes(messageWithNewline);
+                tcpStream.Write(data, 0, data.Length);
             }
             catch (SocketException e)
             {
                 logMessage(String.Format("SocketException {0}", e));
-                connect();
+                TCPConnect();
             }
             catch (Exception e)
             {
                 logMessage(String.Format("Something is wrong {0}", e));
-                connect();
+                TCPConnect();
             }
+        }
+
+        private void sendTableInformation()
+        {
+            string message = string.Format("VPX INFO ROM {0}", romName);
+            sendTCPMessage(message);
         }
 
         #region IDirectPluginPinMame Members
@@ -287,10 +262,21 @@ namespace Pin80Plugin
                 FE.Show(Owner);
             }
 
+            Form1 form1 = FE;
+            form1.FormClosed += new FormClosedEventHandler(Form1Closed);
+
             // TODO: This only shows up the first time the window is shown.
-            string allLogs = String.Join("\n", log);
-            (FE as Form1).updateLog(allLogs);
-            log.Clear();
+
+            string allLogs = String.Join("\n", pluginLog);
+            form1.updateLog(allLogs);
+        }
+
+        private void Form1Closed(object sender, FormClosedEventArgs e)
+        {
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Pin80\Plugin");
+            debugEnabled = bool.Parse(key.GetValue("loggingEnabled", "false").ToString());
+            key.Close();
+            pluginLog.Clear();
         }
         #endregion
     }

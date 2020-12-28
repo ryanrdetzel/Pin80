@@ -80,6 +80,10 @@ namespace Pin80Server.CommandProcessors
                     serial.Write(string.Format("{0} {1}\n", "S48", commandParts[1]));
                 }
 
+                if (commandParts[0] == "E101" || commandParts[0] == "E102") { 
+                    serial.Write(string.Format("{0} {1}\n", "S48", commandParts[1]));
+                }
+
                 return true;
             }
             catch (Exception e)

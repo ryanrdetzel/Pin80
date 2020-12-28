@@ -1,1 +1,7 @@
-README
+Pin80Server
+A TCP/HTTP server that listens for commands and processes them. Usually, these commands will be use to trigger external hardware
+
+Pin80Plugin
+A b2server plugin that sends all virtual pinball commands to the Pin80Server for processing
+
+
