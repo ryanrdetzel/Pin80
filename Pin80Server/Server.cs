@@ -195,10 +195,13 @@ namespace Pin80Server
                 var cmd = commandQueue.Take();
                 string[] commandParts = cmd.Split(' ');
 
-                mainForm.BeginInvoke((MethodInvoker)delegate ()
+                if (mainForm.IsHandleCreated)
                 {
-                    mainForm.addLogEntry(cmd);
-                });
+                    mainForm.BeginInvoke((MethodInvoker)delegate ()
+                    {
+                        mainForm.addLogEntry(cmd);
+                    });
+                }
 
                 string source = commandParts[0];
 

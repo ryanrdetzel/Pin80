@@ -13,16 +13,16 @@ namespace Pin80Plugin
 
     public class Plugin : IDirectPlugin, IDirectPluginFrontend, IDirectPluginPinMame
     {
-        private const int ConnectTimerPeriodMs = 1000;
+        private const int ConnectTimerPeriodMs = 5000;
         private const int ConnectTimeout = 1;
         private const string DefaultHost = "127.0.0.1";
         private const int DefaultPort = 2012;
 
         private TcpClient tcpClient;
-        private NetworkStream tcpStream;
         private System.Timers.Timer connectionTimerCheck;
 
         private List<string> pluginLog = new List<string>();
+        private List<string> ignoreCodes = new List<string>();
 
         private bool debugEnabled = false;
         private string romName = null;
@@ -62,14 +62,29 @@ namespace Pin80Plugin
         {
             romName = RomName;
 
-            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Pin80\Plugin");
-            debugEnabled = bool.Parse(key.GetValue("loggingEnabled", "false").ToString());
-            key.Close();
-
+            InitPreferences();
             TCPConnect();
             InitConnectTimer();
         }
 
+        private void InitPreferences()
+        {
+            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Pin80\Plugin");
+
+            debugEnabled = bool.Parse(key.GetValue("loggingEnabled", "false").ToString());
+            ignoreCodes.Clear();
+
+            if (!bool.Parse(key.GetValue("sendNCheckbox", "false").ToString()))
+            {
+                ignoreCodes.Add("N");
+            }
+            if (!bool.Parse(key.GetValue("sendLCheckbox", "false").ToString()))
+            {
+                ignoreCodes.Add("L");
+            }
+
+            key.Close();
+        }
         /*
          * Used to reconnect if we're not connected
          */
@@ -84,7 +99,7 @@ namespace Pin80Plugin
         private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             logMessage("OnTimedEvent Trigger");
-            if (!tcpClient.Connected)
+            if (tcpClient == null || !tcpClient.Connected)
             {
                 logMessage("Not connected, trying to connect...");
                 TCPConnect();
@@ -105,6 +120,7 @@ namespace Pin80Plugin
             if (tcpClient != null)
             {
                 logMessage("Dispose of tcpclient");
+                tcpClient.Close();
                 tcpClient.Dispose();
             }
 
@@ -112,16 +128,14 @@ namespace Pin80Plugin
             {
                 //TODO make these config driven
                 tcpClient = new TcpClient();
-                //tcpClient.Connect(DefaultHost, DefaultPort);
                 var result = tcpClient.BeginConnect(DefaultHost, DefaultPort, null, null);
                 var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(ConnectTimeout));
                 if (success)
                 {
-                    tcpStream = tcpClient.GetStream();
                     sendTableInformation();
-
                     return true;
                 }
+                tcpClient.EndConnect(result);
             }
             catch (SocketException e)
             {
@@ -140,7 +154,6 @@ namespace Pin80Plugin
         public void PluginFinish()
         {
             connectionTimerCheck.Stop();
-            tcpStream.Close();
             tcpClient.Close();
         }
 
@@ -161,7 +174,7 @@ namespace Pin80Plugin
             }
 
             // Ignore some commands we don't care about
-            if (TableElementTypeChar.Equals('N'))
+            if (ignoreCodes.Contains(TableElementTypeChar.ToString()))
             {
                 return;
             }
@@ -175,6 +188,7 @@ namespace Pin80Plugin
         private void sendTCPMessage(string message)
         {
             string messageWithNewline = message + "\n";
+            NetworkStream tcpStream = tcpClient.GetStream();
 
             try
             {
@@ -184,12 +198,10 @@ namespace Pin80Plugin
             catch (SocketException e)
             {
                 logMessage(String.Format("SocketException {0}", e.Message));
-                TCPConnect();
             }
             catch (Exception e)
             {
                 logMessage(String.Format("Something is wrong {0}", e.Message));
-                TCPConnect();
             }
         }
 
@@ -273,17 +285,13 @@ namespace Pin80Plugin
             form1.FormClosed += new FormClosedEventHandler(Form1Closed);
 
             // TODO: This only shows up the first time the window is shown.
-
             string allLogs = String.Join("\n", pluginLog);
             form1.updateLog(allLogs);
         }
 
         private void Form1Closed(object sender, FormClosedEventArgs e)
         {
-            RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Pin80\Plugin");
-            debugEnabled = bool.Parse(key.GetValue("loggingEnabled", "false").ToString());
-            key.Close();
-            pluginLog.Clear();
+            InitPreferences();
         }
         #endregion
     }

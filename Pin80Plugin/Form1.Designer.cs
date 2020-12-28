@@ -31,6 +31,8 @@ namespace Pin80Plugin
         {
             this.pluginLog = new System.Windows.Forms.RichTextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.sendLCheckbox = new System.Windows.Forms.CheckBox();
+            this.sendNCheckbox = new System.Windows.Forms.CheckBox();
             this.LoggingEnabled = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
@@ -43,7 +45,7 @@ namespace Pin80Plugin
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pluginLog.Location = new System.Drawing.Point(12, 110);
             this.pluginLog.Name = "pluginLog";
-            this.pluginLog.Size = new System.Drawing.Size(459, 334);
+            this.pluginLog.Size = new System.Drawing.Size(673, 370);
             this.pluginLog.TabIndex = 0;
             this.pluginLog.Text = "";
             // 
@@ -51,21 +53,45 @@ namespace Pin80Plugin
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.sendLCheckbox);
+            this.panel1.Controls.Add(this.sendNCheckbox);
             this.panel1.Controls.Add(this.LoggingEnabled);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(459, 92);
+            this.panel1.Size = new System.Drawing.Size(673, 92);
             this.panel1.TabIndex = 1;
+            // 
+            // sendLCheckbox
+            // 
+            this.sendLCheckbox.AutoSize = true;
+            this.sendLCheckbox.Location = new System.Drawing.Point(489, 44);
+            this.sendLCheckbox.Name = "sendLCheckbox";
+            this.sendLCheckbox.Size = new System.Drawing.Size(173, 17);
+            this.sendLCheckbox.TabIndex = 3;
+            this.sendLCheckbox.Text = "Send commands starting with L";
+            this.sendLCheckbox.UseVisualStyleBackColor = true;
+            this.sendLCheckbox.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
+            // 
+            // sendNCheckbox
+            // 
+            this.sendNCheckbox.AutoSize = true;
+            this.sendNCheckbox.Location = new System.Drawing.Point(489, 21);
+            this.sendNCheckbox.Name = "sendNCheckbox";
+            this.sendNCheckbox.Size = new System.Drawing.Size(175, 17);
+            this.sendNCheckbox.TabIndex = 2;
+            this.sendNCheckbox.Text = "Send commands starting with N";
+            this.sendNCheckbox.UseVisualStyleBackColor = true;
+            this.sendNCheckbox.CheckedChanged += new System.EventHandler(this.checkBox_CheckedChanged);
             // 
             // LoggingEnabled
             // 
             this.LoggingEnabled.AutoSize = true;
             this.LoggingEnabled.Location = new System.Drawing.Point(25, 21);
             this.LoggingEnabled.Name = "LoggingEnabled";
-            this.LoggingEnabled.Size = new System.Drawing.Size(100, 17);
+            this.LoggingEnabled.Size = new System.Drawing.Size(135, 17);
             this.LoggingEnabled.TabIndex = 1;
-            this.LoggingEnabled.Text = "Enable Logging";
+            this.LoggingEnabled.Text = "Enable Debug Logging";
             this.LoggingEnabled.UseVisualStyleBackColor = true;
             this.LoggingEnabled.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
@@ -82,7 +108,7 @@ namespace Pin80Plugin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(483, 456);
+            this.ClientSize = new System.Drawing.Size(697, 492);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.pluginLog);
             this.Name = "Form1";
@@ -99,5 +125,7 @@ namespace Pin80Plugin
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.CheckBox LoggingEnabled;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox sendLCheckbox;
+        private System.Windows.Forms.CheckBox sendNCheckbox;
     }
 }
