@@ -7,7 +7,6 @@ using System.Windows.Forms;
 
 namespace Pin80Server
 {
-
     public partial class MainForm : Form
     {
         private DataGridView songsDataGridView;
@@ -26,13 +25,16 @@ namespace Pin80Server
 
         public void addLogEntry(string entry)
         {
-            if (filterValue == "" || entry.StartsWith(filterValue))
+            if (tabView.SelectedIndex == 3)
             {
-                listBox1.Items.Insert(0, entry);
-
-                if (listBox1.Items.Count > maxLogLength)
+                if (filterValue == "" || entry.StartsWith(filterValue))
                 {
-                    listBox1.Items.RemoveAt(maxLogLength);
+                    listBox1.Items.Insert(0, entry);
+
+                    if (listBox1.Items.Count > maxLogLength)
+                    {
+                        listBox1.Items.RemoveAt(maxLogLength);
+                    }
                 }
             }
         }

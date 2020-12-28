@@ -4,4 +4,5 @@ A TCP/HTTP server that listens for commands and processes them. Usually, these c
 Pin80Plugin
 A b2server plugin that sends all virtual pinball commands to the Pin80Server for processing
 
-
+PinballYScripts
+Javascript file to use with PinballY that will send commands to the Pin80Server

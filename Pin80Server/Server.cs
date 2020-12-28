@@ -177,7 +177,7 @@ namespace Pin80Server
         public static void processUI(Processor processor)
         {
             Debug.WriteLine("Update UI");
-            string romName = processor.romName();
+            romName = processor.romName();
 
             if (romName != null)
             {

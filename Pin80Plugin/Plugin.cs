@@ -13,7 +13,7 @@ namespace Pin80Plugin
 
     public class Plugin : IDirectPlugin, IDirectPluginFrontend, IDirectPluginPinMame
     {
-        private const int ConnectTimerPeriodMs = 5000;
+        private const int ConnectTimerPeriodMs = 1000;
         private const int ConnectTimeout = 1;
         private const string DefaultHost = "127.0.0.1";
         private const int DefaultPort = 2012;
@@ -84,7 +84,7 @@ namespace Pin80Plugin
         private void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             logMessage("OnTimedEvent Trigger");
-            if (tcpClient == null || tcpStream == null)
+            if (!tcpClient.Connected)
             {
                 logMessage("Not connected, trying to connect...");
                 TCPConnect();
@@ -102,11 +102,18 @@ namespace Pin80Plugin
         public bool TCPConnect()
         {
             logMessage("TCPConnect called");
+            if (tcpClient != null)
+            {
+                logMessage("Dispose of tcpclient");
+                tcpClient.Dispose();
+            }
 
             try
             {
+                //TODO make these config driven
                 tcpClient = new TcpClient();
-                var result = tcpClient.BeginConnect(DefaultHost, DefaultPort, null, null); //TODO make these config driven
+                //tcpClient.Connect(DefaultHost, DefaultPort);
+                var result = tcpClient.BeginConnect(DefaultHost, DefaultPort, null, null);
                 var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(ConnectTimeout));
                 if (success)
                 {
@@ -148,7 +155,7 @@ namespace Pin80Plugin
         /// <param name="Value">The value of the table element.</param>
         public void DataReceive(char TableElementTypeChar, int Number, int Value)
         {
-            if (tcpClient == null || tcpStream == null)
+            if (!tcpClient.Connected)
             {
                 return;
             }
@@ -176,12 +183,12 @@ namespace Pin80Plugin
             }
             catch (SocketException e)
             {
-                logMessage(String.Format("SocketException {0}", e));
+                logMessage(String.Format("SocketException {0}", e.Message));
                 TCPConnect();
             }
             catch (Exception e)
             {
-                logMessage(String.Format("Something is wrong {0}", e));
+                logMessage(String.Format("Something is wrong {0}", e.Message));
                 TCPConnect();
             }
         }
