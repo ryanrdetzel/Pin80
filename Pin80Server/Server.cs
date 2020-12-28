@@ -10,6 +10,8 @@ using System.Linq;
 using System.IO;
 using System.IO.Ports;
 using Pin80Server.CommandProcessors;
+using WebSocketSharp.Server;
+using WebSocketSharp;
 
 namespace Pin80Server
 {
@@ -27,6 +29,7 @@ namespace Pin80Server
 
         static VPXProcessor vpxProcessor = new VPXProcessor(serial);
         static PBYProcessor vbyProcessor = new PBYProcessor(serial);
+
 
         /// <summary>
         /// The main entry point for the application.
@@ -66,6 +69,12 @@ namespace Pin80Server
             httpthread.IsBackground = true;
             httpthread.Start();
 
+            var wssv = new WebSocketServer(8080);
+            wssv.AddWebSocketService<Laputa>("/dmd");
+            wssv.Start();
+            //Console.ReadKey(true);
+            //wssv.Stop();
+
             // Command Processor Thread
             Thread p = new Thread(new ThreadStart(HandleCommands));
             p.IsBackground = true;
@@ -86,6 +95,25 @@ namespace Pin80Server
             Application.Run(mainForm);
         }
 
+        public class Laputa : WebSocketBehavior
+        {
+            protected override void OnMessage(MessageEventArgs e)
+            {
+                //Debug.Write(e.Data);
+                Debug.WriteLine("Got ws message");
+                //Send(msg);
+            }
+            protected override void OnError(WebSocketSharp.ErrorEventArgs e)
+            {
+                Debug.WriteLine("Websock error: {0}", e.Message);
+                //_src.Closed(this);
+            }
+
+            protected override void OnOpen()
+            {
+                Debug.WriteLine("New WebSocket client {0}", ID);
+            }
+        }
         public static void HandleIncomingHttpConnections()
         {
             //TODO add try block around this
