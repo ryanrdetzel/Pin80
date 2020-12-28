@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pin80Server", "Pin80Server\Pin80Server.csproj", "{7E19F88A-6037-4F12-8ABA-8BDF970C82B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pin80Plugin", "Pin80Plugin\Pin80Plugin.csproj", "{1B128649-C9C8-4558-AC6D-1BFEE02AFD7C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7E19F88A-6037-4F12-8ABA-8BDF970C82B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E19F88A-6037-4F12-8ABA-8BDF970C82B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E19F88A-6037-4F12-8ABA-8BDF970C82B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E19F88A-6037-4F12-8ABA-8BDF970C82B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B128649-C9C8-4558-AC6D-1BFEE02AFD7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B128649-C9C8-4558-AC6D-1BFEE02AFD7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B128649-C9C8-4558-AC6D-1BFEE02AFD7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B128649-C9C8-4558-AC6D-1BFEE02AFD7C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {83760D2E-B60C-4FC7-94E6-55C6DBE9283F}
+	EndGlobalSection
+EndGlobal
