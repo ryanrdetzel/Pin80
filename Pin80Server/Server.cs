@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Pin80Server.CommandProcessors;
+using System;
 using System.Collections.Concurrent;
-using System.Net;
-using System.Net.Sockets;
-using System.Windows.Forms;
-using System.Threading;
-using System.Text;
 using System.Diagnostics;
-using System.Linq;
 using System.IO;
 using System.IO.Ports;
-using Pin80Server.CommandProcessors;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace Pin80Server
 {
@@ -25,9 +25,12 @@ namespace Pin80Server
         static private string _romName;
         static string RomName
         {
-            get {
+            get
+            {
                 return _romName;
-            } set {
+            }
+            set
+            {
                 _romName = value;
 
                 LoadTableData(_romName);
@@ -41,7 +44,7 @@ namespace Pin80Server
                         });
                     }
                 }
-            } 
+            }
         }
         static SerialPort serial = new SerialPort("COM3"); // TODO make this a setting
 
@@ -144,7 +147,7 @@ namespace Pin80Server
                     }
                 }
                 // TODO add json as a valid input to open up more options
-                
+
                 byte[] data = Encoding.UTF8.GetBytes("ok");
                 resp.ContentType = "text/html";
                 resp.ContentEncoding = Encoding.UTF8;

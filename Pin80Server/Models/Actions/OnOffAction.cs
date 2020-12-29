@@ -1,7 +1,4 @@
-﻿using System;
-using Pin80Server.Models.JSONSerializer;
-
-namespace Pin80Server.Models.Actions
+﻿namespace Pin80Server.Models.Actions
 {
     public class OnOffAction : IAction
     {

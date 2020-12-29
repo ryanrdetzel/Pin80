@@ -7,8 +7,8 @@ namespace Pin80Server.Models.JSONSerializer
 {
     public class ControlItem
     {
-        [JsonProperty("enabled")] 
-        public  bool enabled { get; set; }
+        [JsonProperty("enabled")]
+        public bool enabled { get; set; }
 
         [JsonProperty("trigger")]
         public string trigger { get; set; }

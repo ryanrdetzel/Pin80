@@ -61,7 +61,7 @@ namespace Pin80Server
         {
             controlDataGridView.RowHeadersVisible = false;
             controlDataGridView.AutoGenerateColumns = false;
-            controlDataGridView.SelectionMode  =DataGridViewSelectionMode.FullRowSelect;
+            controlDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             controlDataGridView.MultiSelect = false;
             controlDataGridView.AllowUserToAddRows = false;
         }
@@ -78,7 +78,7 @@ namespace Pin80Server
 
                 // we don't want a minimized window at startup
                 if (this.WindowState == FormWindowState.Minimized) this.WindowState = FormWindowState.Normal;
-            
+
                 this.Location = Properties.Settings.Default.F1Location;
                 this.Size = Properties.Settings.Default.F1Size;
             }
@@ -92,7 +92,7 @@ namespace Pin80Server
         private void saveWindowState()
         {
             Properties.Settings.Default.F1State = this.WindowState;
-        
+
             if (this.WindowState == FormWindowState.Normal)
             {
                 // save location and size if the state is normal
