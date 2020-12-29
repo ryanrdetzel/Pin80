@@ -22,7 +22,27 @@ namespace Pin80Server
 
         static BlockingCollection<string> commandQueue = new BlockingCollection<string>();
 
-        static string romName;
+        static private string _romName;
+        static string RomName
+        {
+            get {
+                return _romName;
+            } set {
+                _romName = value;
+
+                LoadTableData(_romName);
+                if (_romName != null)
+                {
+                    if (mainForm.IsHandleCreated)
+                    {
+                        mainForm.BeginInvoke((MethodInvoker)delegate ()
+                        {
+                            mainForm.setRomName(_romName);
+                        });
+                    }
+                }
+            } 
+        }
         static SerialPort serial = new SerialPort("COM3"); // TODO make this a setting
 
         static VPXProcessor vpxProcessor = new VPXProcessor(serial);
@@ -87,7 +107,15 @@ namespace Pin80Server
             mainForm = new MainForm();
             mainForm.setDataProcessor(dataProcessor);
 
+            mainForm.Shown += mainForm_Shown;
+
             Application.Run(mainForm);
+        }
+
+        private static void mainForm_Shown(object sender, EventArgs e)
+        {
+            // Testing
+            RomName = "afm";
         }
 
         public static void HandleIncomingHttpConnections()
@@ -181,15 +209,12 @@ namespace Pin80Server
         public static void processUI(Processor processor)
         {
             Debug.WriteLine("Update UI");
-            romName = processor.romName();
+            RomName = processor.romName();
+        }
 
-            if (romName != null)
-            {
-                mainForm.BeginInvoke((MethodInvoker)delegate ()
-                {
-                    mainForm.setRomName(romName);
-                });
-            }
+        static private void LoadTableData(string name)
+        {
+            dataProcessor.LoadTableInformation(name);
         }
 
         static public void HandleCommands()

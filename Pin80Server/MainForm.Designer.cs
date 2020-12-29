@@ -45,9 +45,10 @@ namespace Pin80Server
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.jsonTableBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.enabledDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.triggerDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.actionDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.enabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.triggerColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.actionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.targetColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.commentDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.controlDataGridView)).BeginInit();
             this.tabView.SuspendLayout();
@@ -68,9 +69,10 @@ namespace Pin80Server
             this.controlDataGridView.BackgroundColor = System.Drawing.Color.White;
             this.controlDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.controlDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.enabledDataGridViewCheckBoxColumn,
-            this.triggerDataGridViewTextBoxColumn,
-            this.actionDataGridViewTextBoxColumn,
+            this.enabledColumn,
+            this.triggerColumn,
+            this.actionColumn,
+            this.targetColumn,
             this.commentDataGridViewTextBoxColumn});
             this.controlDataGridView.DataBindings.Add(new System.Windows.Forms.Binding("Tag", this.jsonTableBindingSource, "Enabled", true));
             this.controlDataGridView.DataBindings.Add(new System.Windows.Forms.Binding("CellBorderStyle", this.jsonTableBindingSource, "Trigger", true));
@@ -82,6 +84,7 @@ namespace Pin80Server
             this.controlDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.controlDataGridView.Size = new System.Drawing.Size(825, 383);
             this.controlDataGridView.TabIndex = 2;
+            this.controlDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.controlDataGridView_CellFormatting);
             this.controlDataGridView.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowEnter);
             // 
             // romNameLabel
@@ -225,34 +228,42 @@ namespace Pin80Server
             // 
             // jsonTableBindingSource
             // 
-            this.jsonTableBindingSource.DataSource = typeof(Pin80Server.ControlItem);
+            this.jsonTableBindingSource.DataSource = typeof(Pin80Server.Models.JSONSerializer.ControlItem);
+            this.jsonTableBindingSource.CurrentChanged += new System.EventHandler(this.jsonTableBindingSource_CurrentChanged);
             // 
-            // enabledDataGridViewCheckBoxColumn
+            // enabledColumn
             // 
-            this.enabledDataGridViewCheckBoxColumn.DataPropertyName = "enabled";
-            this.enabledDataGridViewCheckBoxColumn.HeaderText = "enabled";
-            this.enabledDataGridViewCheckBoxColumn.Name = "enabledDataGridViewCheckBoxColumn";
-            this.enabledDataGridViewCheckBoxColumn.Width = 51;
+            this.enabledColumn.DataPropertyName = "enabled";
+            this.enabledColumn.HeaderText = "Enabled";
+            this.enabledColumn.Name = "enabledColumn";
+            this.enabledColumn.Width = 52;
             // 
-            // triggerDataGridViewTextBoxColumn
+            // triggerColumn
             // 
-            this.triggerDataGridViewTextBoxColumn.DataPropertyName = "trigger";
-            this.triggerDataGridViewTextBoxColumn.HeaderText = "trigger";
-            this.triggerDataGridViewTextBoxColumn.Name = "triggerDataGridViewTextBoxColumn";
-            this.triggerDataGridViewTextBoxColumn.Width = 61;
+            this.triggerColumn.DataPropertyName = "trigger";
+            this.triggerColumn.HeaderText = "Trigger";
+            this.triggerColumn.Name = "triggerColumn";
+            this.triggerColumn.Width = 65;
             // 
-            // actionDataGridViewTextBoxColumn
+            // actionColumn
             // 
-            this.actionDataGridViewTextBoxColumn.DataPropertyName = "action";
-            this.actionDataGridViewTextBoxColumn.HeaderText = "action";
-            this.actionDataGridViewTextBoxColumn.Name = "actionDataGridViewTextBoxColumn";
-            this.actionDataGridViewTextBoxColumn.Width = 61;
+            this.actionColumn.DataPropertyName = "action";
+            this.actionColumn.HeaderText = "Action";
+            this.actionColumn.Name = "actionColumn";
+            this.actionColumn.Width = 62;
+            // 
+            // targetColumn
+            // 
+            this.targetColumn.DataPropertyName = "target";
+            this.targetColumn.HeaderText = "Target";
+            this.targetColumn.Name = "targetColumn";
+            this.targetColumn.Width = 63;
             // 
             // commentDataGridViewTextBoxColumn
             // 
             this.commentDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.commentDataGridViewTextBoxColumn.DataPropertyName = "comment";
-            this.commentDataGridViewTextBoxColumn.HeaderText = "comment";
+            this.commentDataGridViewTextBoxColumn.HeaderText = "Comment";
             this.commentDataGridViewTextBoxColumn.Name = "commentDataGridViewTextBoxColumn";
             // 
             // MainForm
@@ -299,9 +310,10 @@ namespace Pin80Server
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn enabledDataGridViewCheckBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn triggerDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn actionDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn enabledColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn triggerColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn actionColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn targetColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn commentDataGridViewTextBoxColumn;
     }
 }

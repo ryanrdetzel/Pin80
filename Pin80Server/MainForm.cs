@@ -7,9 +7,8 @@ namespace Pin80Server
     public partial class MainForm : Form
     {
         const int maxLogLength = 1000;
-        string filterValue = "";
 
-        private DataProcessor dataProcessor;
+        string filterValue = "";
 
         public MainForm()
         {
@@ -19,7 +18,8 @@ namespace Pin80Server
 
         public void setDataProcessor(DataProcessor dp)
         {
-            dataProcessor = dp;
+            Debug.WriteLine("Setting new data source");
+            controlDataGridView.DataSource = dp;
         }
 
         public void setTableName(string name)
@@ -46,36 +46,31 @@ namespace Pin80Server
                 }
             }
         }
-
-        private void Form1_Load(System.Object sender, System.EventArgs e)
-        {
-            SetupDataGridView();
-            PopulateDataGridView();
-        }
-
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             saveWindowState();
             Environment.Exit(Environment.ExitCode);
         }
 
+        private void Form1_Load(System.Object sender, System.EventArgs e)
+        {
+            SetupDataGridView();
+        }
+
         private void SetupDataGridView()
         {
             controlDataGridView.RowHeadersVisible = false;
             controlDataGridView.AutoGenerateColumns = false;
-            controlDataGridView.SelectionMode =DataGridViewSelectionMode.FullRowSelect;
+            controlDataGridView.SelectionMode  =DataGridViewSelectionMode.FullRowSelect;
             controlDataGridView.MultiSelect = false;
-        }
-
-        private void PopulateDataGridView()
-        {
-            controlDataGridView.DataSource = dataProcessor.getProcessedData();
+            controlDataGridView.AllowUserToAddRows = false;
         }
 
         private void Form1_Load_1(object sender, EventArgs e)
         {
             if (Properties.Settings.Default.F1Size.Width == 0 || Properties.Settings.Default.F1Size.Height == 0)
             {
+
             }
             else
             {
@@ -143,6 +138,50 @@ namespace Pin80Server
         private void button2_Click(object sender, EventArgs e)
         {
             listBox1.Items.Clear();
+        }
+
+        private void controlDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            var dp = controlDataGridView.DataSource as DataProcessor;
+            DataGridViewCell cell = controlDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
+
+            // Render the cell so it's readable
+            if (controlDataGridView.Columns[e.ColumnIndex].Name == "actionColumn")
+            {
+                if (e.Value != null)
+                {
+                    string actionId = (string)e.Value;
+                    string friendlyName = dp.getAction(actionId).ToString();
+                    e.Value = friendlyName;
+                }
+            }
+            else if (controlDataGridView.Columns[e.ColumnIndex].Name == "triggerColumn")
+            {
+                if (e.Value != null)
+                {
+                    string actionId = (string)e.Value;
+                    string friendlyName = dp.getTrigger(actionId).ToString();
+                    e.Value = friendlyName;
+
+                    cell.ToolTipText = dp.getTrigger(actionId).name;
+                }
+            }
+            else if (controlDataGridView.Columns[e.ColumnIndex].Name == "targetColumn")
+            {
+                if (e.Value != null)
+                {
+                    string actionId = (string)e.Value;
+                    string friendlyName = dp.getTarget(actionId).ToString();
+                    e.Value = friendlyName;
+
+                    cell.ToolTipText = dp.getTarget(actionId).id;
+                }
+            }
+        }
+
+        private void jsonTableBindingSource_CurrentChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
