@@ -17,7 +17,7 @@ namespace Pin80Server.Models.Actions
             duration = action.duration;
             speed = action.speed;
         }
-        override public string ToString()
+        public override string ToString()
         {
             //return string.Format("({1}) {0} Delay:{2} Duration:{3} speed:{4}", name, id, delay, duration, speed);
             return name;

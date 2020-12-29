@@ -6,9 +6,8 @@ namespace Pin80Server
 {
     public partial class MainForm : Form
     {
-        const int maxLogLength = 1000;
-
-        string filterValue = "";
+        private const int maxLogLength = 1000;
+        private string filterValue = "";
 
         public MainForm()
         {
@@ -52,7 +51,7 @@ namespace Pin80Server
             Environment.Exit(Environment.ExitCode);
         }
 
-        private void Form1_Load(System.Object sender, System.EventArgs e)
+        private void Form1_Load(object sender, System.EventArgs e)
         {
             SetupDataGridView();
         }
@@ -77,7 +76,10 @@ namespace Pin80Server
                 this.WindowState = Properties.Settings.Default.F1State;
 
                 // we don't want a minimized window at startup
-                if (this.WindowState == FormWindowState.Minimized) this.WindowState = FormWindowState.Normal;
+                if (this.WindowState == FormWindowState.Minimized)
+                {
+                    this.WindowState = FormWindowState.Normal;
+                }
 
                 this.Location = Properties.Settings.Default.F1Location;
                 this.Size = Properties.Settings.Default.F1Size;

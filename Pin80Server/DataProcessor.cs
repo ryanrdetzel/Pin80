@@ -13,7 +13,7 @@ namespace Pin80Server
 {
     public class DataProcessor : IListSource
     {
-        private BindingList<ControlItem> controllerData = new BindingList<ControlItem>();
+        private readonly BindingList<ControlItem> controllerData = new BindingList<ControlItem>();
         public Dictionary<string, Trigger> triggers = new Dictionary<string, Trigger>();
         public Dictionary<string, Target> targets = new Dictionary<string, Target>();
 

@@ -13,22 +13,18 @@ using System.Windows.Forms;
 
 namespace Pin80Server
 {
-    static class Server
+    internal static class Server
     {
-        static MainForm mainForm;
+        private static MainForm mainForm;
+        private static TcpListener server = null;
+        private static HttpListener listener = null;
+        private static readonly BlockingCollection<string> commandQueue = new BlockingCollection<string>();
 
-        static TcpListener server = null;
-        static HttpListener listener = null;
+        private static string _romName;
 
-        static BlockingCollection<string> commandQueue = new BlockingCollection<string>();
-
-        static private string _romName;
-        static string RomName
+        private static string RomName
         {
-            get
-            {
-                return _romName;
-            }
+            get => _romName;
             set
             {
                 _romName = value;
@@ -46,18 +42,18 @@ namespace Pin80Server
                 }
             }
         }
-        static SerialPort serial = new SerialPort("COM3"); // TODO make this a setting
 
-        static VPXProcessor vpxProcessor = new VPXProcessor(serial);
-        static PBYProcessor vbyProcessor = new PBYProcessor(serial);
+        private static readonly SerialPort serial = new SerialPort("COM3"); // TODO make this a setting
 
-        static DataProcessor dataProcessor = new DataProcessor();
+        private static readonly VPXProcessor vpxProcessor = new VPXProcessor(serial);
+        private static readonly PBYProcessor vbyProcessor = new PBYProcessor(serial);
+        private static readonly DataProcessor dataProcessor = new DataProcessor();
 
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -157,7 +153,7 @@ namespace Pin80Server
             }
         }
 
-        static public void HandleIncomingTCPConnections()
+        public static void HandleIncomingTCPConnections()
         {
             try
             {
@@ -177,12 +173,12 @@ namespace Pin80Server
             }
         }
 
-        static public void HandleTCPClint(Object obj)
+        public static void HandleTCPClint(object obj)
         {
             TcpClient client = (TcpClient)obj;
             var stream = client.GetStream();
             string data = null;
-            Byte[] bytes = new Byte[256];
+            byte[] bytes = new byte[256];
             int i;
             try
             {
@@ -215,12 +211,12 @@ namespace Pin80Server
             RomName = processor.romName();
         }
 
-        static private void LoadTableData(string name)
+        private static void LoadTableData(string name)
         {
             dataProcessor.LoadTableInformation(name);
         }
 
-        static public void HandleCommands()
+        public static void HandleCommands()
         {
             while (true)
             {

@@ -3,9 +3,9 @@ using System.IO.Ports;
 
 namespace Pin80Server.CommandProcessors
 {
-    class PBYProcessor : Processor
+    internal class PBYProcessor : Processor
     {
-        private SerialPort serial;
+        private readonly SerialPort serial;
         private string _romName;
 
         public PBYProcessor(SerialPort s)

@@ -24,7 +24,7 @@ namespace Pin80Server.Models.JSONSerializer
 
 
 
-        override public string ToString()
+        public override string ToString()
         {
             return string.Format("{0} {1}", trigger, action);
         }

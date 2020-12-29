@@ -21,8 +21,8 @@ namespace Pin80Plugin
         private TcpClient tcpClient;
         private System.Timers.Timer connectionTimerCheck;
 
-        private List<string> pluginLog = new List<string>();
-        private List<string> ignoreCodes = new List<string>();
+        private readonly List<string> pluginLog = new List<string>();
+        private readonly List<string> ignoreCodes = new List<string>();
 
         private bool debugEnabled = false;
         private string romName = null;
@@ -96,7 +96,7 @@ namespace Pin80Plugin
             connectionTimerCheck.Enabled = true;
         }
 
-        private void OnTimedEvent(Object source, ElapsedEventArgs e)
+        private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             logMessage("OnTimedEvent Trigger");
             if (tcpClient == null || !tcpClient.Connected)
@@ -139,7 +139,7 @@ namespace Pin80Plugin
             }
             catch (SocketException e)
             {
-                logMessage(String.Format("Connect failed {0}", e));
+                logMessage(string.Format("Connect failed {0}", e));
             }
 
             return false;
@@ -192,16 +192,16 @@ namespace Pin80Plugin
 
             try
             {
-                Byte[] data = System.Text.Encoding.ASCII.GetBytes(messageWithNewline);
+                byte[] data = System.Text.Encoding.ASCII.GetBytes(messageWithNewline);
                 tcpStream.Write(data, 0, data.Length);
             }
             catch (SocketException e)
             {
-                logMessage(String.Format("SocketException {0}", e.Message));
+                logMessage(string.Format("SocketException {0}", e.Message));
             }
             catch (Exception e)
             {
-                logMessage(String.Format("Something is wrong {0}", e.Message));
+                logMessage(string.Format("Something is wrong {0}", e.Message));
             }
         }
 
@@ -285,7 +285,7 @@ namespace Pin80Plugin
             form1.FormClosed += new FormClosedEventHandler(Form1Closed);
 
             // TODO: This only shows up the first time the window is shown.
-            string allLogs = String.Join("\n", pluginLog);
+            string allLogs = string.Join("\n", pluginLog);
             form1.updateLog(allLogs);
         }
 

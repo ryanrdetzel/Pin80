@@ -15,7 +15,7 @@
             delay = action.delay;
             duration = action.duration;
         }
-        override public string ToString()
+        public override string ToString()
         {
             //return string.Format("({1}) {0} Delay:{2} Duration:{3}", name, id, delay, duration);
             return name;

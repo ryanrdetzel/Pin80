@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace Pin80Server.CommandProcessors
 {
-    class VPXProcessor : Processor
+    internal class VPXProcessor : Processor
     {
-        private SerialPort serial;
+        private readonly SerialPort serial;
         private string _romName;
         private const int LagIgnoreMS = 30;
 
@@ -37,7 +37,7 @@ namespace Pin80Server.CommandProcessors
 
                 if (commandParts.Length < 3)
                 {
-                    Debug.WriteLine(String.Format("Command is not valid: {0}", command));
+                    Debug.WriteLine(string.Format("Command is not valid: {0}", command));
                     return false;
                 }
 
@@ -71,7 +71,7 @@ namespace Pin80Server.CommandProcessors
 
                 if (lag > LagIgnoreMS)
                 {
-                    Debug.WriteLine(String.Format("Ignoring command {0} as it's too old: {1}", command, lag));
+                    Debug.WriteLine(string.Format("Ignoring command {0} as it's too old: {1}", command, lag));
                 }
 
                 if (commandParts[0] == "S11" || commandParts[0] == "S13" || commandParts[0] == "S12" || commandParts[0] == "S48" || commandParts[0] == "S46")
