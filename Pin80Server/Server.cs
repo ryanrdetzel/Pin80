@@ -28,6 +28,8 @@ namespace Pin80Server
         static VPXProcessor vpxProcessor = new VPXProcessor(serial);
         static PBYProcessor vbyProcessor = new PBYProcessor(serial);
 
+        static DataProcessor dataProcessor = new DataProcessor();
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -83,6 +85,8 @@ namespace Pin80Server
             }
 
             mainForm = new MainForm();
+            mainForm.setDataProcessor(dataProcessor);
+
             Application.Run(mainForm);
         }
 

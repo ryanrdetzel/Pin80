@@ -52,16 +52,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataProcessor.cs" />
     <Compile Include="CommandProcessors\Processor.cs" />
     <Compile Include="CommandProcessors\PBYProcessor.cs" />
     <Compile Include="CommandProcessors\VPXProcessor.cs" />
-    <Compile Include="JsonTable.cs" />
-    <Compile Include="TriggerSettings.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TriggerSettings.Designer.cs">
-      <DependentUpon>TriggerSettings.cs</DependentUpon>
-    </Compile>
+    <Compile Include="ControlItem.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -70,9 +65,6 @@
     </Compile>
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="TriggerSettings.resx">
-      <DependentUpon>TriggerSettings.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
