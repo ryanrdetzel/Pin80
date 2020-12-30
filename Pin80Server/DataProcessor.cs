@@ -13,12 +13,14 @@ using System.Windows.Forms;
 
 namespace Pin80Server
 {
-    public class DataProcessor : IListSource
+    public class DataProcessor
     {
         private string Romname;
         public bool autoAddItems = false;
 
-        private readonly BindingList<ControlItem> controllerData = new BindingList<ControlItem>();
+        public BindingSource bSource;
+
+        public BindingList<ControlItem> controllerData = new BindingList<ControlItem>();
         public Dictionary<string, Trigger> triggers = new Dictionary<string, Trigger>();
 
         public Dictionary<string, Target> targets = new Dictionary<string, Target>();
@@ -28,20 +30,28 @@ namespace Pin80Server
 
         public DataProcessor()
         {
-            controllerData.ListChanged += listOfParts_ListChanged;
+            //controllerData.ListChanged += listOfParts_ListChanged;
             autoAddItems = Settings.ReadBoolSetting(Constants.SettingAutoAddItems);
+
+            bSource = new BindingSource();
+            
+            bSource.DataSource = controllerData;
         }
 
         void listOfParts_ListChanged(object sender, ListChangedEventArgs e)
         {
             //MessageBox.Show(e.ListChangedType.ToString());
-            Debug.WriteLine("Data changed " + e.ListChangedType.ToString());
+            //Debug.WriteLine("Data changed " + e.ListChangedType.ToString());
         }
 
-        public IList GetList()
-        {
-            return controllerData;
-        }
+        //public IList GetList()
+        //{
+        //    Debug.WriteLine("Getting data");
+        //    //var filteredList = controllerData.Where(item => item.enabled);
+        //    //var filteredBindingList = new BindingList<ControlItem>(controllerData.Where(x => x.enabled).ToList());
+
+        //    return controllerData;
+        //}
 
         public void addControlItem(ControlItem item)
         {
@@ -183,6 +193,9 @@ namespace Pin80Server
             // TODO handle exceptions here.
             Debug.WriteLine("Loading table for: " + fullPath);
             Debug.WriteLine(controllerData.Count);
+
+
+
         }
         private List<Trigger> LoadTriggers(string fullPath)
         {

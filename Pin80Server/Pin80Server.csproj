@@ -97,6 +97,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\ItemBindingSource.datasource" />
     <None Include="Properties\DataSources\JsonTable.datasource" />
     <None Include="Properties\DataSources\Pin80Server.Models.JSONSerializer.ControlItem.datasource" />
     <None Include="Properties\Settings.settings">

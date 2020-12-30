@@ -33,8 +33,8 @@ namespace Pin80Server
         public void setDataProcessor(DataProcessor dp)
         {
             Debug.WriteLine("Setting new data source");
-            controlDataGridView.DataSource = dp;
             dataProcessor = dp;
+            controlDataGridView.DataSource = dp.bSource;
 
             statusStrip1.Items[1].Text = (dataProcessor.autoAddItems) ? "Auto add items enabled" : "Auto add items disabled";
             autoAddItemsCheckbox.Checked = dataProcessor.autoAddItems;
@@ -91,14 +91,14 @@ namespace Pin80Server
             controlDataGridView.AllowUserToAddRows = false;
 
             // All columns readonly except the first
-            for (int c = 1; c < controlDataGridView.ColumnCount; c++)
-            {
-                controlDataGridView.Columns[c].ReadOnly = true;
-                controlDataGridView.Columns[c-1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            //for (int c = 1; c < controlDataGridView.ColumnCount; c++)
+            //{
+            //    controlDataGridView.Columns[c].ReadOnly = true;
+            //    controlDataGridView.Columns[c-1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
 
-            }
+            //}
 
-            controlDataGridView.Columns[controlDataGridView.ColumnCount - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            //controlDataGridView.Columns[controlDataGridView.ColumnCount - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
         }
 
         private void Form1_Load_1(object sender, EventArgs e)
@@ -180,13 +180,13 @@ namespace Pin80Server
 
         private void controlDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            var dp = controlDataGridView.DataSource as DataProcessor;
+            //var dp = controlDataGridView.DataSource as DataProcessor;
             DataGridViewCell cell = controlDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
             
             // Disable if it fails validation
             if (e.ColumnIndex == 0)
             {
-                var controlItem = dp.GetList()[e.RowIndex] as ControlItem;
+                var controlItem = dataProcessor.controllerData[e.RowIndex] as ControlItem;
                 DataGridViewCheckBoxCell checkCell = (DataGridViewCheckBoxCell)cell;
 
                 if (!controlItem.validate())
@@ -205,7 +205,7 @@ namespace Pin80Server
                 if (e.Value != null)
                 {
                     string actionId = (string)e.Value;
-                    string friendlyName = dp.getAction(actionId).ToString();
+                    string friendlyName = dataProcessor.getAction(actionId).ToString();
                     e.Value = friendlyName;
                 }
             }
@@ -214,11 +214,11 @@ namespace Pin80Server
                 if (e.Value != null)
                 {
                     string actionId = (string)e.Value;
-                    var trigger = dp.getTrigger(actionId);
+                    var trigger = dataProcessor.getTrigger(actionId);
                     if (trigger != null)
                     {
-                        e.Value = dp.getTrigger(actionId).ToString();
-                        cell.ToolTipText = dp.getTrigger(actionId).name;
+                        e.Value = dataProcessor.getTrigger(actionId).ToString();
+                        cell.ToolTipText = dataProcessor.getTrigger(actionId).name;
                     }
                 }
             }
@@ -227,10 +227,10 @@ namespace Pin80Server
                 if (e.Value != null)
                 {
                     string actionId = (string)e.Value;
-                    string friendlyName = dp.getTarget(actionId).ToString();
+                    string friendlyName = dataProcessor.getTarget(actionId).ToString();
                     e.Value = friendlyName;
 
-                    cell.ToolTipText = dp.getTarget(actionId).id;
+                    cell.ToolTipText = dataProcessor.getTarget(actionId).id;
                 }
             }
         }
@@ -243,8 +243,8 @@ namespace Pin80Server
         private void button1_Click(object sender, EventArgs e)
         {
             // Save
-            var dp = controlDataGridView.DataSource as DataProcessor;
-            dp.saveControllerData();
+            //var dp = controlDataGridView.DataSource as DataProcessor;
+            dataProcessor.saveControllerData();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -275,9 +275,9 @@ namespace Pin80Server
         private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             Debug.WriteLine("Clicked");
-            var dp = controlDataGridView.DataSource as DataProcessor;
+            //var dp = controlDataGridView.DataSource as DataProcessor;
             var row = controlDataGridView.CurrentCell.RowIndex;
-            var item = dp.GetList()[row] as ControlItem;
+            var item = dataProcessor.controllerData[row] as ControlItem;
 
             if (e.ClickedItem.Name == "stripMenuTest")
             {
@@ -304,16 +304,19 @@ namespace Pin80Server
             editForm.Show();
             editForm.Location = new Point(mainLocation.X - editForm.Size.Width, mainLocation.Y);
 
-            var dp = controlDataGridView.DataSource as DataProcessor;
+            //var dp = controlDataGridView.DataSource as DataProcessor;
             var row = controlDataGridView.CurrentCell.RowIndex;
-            var item = dp.GetList()[row] as ControlItem;
+            var item = dataProcessor.controllerData[row] as ControlItem;
 
-            editForm.setControlItem(dp, item);
+            editForm.setControlItem(dataProcessor, item);
         }
 
         private void controlDataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             //ListSortDirection direction = ListSortDirection.Ascending; ;
+            Debug.WriteLine(dataProcessor.bSource.SupportsFiltering);
+
+            //dataProcessor.bSource.Sort = "triggerString DESC";
 
             return;
             var sortedColumn = controlDataGridView.SortedColumn;

@@ -42,8 +42,6 @@ namespace Pin80Server
             this.Triggers = new System.Windows.Forms.TabPage();
             this.Control = new System.Windows.Forms.TabPage();
             this.controlDataGridView = new System.Windows.Forms.DataGridView();
-            this.targetString = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.actionString = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabView = new System.Windows.Forms.TabControl();
             this.logMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.clearLogItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,11 +54,13 @@ namespace Pin80Server
             this.deleteItemItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableNameLabel = new System.Windows.Forms.Label();
             this.itemFilterCombo = new System.Windows.Forms.ComboBox();
-            this.enabledDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.triggerStringDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.valueDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.commentDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.controlItemSource = new System.Windows.Forms.BindingSource(this.components);
+            this.enabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.triggerString = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.valueString = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.actionString = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.targetString = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.commnet = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.itemMenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -73,7 +73,6 @@ namespace Pin80Server
             this.tabView.SuspendLayout();
             this.logMenuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.controlItemSource)).BeginInit();
             this.SuspendLayout();
             // 
             // itemMenuStrip
@@ -210,20 +209,19 @@ namespace Pin80Server
             this.controlDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.controlDataGridView.AutoGenerateColumns = false;
             this.controlDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.controlDataGridView.BackgroundColor = System.Drawing.Color.White;
             this.controlDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.controlDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.controlDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.enabledDataGridViewCheckBoxColumn,
-            this.triggerStringDataGridViewTextBoxColumn,
-            this.valueDataGridViewTextBoxColumn,
+            this.enabled,
+            this.Id,
+            this.triggerString,
+            this.valueString,
             this.actionString,
             this.targetString,
-            this.commentDataGridViewTextBoxColumn});
+            this.commnet});
             this.controlDataGridView.ContextMenuStrip = this.itemMenuStrip;
-            this.controlDataGridView.DataSource = this.controlItemSource;
             this.controlDataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnKeystroke;
             this.controlDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
             this.controlDataGridView.Location = new System.Drawing.Point(6, 6);
@@ -238,20 +236,6 @@ namespace Pin80Server
             this.controlDataGridView.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.controlDataGridView_ColumnHeaderMouseClick);
             this.controlDataGridView.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowEnter);
             this.controlDataGridView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.controlDataGridView_MouseDoubleClick);
-            // 
-            // targetString
-            // 
-            this.targetString.DataPropertyName = "targetString";
-            this.targetString.HeaderText = "Target";
-            this.targetString.Name = "targetString";
-            this.targetString.Width = 63;
-            // 
-            // actionString
-            // 
-            this.actionString.DataPropertyName = "actionString";
-            this.actionString.HeaderText = "Action";
-            this.actionString.Name = "actionString";
-            this.actionString.Width = 62;
             // 
             // tabView
             // 
@@ -303,13 +287,14 @@ namespace Pin80Server
             // logginStatusLabel
             // 
             this.logginStatusLabel.Name = "logginStatusLabel";
-            this.logginStatusLabel.Size = new System.Drawing.Size(107, 19);
+            this.logginStatusLabel.Padding = new System.Windows.Forms.Padding(20, 0, 20, 0);
+            this.logginStatusLabel.Size = new System.Drawing.Size(147, 19);
             this.logginStatusLabel.Text = "Logging is enabled";
             // 
             // autoAddItemsCheckbox
             // 
             this.autoAddItemsCheckbox.AutoSize = true;
-            this.autoAddItemsCheckbox.Location = new System.Drawing.Point(9, 53);
+            this.autoAddItemsCheckbox.Location = new System.Drawing.Point(18, 18);
             this.autoAddItemsCheckbox.Name = "autoAddItemsCheckbox";
             this.autoAddItemsCheckbox.Size = new System.Drawing.Size(98, 17);
             this.autoAddItemsCheckbox.TabIndex = 0;
@@ -321,7 +306,8 @@ namespace Pin80Server
             // 
             this.autoAddEnabledLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)));
             this.autoAddEnabledLabel.Name = "autoAddEnabledLabel";
-            this.autoAddEnabledLabel.Size = new System.Drawing.Size(139, 19);
+            this.autoAddEnabledLabel.Padding = new System.Windows.Forms.Padding(20, 0, 20, 0);
+            this.autoAddEnabledLabel.Size = new System.Drawing.Size(179, 19);
             this.autoAddEnabledLabel.Text = "Auto Add Items Enabled";
             // 
             // toolStripSeparator1
@@ -359,39 +345,55 @@ namespace Pin80Server
             this.itemFilterCombo.TabIndex = 7;
             this.itemFilterCombo.SelectedValueChanged += new System.EventHandler(this.itemFilterCombo_SelectedValueChanged);
             // 
-            // enabledDataGridViewCheckBoxColumn
+            // enabled
             // 
-            this.enabledDataGridViewCheckBoxColumn.DataPropertyName = "enabled";
-            this.enabledDataGridViewCheckBoxColumn.HeaderText = "enabled";
-            this.enabledDataGridViewCheckBoxColumn.Name = "enabledDataGridViewCheckBoxColumn";
-            this.enabledDataGridViewCheckBoxColumn.Width = 51;
+            this.enabled.DataPropertyName = "enabled";
+            this.enabled.HeaderText = "Enabled";
+            this.enabled.Name = "enabled";
+            this.enabled.Width = 52;
             // 
-            // triggerStringDataGridViewTextBoxColumn
+            // Id
             // 
-            this.triggerStringDataGridViewTextBoxColumn.DataPropertyName = "triggerString";
-            this.triggerStringDataGridViewTextBoxColumn.HeaderText = "Trigger";
-            this.triggerStringDataGridViewTextBoxColumn.Name = "triggerStringDataGridViewTextBoxColumn";
-            this.triggerStringDataGridViewTextBoxColumn.Width = 65;
+            this.Id.DataPropertyName = "id";
+            this.Id.HeaderText = "ID";
+            this.Id.Name = "Id";
+            this.Id.Visible = false;
+            this.Id.Width = 43;
             // 
-            // valueDataGridViewTextBoxColumn
+            // triggerString
             // 
-            this.valueDataGridViewTextBoxColumn.DataPropertyName = "value";
-            this.valueDataGridViewTextBoxColumn.HeaderText = "Value";
-            this.valueDataGridViewTextBoxColumn.Name = "valueDataGridViewTextBoxColumn";
-            this.valueDataGridViewTextBoxColumn.Width = 59;
+            this.triggerString.DataPropertyName = "triggerString";
+            this.triggerString.HeaderText = "Trigger";
+            this.triggerString.Name = "triggerString";
+            this.triggerString.Width = 65;
             // 
-            // commentDataGridViewTextBoxColumn
+            // valueString
             // 
-            this.commentDataGridViewTextBoxColumn.DataPropertyName = "comment";
-            this.commentDataGridViewTextBoxColumn.HeaderText = "Comment";
-            this.commentDataGridViewTextBoxColumn.Name = "commentDataGridViewTextBoxColumn";
-            this.commentDataGridViewTextBoxColumn.Width = 76;
+            this.valueString.DataPropertyName = "value";
+            this.valueString.HeaderText = "Value";
+            this.valueString.Name = "valueString";
+            this.valueString.Width = 59;
             // 
-            // controlItemSource
+            // actionString
             // 
-            this.controlItemSource.DataSource = typeof(Pin80Server.Models.JSONSerializer.ControlItem);
-            this.controlItemSource.Sort = "";
-            this.controlItemSource.CurrentChanged += new System.EventHandler(this.jsonTableBindingSource_CurrentChanged);
+            this.actionString.DataPropertyName = "actionString";
+            this.actionString.HeaderText = "Action";
+            this.actionString.Name = "actionString";
+            this.actionString.Width = 62;
+            // 
+            // targetString
+            // 
+            this.targetString.DataPropertyName = "targetString";
+            this.targetString.HeaderText = "Target";
+            this.targetString.Name = "targetString";
+            this.targetString.Width = 63;
+            // 
+            // commnet
+            // 
+            this.commnet.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.commnet.DataPropertyName = "comment";
+            this.commnet.HeaderText = "Comment";
+            this.commnet.Name = "commnet";
             // 
             // MainForm
             // 
@@ -424,7 +426,6 @@ namespace Pin80Server
             this.logMenuStrip.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.controlItemSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -432,7 +433,6 @@ namespace Pin80Server
 
         #endregion
         private System.Windows.Forms.Label romNameLabel;
-        private System.Windows.Forms.BindingSource controlItemSource;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button addItemButton;
@@ -445,12 +445,6 @@ namespace Pin80Server
         private System.Windows.Forms.TabControl tabView;
         private System.Windows.Forms.TabPage Control;
         private System.Windows.Forms.DataGridView controlDataGridView;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn enabledDataGridViewCheckBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn triggerStringDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn valueDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn actionString;
-        private System.Windows.Forms.DataGridViewTextBoxColumn targetString;
-        private System.Windows.Forms.DataGridViewTextBoxColumn commentDataGridViewTextBoxColumn;
         private System.Windows.Forms.TabPage Triggers;
         private System.Windows.Forms.ContextMenuStrip logMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem clearLogItem;
@@ -463,6 +457,13 @@ namespace Pin80Server
         private System.Windows.Forms.ToolStripMenuItem deleteItemItem;
         private System.Windows.Forms.ComboBox itemFilterCombo;
         private System.Windows.Forms.Label tableNameLabel;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn enabled;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn triggerString;
+        private System.Windows.Forms.DataGridViewTextBoxColumn valueString;
+        private System.Windows.Forms.DataGridViewTextBoxColumn actionString;
+        private System.Windows.Forms.DataGridViewTextBoxColumn targetString;
+        private System.Windows.Forms.DataGridViewTextBoxColumn commnet;
     }
 }
 

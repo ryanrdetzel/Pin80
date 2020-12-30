@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Pin80Server
 {
-    class ItemBindingSource : IBindingListView
+    public class ItemBindingSource : IBindingList
     {
         public object this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
