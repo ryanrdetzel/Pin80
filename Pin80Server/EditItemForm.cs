@@ -43,11 +43,13 @@ namespace Pin80Server
             triggerLabel.Text = item.triggerString;
             triggerNameField.Text = trigger?.name ?? "";
 
-            var targetValues = dp.targets.Keys.ToArray();
+            var targetValues = dp.targetsDict.Keys.ToArray();
+            targetsComboBox.Items.Clear();
             targetsComboBox.Items.AddRange(targetValues);
             targetsComboBox.SelectedItem = item.targetString;
 
-            var actionValues = dp.actions.Keys.ToArray();
+            var actionValues = dp.actionsDict.Keys.ToArray();
+            actionComboBox.Items.Clear();
             actionComboBox.Items.AddRange(actionValues);
             actionComboBox.SelectedItem = item.actionString;
 

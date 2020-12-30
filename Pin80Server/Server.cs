@@ -186,28 +186,6 @@ namespace Pin80Server
             }
         }
 
-        //public static void processUI(Processor processor)
-        //{
-        //    Debug.WriteLine("Update UI");
-        //    //RomName = processor.romName();
-
-        //    //if (RomName != null)
-        //    //{
-        //    //    if (mainForm.IsHandleCreated)
-        //    //    {
-        //    //        mainForm.BeginInvoke((MethodInvoker)delegate ()
-        //    //        {
-        //    //            mainForm.setRomName(RomName);
-        //    //        });
-        //    //    }
-        //    //}
-        //}
-
-        //private static void LoadTableData(string name)
-        //{
-        //    dataProcessor.LoadTableInformation(name);
-        //}
-
         public static void HandleCommands()
         {
             while (true)

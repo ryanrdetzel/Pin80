@@ -15,42 +15,35 @@ namespace Pin80Server
     public class DataProcessor
     {
         private string Romname;
+
         public bool autoAddItems = false;
+        public bool unsavedChanges = false;
 
         public BindingSource bSource;
 
         public BindingList<ControlItem> controllerData = new BindingList<ControlItem>();
-        public Dictionary<string, Trigger> triggers = new Dictionary<string, Trigger>();
 
-        public Dictionary<string, Target> targets = new Dictionary<string, Target>();
-        public Dictionary<string, IAction> actions = new Dictionary<string, IAction>();
+        public Dictionary<string, Trigger> triggersDict = new Dictionary<string, Trigger>();
+        public Dictionary<string, Target> targetsDict = new Dictionary<string, Target>();
+        public Dictionary<string, IAction> actionsDict = new Dictionary<string, IAction>();
 
         public bool ContainsListCollection => throw new System.NotImplementedException();
 
         public DataProcessor()
         {
-            //controllerData.ListChanged += listOfParts_ListChanged;
             autoAddItems = Settings.ReadBoolSetting(Constants.SettingAutoAddItems);
 
             bSource = new BindingSource();
-
             bSource.DataSource = controllerData;
+
+            controllerData.ListChanged += ControllerData_ListChanged;
         }
 
-        private void listOfParts_ListChanged(object sender, ListChangedEventArgs e)
+        private void ControllerData_ListChanged(object sender, ListChangedEventArgs e)
         {
-            //MessageBox.Show(e.ListChangedType.ToString());
-            //Debug.WriteLine("Data changed " + e.ListChangedType.ToString());
+            Debug.WriteLine(e.ToString());
+            unsavedChanges = true;
         }
-
-        //public IList GetList()
-        //{
-        //    Debug.WriteLine("Getting data");
-        //    //var filteredList = controllerData.Where(item => item.enabled);
-        //    //var filteredBindingList = new BindingList<ControlItem>(controllerData.Where(x => x.enabled).ToList());
-
-        //    return controllerData;
-        //}
 
         public void addControlItem(ControlItem item)
         {
@@ -78,6 +71,7 @@ namespace Pin80Server
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.Serialize(file, controllerData);
             }
+            unsavedChanges = false;
         }
 
         /* For this table see if there is a control item for this trigger */
@@ -88,17 +82,18 @@ namespace Pin80Server
 
         public IAction getAction(string actionId)
         {
-            return actionId != null && actions.ContainsKey(actionId) ? actions[actionId] : null;
+            return actionId != null && actionsDict.ContainsKey(actionId) ? actionsDict[actionId] : null;
         }
 
+        /* Always returns a trigger */
         public Trigger getTrigger(string command)
         {
-            return command != null && triggers.ContainsKey(command) ? triggers[command] : null;
+            return command != null && triggersDict.ContainsKey(command) ? triggersDict[command] : new Trigger(command);
         }
 
         public Target getTarget(string id)
         {
-            return id != null && targets.ContainsKey(id) ? targets[id] : null;
+            return id != null && targetsDict.ContainsKey(id) ? targetsDict[id] : null;
         }
 
         private void populateActions()
@@ -112,10 +107,10 @@ namespace Pin80Server
                 switch (action.kind)
                 {
                     case "ONOFF":
-                        actions[action.id] = new OnOffAction(action);
+                        actionsDict[action.id] = new OnOffAction(action);
                         break;
                     case "BLINK":
-                        actions[action.id] = new BlinkAction(action);
+                        actionsDict[action.id] = new BlinkAction(action);
                         break;
                     default:
                         throw new Exception("Not a valid action");
@@ -131,7 +126,7 @@ namespace Pin80Server
             //Convert the json to actual actions
             triggerList.ForEach(trigger =>
             {
-                triggers[trigger.command] = trigger;
+                triggersDict[trigger.command] = trigger;
             });
         }
 
@@ -143,7 +138,7 @@ namespace Pin80Server
             //Convert the json to actual actions
             targetList.ForEach(target =>
             {
-                targets[target.id] = target;
+                targetsDict[target.id] = target;
             });
         }
 
@@ -151,9 +146,11 @@ namespace Pin80Server
         {
             this.Romname = Romname;
 
-            actions.Clear();
-            targets.Clear();
-            triggers.Clear();
+            actionsDict.Clear();
+            targetsDict.Clear();
+            triggersDict.Clear();
+
+            // This has to be handled on the main ui thread since it's binding
             if (mainForm.IsHandleCreated)
             {
                 mainForm.BeginInvoke((MethodInvoker)delegate ()
@@ -161,43 +158,36 @@ namespace Pin80Server
                     controllerData.Clear();
                 });
             }
-            // TODO Need this refresh but it breaks threads
-            // controllerData.Clear();
 
+            // TODO Search for various combinations of files.
 
-            // Search for various combinations of files.
-            // actions and triggers and default
-
-            //Can't continue unless we have actions and triggers.
+            // TODO Can't continue unless we have actions and triggers.
             populateActions();
             populateTriggers();
             populateTargets();
 
-            // Exact match, remove version, default?
             var fullPath = Path.Combine(@"Data", $"{Romname}.json");
             var ldata = LoadFile(fullPath);
 
             var sortedListInstance = new BindingList<ControlItem>(ldata.OrderBy(x => x.triggerString).ToList());
 
-            foreach (var d in sortedListInstance)
+            // Add each item on the UI thread
+            if (mainForm.IsHandleCreated)
             {
-                if (mainForm.IsHandleCreated)
+                mainForm.BeginInvoke((MethodInvoker)delegate ()
                 {
-                    mainForm.BeginInvoke((MethodInvoker)delegate ()
+                    foreach (var d in sortedListInstance)
                     {
                         controllerData.Add(d);
-                    });
-                }
-
+                    }
+                    unsavedChanges = false;
+                });
             }
 
-            // TODO handle exceptions here.
+            // TODO handle exceptions here like failing to open a file.
             Debug.WriteLine("Loading table for: " + fullPath);
-            Debug.WriteLine(controllerData.Count);
-
-
-
         }
+
         private List<Trigger> LoadTriggers(string fullPath)
         {
             using (StreamReader r = new StreamReader(fullPath))

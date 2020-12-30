@@ -25,10 +25,21 @@ namespace Pin80Server
             Load += new EventHandler(Form1_Load);
         }
 
+        private void Form1_Load(object sender, System.EventArgs e)
+        {
+            SetupDataGridView();
+
+            var itemFilter = Settings.ReadSetting(Constants.SettingItemFilter);
+            if (itemFilter == "")
+            {
+                itemFilter = itemFilterCombo.Items[0].ToString();
+            }
+            itemFilterCombo.SelectedItem = itemFilter;
+        }
+
         public void setQueueRef(ref BlockingCollection<string> cq)
         {
             commandQueue = cq;
-            editForm.setQueueRef(ref commandQueue);
         }
 
         public void setDataProcessor(DataProcessor dp)
@@ -68,19 +79,15 @@ namespace Pin80Server
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             saveWindowState();
-            Environment.Exit(Environment.ExitCode);
-        }
-
-        private void Form1_Load(object sender, System.EventArgs e)
-        {
-            SetupDataGridView();
-
-            var itemFilter = Settings.ReadSetting(Constants.SettingItemFilter);
-            if (itemFilter == "")
+            if (dataProcessor.unsavedChanges)
             {
-                itemFilter = itemFilterCombo.Items[0].ToString();
+                if (MessageBox.Show("Do you want to save your changes?", "Unsaved Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    e.Cancel = true;
+                    dataProcessor.saveControllerData();
+                    Application.Exit();
+                }
             }
-            itemFilterCombo.SelectedItem = itemFilter;
         }
 
         private void SetupDataGridView()
@@ -90,16 +97,6 @@ namespace Pin80Server
             controlDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             controlDataGridView.MultiSelect = false;
             controlDataGridView.AllowUserToAddRows = false;
-
-            // All columns readonly except the first
-            //for (int c = 1; c < controlDataGridView.ColumnCount; c++)
-            //{
-            //    controlDataGridView.Columns[c].ReadOnly = true;
-            //    controlDataGridView.Columns[c-1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-
-            //}
-
-            //controlDataGridView.Columns[controlDataGridView.ColumnCount - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
         }
 
         private void Form1_Load_1(object sender, EventArgs e)
@@ -121,11 +118,6 @@ namespace Pin80Server
                 this.Location = Properties.Settings.Default.F1Location;
                 this.Size = Properties.Settings.Default.F1Size;
             }
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            saveWindowState();
         }
 
         private void saveWindowState()
@@ -153,30 +145,9 @@ namespace Pin80Server
             saveWindowState();
         }
 
-        private void Form1_Resize(object sender, EventArgs e)
-        {
-            saveWindowState();
-        }
-
-        private void Form1_SizeChanged(object sender, EventArgs e)
-        {
-            saveWindowState();
-        }
-
         private void dataGridView1_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            Debug.WriteLine("Row {0}", e.RowIndex);
-        }
-
-        private void textBox1_KeyUp(object sender, KeyEventArgs e)
-        {
-            // Filter
-            //filterValue = textBox1.Text;
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            listBox1.Items.Clear();
+            Debug.WriteLine("Row Click {0}", e.RowIndex);
         }
 
         private void controlDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -243,19 +214,12 @@ namespace Pin80Server
             }
         }
 
-        private void jsonTableBindingSource_CurrentChanged(object sender, EventArgs e)
+        private void saveButton_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            // Save
-            //var dp = controlDataGridView.DataSource as DataProcessor;
             dataProcessor.saveControllerData();
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void addItemButton_Click(object sender, EventArgs e)
         {
             ControlItem item = new ControlItem("T00", "0");
             dataProcessor.addControlItem(item);
@@ -308,43 +272,14 @@ namespace Pin80Server
             }
             var mainLocation = this.Location;
 
+            editForm.setQueueRef(ref commandQueue);
             editForm.Show();
             editForm.Location = new Point(mainLocation.X - editForm.Size.Width, mainLocation.Y);
 
-            //var dp = controlDataGridView.DataSource as DataProcessor;
             var row = controlDataGridView.CurrentCell.RowIndex;
             var item = dataProcessor.controllerData[row];
 
             editForm.setControlItem(dataProcessor, item);
-        }
-
-        private void controlDataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            //ListSortDirection direction = ListSortDirection.Ascending; ;
-            Debug.WriteLine(dataProcessor.bSource.SupportsFiltering);
-
-            //dataProcessor.bSource.Sort = "triggerString DESC";
-
-            return;
-            var sortedColumn = controlDataGridView.SortedColumn;
-            var sortOrder = ListSortDirection.Ascending;
-
-            var column = controlDataGridView.Columns[e.ColumnIndex];
-
-            if (sortedColumn == column)
-            {
-                // Same, reverse
-                sortOrder = (controlDataGridView.SortOrder == SortOrder.Ascending) ? ListSortDirection.Descending : ListSortDirection.Ascending;
-            }
-            //var direction = System.ComponentModel.ListSortDirection.Ascending;
-            //var direction = sortOrder ListSortDirection.Ascending ? SortOrder.Ascending : SortOrder.Descending;
-            controlDataGridView.Sort(column, sortOrder);
-            //((BindingSource)controlDataGridView.DataSource).Sort = "triggerString";
-        }
-
-        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
-        {
-
         }
 
         private void logMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -381,6 +316,23 @@ namespace Pin80Server
         private void itemFilterCombo_SelectedValueChanged(object sender, EventArgs e)
         {
             Settings.SaveSetting(Constants.SettingItemFilter, itemFilterCombo.Text);
+        }
+
+        private void controlDataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (controlDataGridView.DataSource != null)
+            {
+                dataProcessor.unsavedChanges = true;
+            }
+        }
+
+        private void controlDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 0)
+            {
+                controlDataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
+                dataProcessor.unsavedChanges = true;
+            }
         }
     }
 }

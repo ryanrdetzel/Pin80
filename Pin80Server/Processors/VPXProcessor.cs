@@ -46,19 +46,18 @@ namespace Pin80Server.CommandProcessors
                     return false;
                 }
 
-                string trigger = commandParts[0];
-                string value = commandParts[1];
-                string extra = string.Join(" ", commandParts.Skip(2));
+                string triggerString = commandParts[0];
+                string valueString = commandParts[1];
+                string extraString = string.Join(" ", commandParts.Skip(2));
 
                 var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
                 /* Table information */
-                if (trigger == "INFO")
+                if (triggerString == "INFO")
                 {
-                    if (value == "ROM")
+                    if (valueString == "ROM")
                     {
-                        _romName = extra;
-                        //callback(this);
+                        _romName = extraString;
                         if (mainForm.IsHandleCreated)
                         {
                             mainForm.BeginInvoke((MethodInvoker)delegate ()
@@ -73,16 +72,21 @@ namespace Pin80Server.CommandProcessors
                     return false;
                 }
 
-                var sentMS = Convert.ToInt64(extra);
+                var sentMS = Convert.ToInt64(extraString);
                 var lag = now - sentMS;
 
                 if (lag > LagIgnoreMS)
                 {
-                    // TODO log this to the UI
-                    Debug.WriteLine(string.Format("Ignoring command {0} as it's too old: {1}", command, lag));
+                    if (mainForm.IsHandleCreated)
+                    {
+                        mainForm.BeginInvoke((MethodInvoker)delegate ()
+                        {
+                            mainForm.addLogEntry(string.Format("Ignoring command {0} as it's too old: {1}", command, lag));
+                        });
+                    }
                 }
 
-                var items = dataProcessor.getControlItems(trigger);
+                var items = dataProcessor.getControlItems(triggerString);
 
                 /* If we didn't match any items see if we should add this to the list */
                 if (items.Count == 0 && dataProcessor.autoAddItems)
@@ -91,7 +95,7 @@ namespace Pin80Server.CommandProcessors
                     {
                         mainForm.BeginInvoke((MethodInvoker)delegate ()
                         {
-                            ControlItem item = new ControlItem(trigger, value);
+                            ControlItem item = new ControlItem(triggerString, valueString);
                             dataProcessor.addControlItem(item);
                         });
                     }
@@ -104,17 +108,15 @@ namespace Pin80Server.CommandProcessors
                         continue;
                     }
                     var target = dataProcessor.getTarget(item.targetString);
-                    var trig = dataProcessor.getTrigger(item.triggerString);
+                    var trigger = dataProcessor.getTrigger(item.triggerString);
                     var action = dataProcessor.getAction(item.actionString);
 
-                    if (action != null)
+                    if (action == null || trigger == null || target == null)
                     {
-                        action.handle(value, item, trig, target, serial);
+                        throw new Exception("Could not handle action");
                     }
-                    else
-                    {
-                        //throw new Exception("Could not handle action");
-                    }
+    
+                    action.handle(valueString, item, trigger, target, serial);
                 }
 
                 return true;
