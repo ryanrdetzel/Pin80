@@ -21,19 +21,6 @@ namespace Pin80Server
 
         private static BlockingCollection<string> commandQueue = new BlockingCollection<string>();
 
-        //private static string _romName;
-
-        //private static string RomName
-        //{
-        //    get => _romName;
-        //    set
-        //    {
-        //        _romName = value;
-
-        //        LoadTableData(_romName);
-        //    }
-        //}
-
         private static readonly SerialPort serial = new SerialPort("COM3"); // TODO make this a setting
 
         private static readonly DataProcessor dataProcessor = new DataProcessor();

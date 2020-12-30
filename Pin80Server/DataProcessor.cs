@@ -21,7 +21,7 @@ namespace Pin80Server
         public Dictionary<string, Trigger> triggers = new Dictionary<string, Trigger>();
 
         public Dictionary<string, Target> targets = new Dictionary<string, Target>();
-        public Dictionary<string, IAction> actionMap = new Dictionary<string, IAction>();
+        public Dictionary<string, IAction> actions = new Dictionary<string, IAction>();
 
         public bool ContainsListCollection => throw new System.NotImplementedException();
 
@@ -41,6 +41,17 @@ namespace Pin80Server
             return controllerData;
         }
 
+        public void addControlItem(ControlItem item)
+        {
+            controllerData.Add(item);
+        }
+
+        public void updateControlItem(ControlItem NewItem)
+        {
+            var index = controllerData.ToList().FindIndex(Item => Item.id == NewItem.id);
+            controllerData[index] = NewItem;
+        }
+
         public void saveControllerData()
         {
             var fullPath = Path.Combine(@"Data", $"{Romname}.json");
@@ -56,22 +67,22 @@ namespace Pin80Server
         /* For this table see if there is a control item for this trigger */
         public List<ControlItem> getControlItems(string trigger)
         {
-            return controllerData.Where(item => item.trigger == trigger && item.enabled).ToList();
+            return controllerData.Where(item => item.triggerString == trigger).ToList();
         }
 
         public IAction getAction(string actionId)
         {
-            return actionMap[actionId];
+            return actionId != null && actions.ContainsKey(actionId) ? actions[actionId] : null;
         }
 
         public Trigger getTrigger(string command)
         {
-            return triggers.ContainsKey(command) ? triggers[command] : null;
+            return command != null && triggers.ContainsKey(command) ? triggers[command] : null;
         }
 
         public Target getTarget(string id)
         {
-            return targets[id];
+            return id != null && targets.ContainsKey(id) ? targets[id] : null;
         }
 
         private void populateActions()
@@ -85,10 +96,10 @@ namespace Pin80Server
                 switch (action.kind)
                 {
                     case "ONOFF":
-                        actionMap[action.id] = new OnOffAction(action);
+                        actions[action.id] = new OnOffAction(action);
                         break;
                     case "BLINK":
-                        actionMap[action.id] = new BlinkAction(action);
+                        actions[action.id] = new BlinkAction(action);
                         break;
                     default:
                         throw new Exception("Not a valid action");
@@ -124,7 +135,7 @@ namespace Pin80Server
         {
             this.Romname = Romname;
 
-            actionMap.Clear();
+            actions.Clear();
             targets.Clear();
             triggers.Clear();
             if (mainForm.IsHandleCreated)

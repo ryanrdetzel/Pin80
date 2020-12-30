@@ -53,6 +53,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataProcessor.cs" />
+    <Compile Include="EditItemForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditItemForm.Designer.cs">
+      <DependentUpon>EditItemForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Actions\OnOffAction.cs" />
     <Compile Include="Models\Actions\BlinkAction.cs" />
     <Compile Include="Models\JSONSerializer\Action.cs" />
@@ -71,6 +77,9 @@
     </Compile>
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="EditItemForm.resx">
+      <DependentUpon>EditItemForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -86,6 +95,7 @@
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\JsonTable.datasource" />
+    <None Include="Properties\DataSources\Pin80Server.Models.JSONSerializer.ControlItem.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

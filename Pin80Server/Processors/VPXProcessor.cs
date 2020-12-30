@@ -86,11 +86,29 @@ namespace Pin80Server.CommandProcessors
 
                 var items = dataProcessor.getControlItems(trigger);
 
+                // TODO enable this mode, it's probably slow
+                if (items.Count == 0)
+                {
+                    if (mainForm.IsHandleCreated)
+                    {
+                        mainForm.BeginInvoke((MethodInvoker)delegate ()
+                        {
+                            ControlItem item = new ControlItem(trigger, value);
+                            dataProcessor.addControlItem(item);
+                        });
+                    }
+                }
+                Debug.WriteLine("Process " + items.Count);
+
                 foreach(var item in items)
                 {
-                    var target = dataProcessor.getTarget(item.target);
-                    var trig = dataProcessor.getTrigger(item.trigger);
-                    var action = dataProcessor.getAction(item.action);
+                    if (!item.enabled)
+                    {
+                        continue;
+                    }
+                    var target = dataProcessor.getTarget(item.targetString);
+                    var trig = dataProcessor.getTrigger(item.triggerString);
+                    var action = dataProcessor.getAction(item.actionString);
 
                     if (action != null)
                     {
@@ -98,7 +116,7 @@ namespace Pin80Server.CommandProcessors
                     }
                     else
                     {
-                        throw new Exception("Could not handle action");
+                        //throw new Exception("Could not handle action");
                     }
                 }
 

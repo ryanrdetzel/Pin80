@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Pin80Server.Models.JSONSerializer;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Windows.Forms;
+using System.Drawing;
+using System.ComponentModel;
 
 namespace Pin80Server
 {
@@ -9,7 +12,12 @@ namespace Pin80Server
     {
         private const int maxLogLength = 1000;
         private string filterValue = "";
+
+        private bool loggingEnabled = true;
+
         private BlockingCollection<string> commandQueue;
+        private DataProcessor dataProcessor;
+        private EditItemForm editForm = new EditItemForm();
 
         public MainForm()
         {
@@ -26,6 +34,7 @@ namespace Pin80Server
         {
             Debug.WriteLine("Setting new data source");
             controlDataGridView.DataSource = dp;
+            dataProcessor = dp;
         }
 
         public void setTableName(string name)
@@ -39,7 +48,7 @@ namespace Pin80Server
 
         public void addLogEntry(string entry)
         {
-            if (tabView.SelectedIndex == 4)
+            if (loggingEnabled)
             {
                 if (filterValue == "" || entry.StartsWith(filterValue))
                 {
@@ -70,6 +79,16 @@ namespace Pin80Server
             controlDataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             controlDataGridView.MultiSelect = false;
             controlDataGridView.AllowUserToAddRows = false;
+
+            // All columns readonly except the first
+            for (int c = 1; c < controlDataGridView.ColumnCount; c++)
+            {
+                controlDataGridView.Columns[c].ReadOnly = true;
+                controlDataGridView.Columns[c-1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+
+            }
+
+            controlDataGridView.Columns[controlDataGridView.ColumnCount - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
         }
 
         private void Form1_Load_1(object sender, EventArgs e)
@@ -141,7 +160,7 @@ namespace Pin80Server
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
             // Filter
-            filterValue = textBox1.Text;
+            //filterValue = textBox1.Text;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -153,9 +172,25 @@ namespace Pin80Server
         {
             var dp = controlDataGridView.DataSource as DataProcessor;
             DataGridViewCell cell = controlDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
+            
+            // Disable if it fails validation
+            if (e.ColumnIndex == 0)
+            {
+                var controlItem = dp.GetList()[e.RowIndex] as ControlItem;
+                DataGridViewCheckBoxCell checkCell = (DataGridViewCheckBoxCell)cell;
+
+                if (!controlItem.validate())
+                {
+                    checkCell.ReadOnly = true;
+                }
+                else
+                {
+                    checkCell.ReadOnly = false;
+                }
+            }
 
             // Render the cell so it's readable
-            if (controlDataGridView.Columns[e.ColumnIndex].Name == "actionColumn")
+            if (controlDataGridView.Columns[e.ColumnIndex].Name == "actionString")
             {
                 if (e.Value != null)
                 {
@@ -164,7 +199,7 @@ namespace Pin80Server
                     e.Value = friendlyName;
                 }
             }
-            else if (controlDataGridView.Columns[e.ColumnIndex].Name == "triggerColumn")
+            else if (controlDataGridView.Columns[e.ColumnIndex].Name == "triggerString")
             {
                 if (e.Value != null)
                 {
@@ -177,7 +212,7 @@ namespace Pin80Server
                     }
                 }
             }
-            else if (controlDataGridView.Columns[e.ColumnIndex].Name == "targetColumn")
+            else if (controlDataGridView.Columns[e.ColumnIndex].Name == "targetString")
             {
                 if (e.Value != null)
                 {
@@ -204,12 +239,88 @@ namespace Pin80Server
 
         private void button3_Click(object sender, EventArgs e)
         {
-            var dp = controlDataGridView.DataSource as DataProcessor;
-            var f = dp.GetList();
-            var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            ControlItem item = new ControlItem("T00","0");
+            dataProcessor.addControlItem(item);
+        }
 
-            string cmd = string.Format("VPX E101 1 {0}", now);
-            commandQueue.Add(cmd);
+        private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+        }
+
+        private void controlDataGridView_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex != -1 && e.RowIndex != -1 && e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                DataGridViewCell c = (sender as DataGridView)[e.ColumnIndex, e.RowIndex];
+                if (!c.Selected)
+                {
+                    c.DataGridView.ClearSelection();
+                    c.DataGridView.CurrentCell = c;
+                    c.Selected = true;
+                }
+            }
+        }
+
+        private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            Debug.WriteLine("Clicked");
+            if (e.ClickedItem.Name == "stripMenuTest")
+            {
+                var dp = controlDataGridView.DataSource as DataProcessor;
+                var row = controlDataGridView.CurrentCell.RowIndex;
+                var item = dp.GetList()[row] as ControlItem;
+
+                var trigger = item.triggerString;
+                var value = 0; // item.value;
+
+                var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                string cmd = string.Format("VPX {0} {1} {2}", trigger, value, now);
+                commandQueue.Add(cmd);
+            }
+        }
+
+        private void controlDataGridView_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (editForm.IsDisposed)
+            {
+                editForm = new EditItemForm();
+            }
+            var mainLocation = this.Location;
+
+            editForm.Show();
+            editForm.Location = new Point(mainLocation.X - editForm.Size.Width, mainLocation.Y);
+
+            var dp = controlDataGridView.DataSource as DataProcessor;
+            var row = controlDataGridView.CurrentCell.RowIndex;
+            var item = dp.GetList()[row] as ControlItem;
+
+            editForm.setControlItem(dp, item);
+        }
+
+        private void controlDataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            //ListSortDirection direction = ListSortDirection.Ascending; ;
+
+            return;
+            var sortedColumn = controlDataGridView.SortedColumn;
+            var sortOrder = ListSortDirection.Ascending;
+
+            var column = controlDataGridView.Columns[e.ColumnIndex];
+
+            if (sortedColumn == column)
+            {
+                // Same, reverse
+                sortOrder = (controlDataGridView.SortOrder == SortOrder.Ascending) ? ListSortDirection.Descending : ListSortDirection.Ascending ;
+            }
+            //var direction = System.ComponentModel.ListSortDirection.Ascending;
+            //var direction = sortOrder ListSortDirection.Ascending ? SortOrder.Ascending : SortOrder.Descending;
+            controlDataGridView.Sort(column, sortOrder);
+            //((BindingSource)controlDataGridView.DataSource).Sort = "triggerString";
+        }
+
+        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
+        {
 
         }
     }
