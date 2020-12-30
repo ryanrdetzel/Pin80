@@ -1,9 +1,4 @@
 ﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pin80Server
 {
@@ -11,7 +6,8 @@ namespace Pin80Server
     {
         public static string ReadSetting(string settingName)
         {
-            using (RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Pin80\Server")) {
+            using (RegistryKey key = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Pin80\Server"))
+            {
                 return key.GetValue(settingName, "").ToString();
             }
         }

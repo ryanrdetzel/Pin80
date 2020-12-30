@@ -33,27 +33,27 @@ namespace Pin80Server
             this.itemMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.stripMenuTest = new System.Windows.Forms.ToolStripMenuItem();
             this.stripMenuIgnore = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.deleteItemItem = new System.Windows.Forms.ToolStripMenuItem();
             this.romNameLabel = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.itemFilterCombo = new System.Windows.Forms.ComboBox();
             this.addItemButton = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.tableNameLabel = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.Triggers = new System.Windows.Forms.TabPage();
+            this.tabView = new System.Windows.Forms.TabControl();
             this.Control = new System.Windows.Forms.TabPage();
             this.controlDataGridView = new System.Windows.Forms.DataGridView();
-            this.tabView = new System.Windows.Forms.TabControl();
+            this.Triggers = new System.Windows.Forms.TabPage();
+            this.autoAddItemsCheckbox = new System.Windows.Forms.CheckBox();
+            this.listBox1 = new System.Windows.Forms.ListBox();
             this.logMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.clearLogItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableLogItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.logginStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.autoAddItemsCheckbox = new System.Windows.Forms.CheckBox();
             this.autoAddEnabledLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.deleteItemItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tableNameLabel = new System.Windows.Forms.Label();
-            this.itemFilterCombo = new System.Windows.Forms.ComboBox();
             this.enabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.triggerString = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -67,10 +67,10 @@ namespace Pin80Server
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.Triggers.SuspendLayout();
+            this.tabView.SuspendLayout();
             this.Control.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.controlDataGridView)).BeginInit();
-            this.tabView.SuspendLayout();
+            this.Triggers.SuspendLayout();
             this.logMenuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -99,6 +99,17 @@ namespace Pin80Server
             this.stripMenuIgnore.Size = new System.Drawing.Size(134, 22);
             this.stripMenuIgnore.Text = "Ignore";
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(131, 6);
+            // 
+            // deleteItemItem
+            // 
+            this.deleteItemItem.Name = "deleteItemItem";
+            this.deleteItemItem.Size = new System.Drawing.Size(134, 22);
+            this.deleteItemItem.Text = "Delete Item";
+            // 
             // romNameLabel
             // 
             this.romNameLabel.AutoSize = true;
@@ -122,6 +133,21 @@ namespace Pin80Server
             this.panel1.Size = new System.Drawing.Size(845, 46);
             this.panel1.TabIndex = 7;
             // 
+            // itemFilterCombo
+            // 
+            this.itemFilterCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.itemFilterCombo.FormattingEnabled = true;
+            this.itemFilterCombo.Items.AddRange(new object[] {
+            "Show All",
+            "Show All But Hidden",
+            "Show Enabled Only",
+            "Show Hidden Only"});
+            this.itemFilterCombo.Location = new System.Drawing.Point(521, 11);
+            this.itemFilterCombo.Name = "itemFilterCombo";
+            this.itemFilterCombo.Size = new System.Drawing.Size(141, 21);
+            this.itemFilterCombo.TabIndex = 7;
+            this.itemFilterCombo.SelectedValueChanged += new System.EventHandler(this.itemFilterCombo_SelectedValueChanged);
+            // 
             // addItemButton
             // 
             this.addItemButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -144,6 +170,15 @@ namespace Pin80Server
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // tableNameLabel
+            // 
+            this.tableNameLabel.AutoSize = true;
+            this.tableNameLabel.Location = new System.Drawing.Point(13, 16);
+            this.tableNameLabel.Name = "tableNameLabel";
+            this.tableNameLabel.Size = new System.Drawing.Size(34, 13);
+            this.tableNameLabel.TabIndex = 4;
+            this.tableNameLabel.Text = "Table";
+            // 
             // splitContainer1
             // 
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -165,30 +200,19 @@ namespace Pin80Server
             this.splitContainer1.SplitterDistance = 300;
             this.splitContainer1.TabIndex = 8;
             // 
-            // listBox1
+            // tabView
             // 
-            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tabView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.listBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listBox1.ContextMenuStrip = this.logMenuStrip;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(5, 5);
-            this.listBox1.Margin = new System.Windows.Forms.Padding(1);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(837, 197);
-            this.listBox1.TabIndex = 2;
-            // 
-            // Triggers
-            // 
-            this.Triggers.Controls.Add(this.autoAddItemsCheckbox);
-            this.Triggers.Location = new System.Drawing.Point(4, 20);
-            this.Triggers.Name = "Triggers";
-            this.Triggers.Padding = new System.Windows.Forms.Padding(3);
-            this.Triggers.Size = new System.Drawing.Size(831, 270);
-            this.Triggers.TabIndex = 1;
-            this.Triggers.Text = "Settings";
-            this.Triggers.UseVisualStyleBackColor = true;
+            this.tabView.Controls.Add(this.Control);
+            this.tabView.Controls.Add(this.Triggers);
+            this.tabView.Location = new System.Drawing.Point(3, 3);
+            this.tabView.Name = "tabView";
+            this.tabView.Padding = new System.Drawing.Point(8, 2);
+            this.tabView.SelectedIndex = 0;
+            this.tabView.Size = new System.Drawing.Size(839, 294);
+            this.tabView.TabIndex = 6;
             // 
             // Control
             // 
@@ -237,19 +261,41 @@ namespace Pin80Server
             this.controlDataGridView.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowEnter);
             this.controlDataGridView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.controlDataGridView_MouseDoubleClick);
             // 
-            // tabView
+            // Triggers
             // 
-            this.tabView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.Triggers.Controls.Add(this.autoAddItemsCheckbox);
+            this.Triggers.Location = new System.Drawing.Point(4, 20);
+            this.Triggers.Name = "Triggers";
+            this.Triggers.Padding = new System.Windows.Forms.Padding(3);
+            this.Triggers.Size = new System.Drawing.Size(831, 270);
+            this.Triggers.TabIndex = 1;
+            this.Triggers.Text = "Settings";
+            this.Triggers.UseVisualStyleBackColor = true;
+            // 
+            // autoAddItemsCheckbox
+            // 
+            this.autoAddItemsCheckbox.AutoSize = true;
+            this.autoAddItemsCheckbox.Location = new System.Drawing.Point(18, 18);
+            this.autoAddItemsCheckbox.Name = "autoAddItemsCheckbox";
+            this.autoAddItemsCheckbox.Size = new System.Drawing.Size(98, 17);
+            this.autoAddItemsCheckbox.TabIndex = 0;
+            this.autoAddItemsCheckbox.Text = "Auto Add Items";
+            this.autoAddItemsCheckbox.UseVisualStyleBackColor = true;
+            this.autoAddItemsCheckbox.CheckedChanged += new System.EventHandler(this.autoAddItemsCheckbox_CheckedChanged);
+            // 
+            // listBox1
+            // 
+            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabView.Controls.Add(this.Control);
-            this.tabView.Controls.Add(this.Triggers);
-            this.tabView.Location = new System.Drawing.Point(3, 3);
-            this.tabView.Name = "tabView";
-            this.tabView.Padding = new System.Drawing.Point(8, 2);
-            this.tabView.SelectedIndex = 0;
-            this.tabView.Size = new System.Drawing.Size(839, 294);
-            this.tabView.TabIndex = 6;
+            this.listBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listBox1.ContextMenuStrip = this.logMenuStrip;
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.Location = new System.Drawing.Point(5, 5);
+            this.listBox1.Margin = new System.Windows.Forms.Padding(1);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(837, 197);
+            this.listBox1.TabIndex = 2;
             // 
             // logMenuStrip
             // 
@@ -291,17 +337,6 @@ namespace Pin80Server
             this.logginStatusLabel.Size = new System.Drawing.Size(147, 19);
             this.logginStatusLabel.Text = "Logging is enabled";
             // 
-            // autoAddItemsCheckbox
-            // 
-            this.autoAddItemsCheckbox.AutoSize = true;
-            this.autoAddItemsCheckbox.Location = new System.Drawing.Point(18, 18);
-            this.autoAddItemsCheckbox.Name = "autoAddItemsCheckbox";
-            this.autoAddItemsCheckbox.Size = new System.Drawing.Size(98, 17);
-            this.autoAddItemsCheckbox.TabIndex = 0;
-            this.autoAddItemsCheckbox.Text = "Auto Add Items";
-            this.autoAddItemsCheckbox.UseVisualStyleBackColor = true;
-            this.autoAddItemsCheckbox.CheckedChanged += new System.EventHandler(this.autoAddItemsCheckbox_CheckedChanged);
-            // 
             // autoAddEnabledLabel
             // 
             this.autoAddEnabledLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)));
@@ -309,41 +344,6 @@ namespace Pin80Server
             this.autoAddEnabledLabel.Padding = new System.Windows.Forms.Padding(20, 0, 20, 0);
             this.autoAddEnabledLabel.Size = new System.Drawing.Size(179, 19);
             this.autoAddEnabledLabel.Text = "Auto Add Items Enabled";
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(131, 6);
-            // 
-            // deleteItemItem
-            // 
-            this.deleteItemItem.Name = "deleteItemItem";
-            this.deleteItemItem.Size = new System.Drawing.Size(134, 22);
-            this.deleteItemItem.Text = "Delete Item";
-            // 
-            // tableNameLabel
-            // 
-            this.tableNameLabel.AutoSize = true;
-            this.tableNameLabel.Location = new System.Drawing.Point(13, 16);
-            this.tableNameLabel.Name = "tableNameLabel";
-            this.tableNameLabel.Size = new System.Drawing.Size(34, 13);
-            this.tableNameLabel.TabIndex = 4;
-            this.tableNameLabel.Text = "Table";
-            // 
-            // itemFilterCombo
-            // 
-            this.itemFilterCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.itemFilterCombo.FormattingEnabled = true;
-            this.itemFilterCombo.Items.AddRange(new object[] {
-            "Show All",
-            "Show All But Hidden",
-            "Show Enabled Only",
-            "Show Hidden Only"});
-            this.itemFilterCombo.Location = new System.Drawing.Point(521, 11);
-            this.itemFilterCombo.Name = "itemFilterCombo";
-            this.itemFilterCombo.Size = new System.Drawing.Size(141, 21);
-            this.itemFilterCombo.TabIndex = 7;
-            this.itemFilterCombo.SelectedValueChanged += new System.EventHandler(this.itemFilterCombo_SelectedValueChanged);
             // 
             // enabled
             // 
@@ -357,6 +357,7 @@ namespace Pin80Server
             this.Id.DataPropertyName = "id";
             this.Id.HeaderText = "ID";
             this.Id.Name = "Id";
+            this.Id.ReadOnly = true;
             this.Id.Visible = false;
             this.Id.Width = 43;
             // 
@@ -365,6 +366,7 @@ namespace Pin80Server
             this.triggerString.DataPropertyName = "triggerString";
             this.triggerString.HeaderText = "Trigger";
             this.triggerString.Name = "triggerString";
+            this.triggerString.ReadOnly = true;
             this.triggerString.Width = 65;
             // 
             // valueString
@@ -372,13 +374,16 @@ namespace Pin80Server
             this.valueString.DataPropertyName = "value";
             this.valueString.HeaderText = "Value";
             this.valueString.Name = "valueString";
+            this.valueString.ReadOnly = true;
             this.valueString.Width = 59;
             // 
             // actionString
             // 
             this.actionString.DataPropertyName = "actionString";
+            this.actionString.FillWeight = 120F;
             this.actionString.HeaderText = "Action";
             this.actionString.Name = "actionString";
+            this.actionString.ReadOnly = true;
             this.actionString.Width = 62;
             // 
             // targetString
@@ -386,6 +391,7 @@ namespace Pin80Server
             this.targetString.DataPropertyName = "targetString";
             this.targetString.HeaderText = "Target";
             this.targetString.Name = "targetString";
+            this.targetString.ReadOnly = true;
             this.targetString.Width = 63;
             // 
             // commnet
@@ -394,6 +400,7 @@ namespace Pin80Server
             this.commnet.DataPropertyName = "comment";
             this.commnet.HeaderText = "Comment";
             this.commnet.Name = "commnet";
+            this.commnet.ReadOnly = true;
             // 
             // MainForm
             // 
@@ -418,11 +425,11 @@ namespace Pin80Server
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.Triggers.ResumeLayout(false);
-            this.Triggers.PerformLayout();
+            this.tabView.ResumeLayout(false);
             this.Control.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.controlDataGridView)).EndInit();
-            this.tabView.ResumeLayout(false);
+            this.Triggers.ResumeLayout(false);
+            this.Triggers.PerformLayout();
             this.logMenuStrip.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();

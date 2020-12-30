@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pin80Server.CommandProcessors
+﻿namespace Pin80Server.CommandProcessors
 {
     internal interface Processor
     {

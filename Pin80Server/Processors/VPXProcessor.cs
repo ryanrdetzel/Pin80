@@ -1,11 +1,8 @@
 ﻿using Pin80Server.Models.JSONSerializer;
-using Pin80Server;
 using System;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Timers;
 using System.Windows.Forms;
 
 namespace Pin80Server.CommandProcessors
@@ -100,7 +97,7 @@ namespace Pin80Server.CommandProcessors
                     }
                 }
 
-                foreach(var item in items)
+                foreach (var item in items)
                 {
                     if (!item.enabled)
                     {

@@ -19,7 +19,7 @@ namespace Pin80Server.Models.Actions
             name = action.name;
             id = action.id;
             delay = action.delay;   // TODO Set reasonable limts 
-            duration =  (action.duration > 0) ? action.duration : 200;
+            duration = (action.duration > 0) ? action.duration : 200;
         }
 
         public override string ToString()
@@ -42,7 +42,8 @@ namespace Pin80Server.Models.Actions
                     int valueI2 = int.Parse(item.value.Replace(">", ""));
                     //Debug.WriteLine(string.Format("{0}{1} - {2}{3}", value, valueI, item.value, valueI2));
 
-                    if (valueI <= valueI2){
+                    if (valueI <= valueI2)
+                    {
                         //Debug.WriteLine(string.Format("{0} isn't less than {1}", value, item.value));
                         return;
                     }

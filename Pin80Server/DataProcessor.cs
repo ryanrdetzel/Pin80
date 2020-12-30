@@ -3,7 +3,6 @@ using Pin80Server.Models;
 using Pin80Server.Models.Actions;
 using Pin80Server.Models.JSONSerializer;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -34,11 +33,11 @@ namespace Pin80Server
             autoAddItems = Settings.ReadBoolSetting(Constants.SettingAutoAddItems);
 
             bSource = new BindingSource();
-            
+
             bSource.DataSource = controllerData;
         }
 
-        void listOfParts_ListChanged(object sender, ListChangedEventArgs e)
+        private void listOfParts_ListChanged(object sender, ListChangedEventArgs e)
         {
             //MessageBox.Show(e.ListChangedType.ToString());
             //Debug.WriteLine("Data changed " + e.ListChangedType.ToString());
@@ -178,7 +177,9 @@ namespace Pin80Server
             var fullPath = Path.Combine(@"Data", $"{Romname}.json");
             var ldata = LoadFile(fullPath);
 
-            foreach (var d in ldata)
+            var sortedListInstance = new BindingList<ControlItem>(ldata.OrderBy(x => x.triggerString).ToList());
+
+            foreach (var d in sortedListInstance)
             {
                 if (mainForm.IsHandleCreated)
                 {
@@ -187,7 +188,7 @@ namespace Pin80Server
                         controllerData.Add(d);
                     });
                 }
-                
+
             }
 
             // TODO handle exceptions here.

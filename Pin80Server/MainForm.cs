@@ -1,17 +1,17 @@
 ﻿using Pin80Server.Models.JSONSerializer;
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Windows.Forms;
-using System.Drawing;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace Pin80Server
 {
     public partial class MainForm : Form
     {
         private const int maxLogLength = 1000;
-        private string filterValue = "";
+        private readonly string filterValue = "";
 
         private bool loggingEnabled = true;
 
@@ -25,9 +25,10 @@ namespace Pin80Server
             Load += new EventHandler(Form1_Load);
         }
 
-        public void setQueueRef(ref BlockingCollection<string>  cq)
+        public void setQueueRef(ref BlockingCollection<string> cq)
         {
             commandQueue = cq;
+            editForm.setQueueRef(ref commandQueue);
         }
 
         public void setDataProcessor(DataProcessor dp)
@@ -180,13 +181,20 @@ namespace Pin80Server
 
         private void controlDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            //var dp = controlDataGridView.DataSource as DataProcessor;
             DataGridViewCell cell = controlDataGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
-            
+            var controlItem = dataProcessor.controllerData[e.RowIndex];
+
+            if (!controlItem.enabled)
+            {
+                e.CellStyle.BackColor = SystemColors.Control;
+            } else
+            {
+                e.CellStyle.BackColor = SystemColors.Window;
+            }
+
             // Disable if it fails validation
             if (e.ColumnIndex == 0)
             {
-                var controlItem = dataProcessor.controllerData[e.RowIndex] as ControlItem;
                 DataGridViewCheckBoxCell checkCell = (DataGridViewCheckBoxCell)cell;
 
                 if (!controlItem.validate())
@@ -249,7 +257,7 @@ namespace Pin80Server
 
         private void button3_Click(object sender, EventArgs e)
         {
-            ControlItem item = new ControlItem("T00","0");
+            ControlItem item = new ControlItem("T00", "0");
             dataProcessor.addControlItem(item);
         }
 
@@ -274,10 +282,8 @@ namespace Pin80Server
 
         private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            Debug.WriteLine("Clicked");
-            //var dp = controlDataGridView.DataSource as DataProcessor;
             var row = controlDataGridView.CurrentCell.RowIndex;
-            var item = dataProcessor.controllerData[row] as ControlItem;
+            var item = dataProcessor.controllerData[row];
 
             if (e.ClickedItem.Name == "stripMenuTest")
             {
@@ -287,7 +293,8 @@ namespace Pin80Server
                 var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 string cmd = string.Format("VPX {0} {1} {2}", trigger, value, now);
                 commandQueue.Add(cmd);
-            } else if (e.ClickedItem.Name == "deleteItemItem")
+            }
+            else if (e.ClickedItem.Name == "deleteItemItem")
             {
                 dataProcessor.deleteControlItem(item);
             }
@@ -306,7 +313,7 @@ namespace Pin80Server
 
             //var dp = controlDataGridView.DataSource as DataProcessor;
             var row = controlDataGridView.CurrentCell.RowIndex;
-            var item = dataProcessor.controllerData[row] as ControlItem;
+            var item = dataProcessor.controllerData[row];
 
             editForm.setControlItem(dataProcessor, item);
         }
@@ -327,7 +334,7 @@ namespace Pin80Server
             if (sortedColumn == column)
             {
                 // Same, reverse
-                sortOrder = (controlDataGridView.SortOrder == SortOrder.Ascending) ? ListSortDirection.Descending : ListSortDirection.Ascending ;
+                sortOrder = (controlDataGridView.SortOrder == SortOrder.Ascending) ? ListSortDirection.Descending : ListSortDirection.Ascending;
             }
             //var direction = System.ComponentModel.ListSortDirection.Ascending;
             //var direction = sortOrder ListSortDirection.Ascending ? SortOrder.Ascending : SortOrder.Descending;
@@ -345,14 +352,16 @@ namespace Pin80Server
             if (e.ClickedItem.Name == "clearLogItem")
             {
                 listBox1.Items.Clear();
-            }else if (e.ClickedItem.Tag.ToString() == "disableLogItem")
+            }
+            else if (e.ClickedItem.Tag.ToString() == "disableLogItem")
             {
                 if (e.ClickedItem.Text == "Disable Log")
                 {
                     e.ClickedItem.Text = "Enable Log";
                     statusStrip1.Items[0].Text = "Logging is disabled";
                     loggingEnabled = false;
-                } else
+                }
+                else
                 {
                     e.ClickedItem.Text = "Disable Log";
                     statusStrip1.Items[0].Text = "Logging is enabled";

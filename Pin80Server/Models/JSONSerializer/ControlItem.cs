@@ -1,7 +1,6 @@
 ﻿
 using Newtonsoft.Json;
 using System;
-using System.Diagnostics;
 using System.Runtime.Serialization;
 /**
 * Control Item
@@ -43,7 +42,7 @@ namespace Pin80Server.Models.JSONSerializer
         [JsonProperty("enabled")]
         public bool enabled
         {
-            get { return _enabled; }
+            get => _enabled;
             set
             {
                 // Always allow false
@@ -59,7 +58,7 @@ namespace Pin80Server.Models.JSONSerializer
         [JsonProperty(PropertyName = "id")]
         public string id
         {
-            get { return _id; }
+            get => _id;
             set
             {
                 if (_processing) // Only allow when reading the file

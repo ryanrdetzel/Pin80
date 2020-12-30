@@ -1,14 +1,9 @@
 ﻿using Pin80Server.Models;
 using Pin80Server.Models.JSONSerializer;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Pin80Server
@@ -20,19 +15,24 @@ namespace Pin80Server
         private IAction action;
         private Target target;
         private DataProcessor dataProcessor;
+        private BlockingCollection<string> commandQueue;
 
         public EditItemForm()
         {
             InitializeComponent();
         }
+        public void setQueueRef(ref BlockingCollection<string> cq)
+        {
+            commandQueue = cq;
+        }
 
         public void setControlItem(DataProcessor dp, ControlItem item)
         {
-            this.dataProcessor = dp;
             this.item = item;
-            this.trigger = dp.getTrigger(item.triggerString);
-            this.action = dp.getAction(item.actionString);
-            this.target = dp.getTarget(item.targetString);
+            dataProcessor = dp;
+            trigger = dp.getTrigger(item.triggerString);
+            action = dp.getAction(item.actionString);
+            target = dp.getTarget(item.targetString);
 
             // TODO we should check if any of these are null
 
@@ -66,7 +66,7 @@ namespace Pin80Server
 
             item.actionString = actionComboBox.SelectedItem.ToString();
             item.targetString = targetsComboBox.SelectedItem.ToString();
-            
+
             item.comment = commentTextBox.Text;
             item.enabled = enabledCheckbox.Checked; //TODO only allow editing if it passes validation
             item.value = valueTextBox.Text;
@@ -105,6 +105,30 @@ namespace Pin80Server
         }
 
         private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var trigger = item.triggerString;
+            if (testTextBox.Text == "")
+            {
+                testTextBox.Text = "1";
+            }
+            var value = testTextBox.Text;
+
+            var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            string cmd = string.Format("VPX {0} {1} {2}", trigger, value, now);
+            commandQueue.Add(cmd);
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
         }
