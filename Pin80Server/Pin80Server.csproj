@@ -52,6 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ItemBindingSource.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="DataProcessor.cs" />
     <Compile Include="EditItemForm.cs">
       <SubType>Form</SubType>

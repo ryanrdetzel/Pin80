@@ -16,6 +16,7 @@ namespace Pin80Server
     public class DataProcessor : IListSource
     {
         private string Romname;
+        public bool autoAddItems = false;
 
         private readonly BindingList<ControlItem> controllerData = new BindingList<ControlItem>();
         public Dictionary<string, Trigger> triggers = new Dictionary<string, Trigger>();
@@ -28,6 +29,7 @@ namespace Pin80Server
         public DataProcessor()
         {
             controllerData.ListChanged += listOfParts_ListChanged;
+            autoAddItems = Settings.ReadBoolSetting(Constants.SettingAutoAddItems);
         }
 
         void listOfParts_ListChanged(object sender, ListChangedEventArgs e)
@@ -44,6 +46,11 @@ namespace Pin80Server
         public void addControlItem(ControlItem item)
         {
             controllerData.Add(item);
+        }
+
+        public void deleteControlItem(ControlItem item)
+        {
+            controllerData.Remove(item);
         }
 
         public void updateControlItem(ControlItem NewItem)

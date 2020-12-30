@@ -35,6 +35,9 @@ namespace Pin80Server
             Debug.WriteLine("Setting new data source");
             controlDataGridView.DataSource = dp;
             dataProcessor = dp;
+
+            statusStrip1.Items[1].Text = (dataProcessor.autoAddItems) ? "Auto add items enabled" : "Auto add items disabled";
+            autoAddItemsCheckbox.Checked = dataProcessor.autoAddItems;
         }
 
         public void setTableName(string name)
@@ -70,6 +73,13 @@ namespace Pin80Server
         private void Form1_Load(object sender, System.EventArgs e)
         {
             SetupDataGridView();
+
+            var itemFilter = Settings.ReadSetting(Constants.SettingItemFilter);
+            if (itemFilter == "")
+            {
+                itemFilter = itemFilterCombo.Items[0].ToString();
+            }
+            itemFilterCombo.SelectedItem = itemFilter;
         }
 
         private void SetupDataGridView()
@@ -265,18 +275,21 @@ namespace Pin80Server
         private void contextMenuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             Debug.WriteLine("Clicked");
+            var dp = controlDataGridView.DataSource as DataProcessor;
+            var row = controlDataGridView.CurrentCell.RowIndex;
+            var item = dp.GetList()[row] as ControlItem;
+
             if (e.ClickedItem.Name == "stripMenuTest")
             {
-                var dp = controlDataGridView.DataSource as DataProcessor;
-                var row = controlDataGridView.CurrentCell.RowIndex;
-                var item = dp.GetList()[row] as ControlItem;
-
                 var trigger = item.triggerString;
                 var value = 0; // item.value;
 
                 var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 string cmd = string.Format("VPX {0} {1} {2}", trigger, value, now);
                 commandQueue.Add(cmd);
+            } else if (e.ClickedItem.Name == "deleteItemItem")
+            {
+                dataProcessor.deleteControlItem(item);
             }
         }
 
@@ -322,6 +335,40 @@ namespace Pin80Server
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void logMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem.Name == "clearLogItem")
+            {
+                listBox1.Items.Clear();
+            }else if (e.ClickedItem.Tag.ToString() == "disableLogItem")
+            {
+                if (e.ClickedItem.Text == "Disable Log")
+                {
+                    e.ClickedItem.Text = "Enable Log";
+                    statusStrip1.Items[0].Text = "Logging is disabled";
+                    loggingEnabled = false;
+                } else
+                {
+                    e.ClickedItem.Text = "Disable Log";
+                    statusStrip1.Items[0].Text = "Logging is enabled";
+                    loggingEnabled = true;
+                }
+            }
+        }
+
+        private void autoAddItemsCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.SaveBoolSetting(Constants.SettingAutoAddItems, autoAddItemsCheckbox.Checked);
+            dataProcessor.autoAddItems = autoAddItemsCheckbox.Checked;
+
+            statusStrip1.Items[1].Text = (dataProcessor.autoAddItems) ? "Auto add items enabled" : "Auto add items disabled";
+        }
+
+        private void itemFilterCombo_SelectedValueChanged(object sender, EventArgs e)
+        {
+            Settings.SaveSetting(Constants.SettingItemFilter, itemFilterCombo.Text);
         }
     }
 }

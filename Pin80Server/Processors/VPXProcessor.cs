@@ -1,4 +1,5 @@
 ﻿using Pin80Server.Models.JSONSerializer;
+using Pin80Server;
 using System;
 using System.Diagnostics;
 using System.IO.Ports;
@@ -86,8 +87,8 @@ namespace Pin80Server.CommandProcessors
 
                 var items = dataProcessor.getControlItems(trigger);
 
-                // TODO enable this mode, it's probably slow
-                if (items.Count == 0)
+                /* If we didn't match any items see if we should add this to the list */
+                if (items.Count == 0 && dataProcessor.autoAddItems)
                 {
                     if (mainForm.IsHandleCreated)
                     {
@@ -98,7 +99,6 @@ namespace Pin80Server.CommandProcessors
                         });
                     }
                 }
-                Debug.WriteLine("Process " + items.Count);
 
                 foreach(var item in items)
                 {
@@ -127,6 +127,12 @@ namespace Pin80Server.CommandProcessors
                 Debug.WriteLine(string.Format("Could not process command: {0} {1}", command, e));
                 return false;
             }
+        }
+
+        private string getSetting(string name)
+        {
+            // Read registry
+            return "";
         }
     }
 }
