@@ -40,7 +40,7 @@ namespace Pin80Server
             commentTextBox.Text = item.comment;
             valueTextBox.Text = item.value;
 
-            triggerLabel.Text = item.triggerString;
+            triggerTextBox.Text = item.triggerString;
             triggerNameField.Text = trigger?.name ?? "";
 
             var targetValues = dp.targetsDict.Keys.ToArray();
@@ -52,26 +52,22 @@ namespace Pin80Server
             actionComboBox.Items.Clear();
             actionComboBox.Items.AddRange(actionValues);
             actionComboBox.SelectedItem = item.actionString;
-
-
-            // Populate the dropdowns
         }
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            Debug.WriteLine("Saving");
-
             // Update the actual data item
             // TODO Validate this is okay
 
-            //TODO - Update the triggers file
+            // TODO - Update the triggers file
 
-            item.actionString = actionComboBox.SelectedItem.ToString();
-            item.targetString = targetsComboBox.SelectedItem.ToString();
+            item.actionString = actionComboBox.SelectedItem?.ToString();
+            item.targetString = targetsComboBox.SelectedItem?.ToString();
 
             item.comment = commentTextBox.Text;
             item.enabled = enabledCheckbox.Checked; //TODO only allow editing if it passes validation
             item.value = valueTextBox.Text;
+            item.triggerString = triggerTextBox.Text;
 
             dataProcessor.updateControlItem(item);
 

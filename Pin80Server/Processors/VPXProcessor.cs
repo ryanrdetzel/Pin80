@@ -65,7 +65,6 @@ namespace Pin80Server.CommandProcessors
                                 mainForm.setRomName(_romName);
                             });
                         }
-                        dataProcessor.LoadTableInformation(_romName, mainForm);
                         return true;
                     }
 
@@ -115,7 +114,7 @@ namespace Pin80Server.CommandProcessors
                     {
                         throw new Exception("Could not handle action");
                     }
-    
+
                     action.handle(valueString, item, trigger, target, serial);
                 }
 

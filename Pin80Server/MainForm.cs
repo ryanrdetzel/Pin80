@@ -1,9 +1,11 @@
 ﻿using Pin80Server.Models.JSONSerializer;
 using System;
 using System.Collections.Concurrent;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Pin80Server
@@ -44,7 +46,6 @@ namespace Pin80Server
 
         public void setDataProcessor(DataProcessor dp)
         {
-            Debug.WriteLine("Setting new data source");
             dataProcessor = dp;
             controlDataGridView.DataSource = dp.bSource;
 
@@ -52,13 +53,10 @@ namespace Pin80Server
             autoAddItemsCheckbox.Checked = dataProcessor.autoAddItems;
         }
 
-        public void setTableName(string name)
-        {
-            tableNameLabel.Text = name;
-        }
         public void setRomName(string name)
         {
-            romNameLabel.Text = name;
+
+            tableComboBox.Text = name;
         }
 
         public void addLogEntry(string entry)
@@ -85,7 +83,9 @@ namespace Pin80Server
                 {
                     e.Cancel = true;
                     dataProcessor.saveControllerData();
-                    Application.Exit();
+
+                    //Application.Exit();
+                    Environment.Exit(Environment.ExitCode);
                 }
             }
         }
@@ -158,7 +158,8 @@ namespace Pin80Server
             if (!controlItem.enabled)
             {
                 e.CellStyle.BackColor = SystemColors.Control;
-            } else
+            }
+            else
             {
                 e.CellStyle.BackColor = SystemColors.Window;
             }
@@ -333,6 +334,32 @@ namespace Pin80Server
                 controlDataGridView.CommitEdit(DataGridViewDataErrorContexts.Commit);
                 dataProcessor.unsavedChanges = true;
             }
+        }
+
+        public void loadAvailableTables()
+        {
+            var fullPath = Path.Combine(@"Data", "Tables");
+            var files = Directory.GetFiles(fullPath, "*", SearchOption.TopDirectoryOnly)
+                .Where(f => !f.Contains("-triggers"))
+                .Select(f => Path.GetFileName(f).Replace(".json", ""))
+                .ToList();
+
+            tableComboBox.Items.Clear();
+            tableComboBox.Items.AddRange(files.ToArray());
+        }
+
+        private void tableComboBox_TextChanged(object sender, EventArgs e)
+        {
+            var Romname = tableComboBox.Text;
+
+            if (dataProcessor.unsavedChanges)
+            {
+                if (MessageBox.Show("Do you want to save your changes before switching tables?", "Unsaved Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    dataProcessor.saveControllerData();
+                }
+            }
+            dataProcessor.LoadTableInformation(Romname);
         }
     }
 }

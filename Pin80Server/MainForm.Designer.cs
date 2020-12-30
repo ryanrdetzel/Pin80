@@ -35,8 +35,8 @@ namespace Pin80Server
             this.stripMenuIgnore = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.deleteItemItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.romNameLabel = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.tableComboBox = new System.Windows.Forms.ComboBox();
             this.itemFilterCombo = new System.Windows.Forms.ComboBox();
             this.addItemButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
@@ -110,28 +110,28 @@ namespace Pin80Server
             this.deleteItemItem.Size = new System.Drawing.Size(134, 22);
             this.deleteItemItem.Text = "Delete Item";
             // 
-            // romNameLabel
-            // 
-            this.romNameLabel.AutoSize = true;
-            this.romNameLabel.Location = new System.Drawing.Point(49, 16);
-            this.romNameLabel.Name = "romNameLabel";
-            this.romNameLabel.Size = new System.Drawing.Size(33, 13);
-            this.romNameLabel.TabIndex = 3;
-            this.romNameLabel.Text = "None";
-            // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.tableComboBox);
             this.panel1.Controls.Add(this.itemFilterCombo);
             this.panel1.Controls.Add(this.addItemButton);
             this.panel1.Controls.Add(this.saveButton);
-            this.panel1.Controls.Add(this.romNameLabel);
             this.panel1.Controls.Add(this.tableNameLabel);
             this.panel1.Location = new System.Drawing.Point(12, 12);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(845, 46);
             this.panel1.TabIndex = 7;
+            // 
+            // tableComboBox
+            // 
+            this.tableComboBox.FormattingEnabled = true;
+            this.tableComboBox.Location = new System.Drawing.Point(53, 13);
+            this.tableComboBox.Name = "tableComboBox";
+            this.tableComboBox.Size = new System.Drawing.Size(289, 21);
+            this.tableComboBox.TabIndex = 8;
+            this.tableComboBox.TextChanged += new System.EventHandler(this.tableComboBox_TextChanged);
             // 
             // itemFilterCombo
             // 
@@ -209,7 +209,7 @@ namespace Pin80Server
             this.tabView.Controls.Add(this.Triggers);
             this.tabView.Location = new System.Drawing.Point(3, 3);
             this.tabView.Name = "tabView";
-            this.tabView.Padding = new System.Drawing.Point(8, 2);
+            this.tabView.Padding = new System.Drawing.Point(15, 4);
             this.tabView.SelectedIndex = 0;
             this.tabView.Size = new System.Drawing.Size(839, 294);
             this.tabView.TabIndex = 6;
@@ -217,10 +217,10 @@ namespace Pin80Server
             // Control
             // 
             this.Control.Controls.Add(this.controlDataGridView);
-            this.Control.Location = new System.Drawing.Point(4, 20);
+            this.Control.Location = new System.Drawing.Point(4, 24);
             this.Control.Name = "Control";
             this.Control.Padding = new System.Windows.Forms.Padding(3);
-            this.Control.Size = new System.Drawing.Size(831, 270);
+            this.Control.Size = new System.Drawing.Size(831, 266);
             this.Control.TabIndex = 0;
             this.Control.Text = "Control";
             this.Control.UseVisualStyleBackColor = true;
@@ -253,7 +253,7 @@ namespace Pin80Server
             this.controlDataGridView.Name = "controlDataGridView";
             this.controlDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             this.controlDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.controlDataGridView.Size = new System.Drawing.Size(819, 258);
+            this.controlDataGridView.Size = new System.Drawing.Size(819, 254);
             this.controlDataGridView.TabIndex = 2;
             this.controlDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.controlDataGridView_CellContentClick);
             this.controlDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.controlDataGridView_CellFormatting);
@@ -322,10 +322,10 @@ namespace Pin80Server
             // Triggers
             // 
             this.Triggers.Controls.Add(this.autoAddItemsCheckbox);
-            this.Triggers.Location = new System.Drawing.Point(4, 20);
+            this.Triggers.Location = new System.Drawing.Point(4, 24);
             this.Triggers.Name = "Triggers";
             this.Triggers.Padding = new System.Windows.Forms.Padding(3);
-            this.Triggers.Size = new System.Drawing.Size(831, 270);
+            this.Triggers.Size = new System.Drawing.Size(831, 266);
             this.Triggers.TabIndex = 1;
             this.Triggers.Text = "Settings";
             this.Triggers.UseVisualStyleBackColor = true;
@@ -439,7 +439,6 @@ namespace Pin80Server
         }
 
         #endregion
-        private System.Windows.Forms.Label romNameLabel;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button addItemButton;
@@ -470,6 +469,7 @@ namespace Pin80Server
         private System.Windows.Forms.DataGridViewTextBoxColumn actionString;
         private System.Windows.Forms.DataGridViewTextBoxColumn targetString;
         private System.Windows.Forms.DataGridViewTextBoxColumn commnet;
+        private System.Windows.Forms.ComboBox tableComboBox;
     }
 }
 

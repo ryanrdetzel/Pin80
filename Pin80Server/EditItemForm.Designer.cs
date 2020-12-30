@@ -34,8 +34,11 @@ namespace Pin80Server
             this.enabledCheckbox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.triggerNameField = new System.Windows.Forms.TextBox();
-            this.triggerLabel = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.testTextBox = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -48,16 +51,13 @@ namespace Pin80Server
             this.targetsComboBox = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.actionComboBox = new System.Windows.Forms.ComboBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.testTextBox = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.triggerTextBox = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // cancelButton
@@ -94,8 +94,8 @@ namespace Pin80Server
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.triggerTextBox);
             this.groupBox1.Controls.Add(this.triggerNameField);
-            this.groupBox1.Controls.Add(this.triggerLabel);
             this.groupBox1.Location = new System.Drawing.Point(16, 32);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(335, 59);
@@ -107,20 +107,10 @@ namespace Pin80Server
             // 
             this.triggerNameField.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.triggerNameField.Location = new System.Drawing.Point(109, 22);
+            this.triggerNameField.Location = new System.Drawing.Point(109, 24);
             this.triggerNameField.Name = "triggerNameField";
             this.triggerNameField.Size = new System.Drawing.Size(218, 20);
             this.triggerNameField.TabIndex = 7;
-            // 
-            // triggerLabel
-            // 
-            this.triggerLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.triggerLabel.Location = new System.Drawing.Point(5, 22);
-            this.triggerLabel.Name = "triggerLabel";
-            this.triggerLabel.Size = new System.Drawing.Size(98, 20);
-            this.triggerLabel.TabIndex = 2;
-            this.triggerLabel.Text = "label1";
-            this.triggerLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // panel2
             // 
@@ -145,6 +135,49 @@ namespace Pin80Server
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(369, 551);
             this.panel2.TabIndex = 0;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox5.Controls.Add(this.label6);
+            this.groupBox5.Controls.Add(this.testTextBox);
+            this.groupBox5.Controls.Add(this.button1);
+            this.groupBox5.Location = new System.Drawing.Point(18, 418);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(335, 62);
+            this.groupBox5.TabIndex = 18;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Test Trigger";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(38, 27);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(37, 13);
+            this.label6.TabIndex = 20;
+            this.label6.Text = "Value:";
+            this.label6.Click += new System.EventHandler(this.label6_Click);
+            // 
+            // testTextBox
+            // 
+            this.testTextBox.Location = new System.Drawing.Point(79, 25);
+            this.testTextBox.Name = "testTextBox";
+            this.testTextBox.Size = new System.Drawing.Size(136, 20);
+            this.testTextBox.TabIndex = 19;
+            this.testTextBox.Text = "1";
+            this.testTextBox.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // button1
+            // 
+            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.button1.Location = new System.Drawing.Point(221, 23);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 17;
+            this.button1.Text = "Test";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // label5
             // 
@@ -264,48 +297,17 @@ namespace Pin80Server
             this.actionComboBox.TabIndex = 9;
             this.actionComboBox.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.actionComboBox_Format);
             // 
-            // button1
+            // triggerTextBox
             // 
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(221, 23);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 17;
-            this.button1.Text = "Test";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.BackColor = System.Drawing.SystemColors.Control;
-            this.groupBox5.Controls.Add(this.label6);
-            this.groupBox5.Controls.Add(this.testTextBox);
-            this.groupBox5.Controls.Add(this.button1);
-            this.groupBox5.Location = new System.Drawing.Point(18, 418);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(335, 62);
-            this.groupBox5.TabIndex = 18;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Test Trigger";
-            // 
-            // testTextBox
-            // 
-            this.testTextBox.Location = new System.Drawing.Point(79, 25);
-            this.testTextBox.Name = "testTextBox";
-            this.testTextBox.Size = new System.Drawing.Size(136, 20);
-            this.testTextBox.TabIndex = 19;
-            this.testTextBox.Text = "1";
-            this.testTextBox.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(38, 27);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(37, 13);
-            this.label6.TabIndex = 20;
-            this.label6.Text = "Value:";
-            this.label6.Click += new System.EventHandler(this.label6_Click);
+            this.triggerTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.triggerTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.triggerTextBox.Location = new System.Drawing.Point(43, 22);
+            this.triggerTextBox.Name = "triggerTextBox";
+            this.triggerTextBox.Size = new System.Drawing.Size(60, 24);
+            this.triggerTextBox.TabIndex = 8;
+            this.triggerTextBox.Text = "W123";
+            this.triggerTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // EditItemForm
             // 
@@ -322,12 +324,12 @@ namespace Pin80Server
             this.groupBox1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -338,7 +340,6 @@ namespace Pin80Server
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.CheckBox enabledCheckbox;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label triggerLabel;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.TextBox triggerNameField;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -357,5 +358,6 @@ namespace Pin80Server
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox testTextBox;
+        private System.Windows.Forms.TextBox triggerTextBox;
     }
 }

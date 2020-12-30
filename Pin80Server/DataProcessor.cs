@@ -15,6 +15,7 @@ namespace Pin80Server
     public class DataProcessor
     {
         private string Romname;
+        private MainForm mainForm;
 
         public bool autoAddItems = false;
         public bool unsavedChanges = false;
@@ -41,8 +42,12 @@ namespace Pin80Server
 
         private void ControllerData_ListChanged(object sender, ListChangedEventArgs e)
         {
-            Debug.WriteLine(e.ToString());
             unsavedChanges = true;
+        }
+
+        public void setMainForm(MainForm mf)
+        {
+            mainForm = mf;
         }
 
         public void addControlItem(ControlItem item)
@@ -63,7 +68,7 @@ namespace Pin80Server
 
         public void saveControllerData()
         {
-            var fullPath = Path.Combine(@"Data", $"{Romname}.json");
+            var fullPath = Path.Combine(@"Data", "Tables", $"{Romname}.json");
             Debug.WriteLine("Saving to " + fullPath);
 
             using (StreamWriter file = File.CreateText(fullPath))
@@ -72,6 +77,8 @@ namespace Pin80Server
                 serializer.Serialize(file, controllerData);
             }
             unsavedChanges = false;
+
+            mainForm.loadAvailableTables();
         }
 
         /* For this table see if there is a control item for this trigger */
@@ -103,7 +110,6 @@ namespace Pin80Server
             //Convert the json to actual actions
             actionList.ForEach(action =>
             {
-                Debug.WriteLine(action.id);
                 switch (action.kind)
                 {
                     case "ONOFF":
@@ -120,7 +126,7 @@ namespace Pin80Server
 
         private void populateTriggers()
         {
-            var fullPath = Path.Combine(@"Data", $"{Romname}-triggers.json");
+            var fullPath = Path.Combine(@"Data", "Tables", $"{Romname}-triggers.json");
             var triggerList = LoadTriggers(fullPath);
 
             //Convert the json to actual actions
@@ -142,9 +148,10 @@ namespace Pin80Server
             });
         }
 
-        public void LoadTableInformation(string Romname, MainForm mainForm)
+        public void LoadTableInformation(string Romname)
         {
             this.Romname = Romname;
+            var fullPath = Path.Combine(@"Data", "Tables", $"{Romname}.json");
 
             actionsDict.Clear();
             targetsDict.Clear();
@@ -166,7 +173,6 @@ namespace Pin80Server
             populateTriggers();
             populateTargets();
 
-            var fullPath = Path.Combine(@"Data", $"{Romname}.json");
             var ldata = LoadFile(fullPath);
 
             var sortedListInstance = new BindingList<ControlItem>(ldata.OrderBy(x => x.triggerString).ToList());
@@ -190,10 +196,18 @@ namespace Pin80Server
 
         private List<Trigger> LoadTriggers(string fullPath)
         {
-            using (StreamReader r = new StreamReader(fullPath))
+            try
             {
-                string json = r.ReadToEnd();
-                return JsonConvert.DeserializeObject<List<Trigger>>(json);
+                using (StreamReader r = new StreamReader(fullPath))
+                {
+
+                    string json = r.ReadToEnd();
+                    return JsonConvert.DeserializeObject<List<Trigger>>(json);
+                }
+            }
+            catch (FileNotFoundException e)
+            {
+                return new List<Trigger>();
             }
         }
 
@@ -215,12 +229,19 @@ namespace Pin80Server
             }
         }
 
-        private BindingList<ControlItem> LoadFile(string fullPath)
+        private List<ControlItem> LoadFile(string fullPath)
         {
-            using (StreamReader r = new StreamReader(fullPath))
+            try
             {
-                string json = r.ReadToEnd();
-                return JsonConvert.DeserializeObject<BindingList<ControlItem>>(json);
+                using (StreamReader r = new StreamReader(fullPath))
+                {
+                    string json = r.ReadToEnd();
+                    return JsonConvert.DeserializeObject<List<ControlItem>>(json);
+                }
+            }
+            catch (FileNotFoundException e)
+            {
+                return new List<ControlItem>();
             }
         }
     }

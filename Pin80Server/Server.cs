@@ -1,6 +1,7 @@
 ﻿using Pin80Server.CommandProcessors;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
@@ -85,16 +86,19 @@ namespace Pin80Server
             mainForm = new MainForm();
             mainForm.setDataProcessor(dataProcessor);
             mainForm.setQueueRef(ref commandQueue);
-
             mainForm.Shown += mainForm_Shown;
+
+            dataProcessor.setMainForm(mainForm);
 
             Application.Run(mainForm);
         }
 
         private static void mainForm_Shown(object sender, EventArgs e)
         {
+            // Load available Tables
+            mainForm.loadAvailableTables();
+
             // Testing
-            //RomName = "dof_test";
             commandQueue.Add("VPX INFO ROM dof_test");
         }
 
