@@ -22,7 +22,8 @@ namespace Pin80Server.Models.JSONSerializer
         [JsonProperty("comment")]
         public string comment { get; set; }
 
-
+        [JsonProperty("value")]
+        public string value { get; set; }
 
         public override string ToString()
         {

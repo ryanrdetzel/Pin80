@@ -4,7 +4,7 @@ namespace Pin80Server.CommandProcessors
 {
     internal interface Processor
     {
-        bool processCommand(string command, Action<Processor> callback);
+        bool processCommand(string command, MainForm mainForm);
         string romName();
     }
 }

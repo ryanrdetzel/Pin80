@@ -1,4 +1,7 @@
 ﻿
+using Pin80Server.Models.JSONSerializer;
+using System.IO.Ports;
+
 namespace Pin80Server.Models.Actions
 {
     public class BlinkAction : IAction
@@ -21,6 +24,11 @@ namespace Pin80Server.Models.Actions
         {
             //return string.Format("({1}) {0} Delay:{2} Duration:{3} speed:{4}", name, id, delay, duration, speed);
             return name;
+        }
+
+        public void handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

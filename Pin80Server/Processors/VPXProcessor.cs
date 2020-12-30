@@ -1,19 +1,26 @@
-﻿using System;
+﻿using Pin80Server.Models.JSONSerializer;
+using System;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Windows.Forms;
 
 namespace Pin80Server.CommandProcessors
 {
     internal class VPXProcessor : Processor
     {
         private readonly SerialPort serial;
+        private readonly DataProcessor dataProcessor;
+
         private string _romName;
         private const int LagIgnoreMS = 30;
 
-        public VPXProcessor(SerialPort s)
+        public VPXProcessor(DataProcessor d, SerialPort s)
         {
             serial = s;
+            dataProcessor = d;
         }
         public string romName()
         {
@@ -24,7 +31,7 @@ namespace Pin80Server.CommandProcessors
          * Commands are broken down as:
          * TRIGGER ACTION TIMESTAMP
          */
-        public bool processCommand(string command, Action<Processor> callback)
+        public bool processCommand(string command, MainForm mainForm)
         {
             if (serial == null)
             {
@@ -53,36 +60,46 @@ namespace Pin80Server.CommandProcessors
                     if (value == "ROM")
                     {
                         _romName = extra;
-                        callback(this);
+                        //callback(this);
+                        if (mainForm.IsHandleCreated)
+                        {
+                            mainForm.BeginInvoke((MethodInvoker)delegate ()
+                            {
+                                mainForm.setRomName(_romName);
+                            });
+                        }
+                        dataProcessor.LoadTableInformation(_romName, mainForm);
                         return true;
                     }
 
                     return false;
                 }
 
-                if (trigger.StartsWith("L")) //Lamps
-                {
-                    return true;
-                }
-
-
                 var sentMS = Convert.ToInt64(extra);
                 var lag = now - sentMS;
 
                 if (lag > LagIgnoreMS)
                 {
+                    // TODO log this to the UI
                     Debug.WriteLine(string.Format("Ignoring command {0} as it's too old: {1}", command, lag));
                 }
 
-                if (commandParts[0] == "S11" || commandParts[0] == "S13" || commandParts[0] == "S12" || commandParts[0] == "S48" || commandParts[0] == "S46")
-                {
-                    // TODO FIX THIS
-                    serial.Write(string.Format("{0} {1}\n", "S48", commandParts[1]));
-                }
+                var items = dataProcessor.getControlItems(trigger);
 
-                if (commandParts[0] == "E101" || commandParts[0] == "E102")
+                foreach(var item in items)
                 {
-                    serial.Write(string.Format("{0} {1}\n", "S48", commandParts[1]));
+                    var target = dataProcessor.getTarget(item.target);
+                    var trig = dataProcessor.getTrigger(item.trigger);
+                    var action = dataProcessor.getAction(item.action);
+
+                    if (action != null)
+                    {
+                        action.handle(value, item, trig, target, serial);
+                    }
+                    else
+                    {
+                        throw new Exception("Could not handle action");
+                    }
                 }
 
                 return true;

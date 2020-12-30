@@ -18,36 +18,28 @@ namespace Pin80Server
         private static MainForm mainForm;
         private static TcpListener server = null;
         private static HttpListener listener = null;
-        private static readonly BlockingCollection<string> commandQueue = new BlockingCollection<string>();
 
-        private static string _romName;
+        private static BlockingCollection<string> commandQueue = new BlockingCollection<string>();
 
-        private static string RomName
-        {
-            get => _romName;
-            set
-            {
-                _romName = value;
+        //private static string _romName;
 
-                LoadTableData(_romName);
-                if (_romName != null)
-                {
-                    if (mainForm.IsHandleCreated)
-                    {
-                        mainForm.BeginInvoke((MethodInvoker)delegate ()
-                        {
-                            mainForm.setRomName(_romName);
-                        });
-                    }
-                }
-            }
-        }
+        //private static string RomName
+        //{
+        //    get => _romName;
+        //    set
+        //    {
+        //        _romName = value;
+
+        //        LoadTableData(_romName);
+        //    }
+        //}
 
         private static readonly SerialPort serial = new SerialPort("COM3"); // TODO make this a setting
 
-        private static readonly VPXProcessor vpxProcessor = new VPXProcessor(serial);
-        private static readonly PBYProcessor vbyProcessor = new PBYProcessor(serial);
         private static readonly DataProcessor dataProcessor = new DataProcessor();
+
+        private static readonly VPXProcessor vpxProcessor = new VPXProcessor(dataProcessor, serial);
+        private static readonly PBYProcessor vbyProcessor = new PBYProcessor(dataProcessor, serial);
 
         /// <summary>
         /// The main entry point for the application.
@@ -105,6 +97,7 @@ namespace Pin80Server
 
             mainForm = new MainForm();
             mainForm.setDataProcessor(dataProcessor);
+            mainForm.setQueueRef(ref commandQueue);
 
             mainForm.Shown += mainForm_Shown;
 
@@ -114,7 +107,8 @@ namespace Pin80Server
         private static void mainForm_Shown(object sender, EventArgs e)
         {
             // Testing
-            RomName = "afm";
+            //RomName = "dof_test";
+            commandQueue.Add("VPX INFO ROM dof_test");
         }
 
         public static void HandleIncomingHttpConnections()
@@ -205,22 +199,34 @@ namespace Pin80Server
             }
         }
 
-        public static void processUI(Processor processor)
-        {
-            Debug.WriteLine("Update UI");
-            RomName = processor.romName();
-        }
+        //public static void processUI(Processor processor)
+        //{
+        //    Debug.WriteLine("Update UI");
+        //    //RomName = processor.romName();
 
-        private static void LoadTableData(string name)
-        {
-            dataProcessor.LoadTableInformation(name);
-        }
+        //    //if (RomName != null)
+        //    //{
+        //    //    if (mainForm.IsHandleCreated)
+        //    //    {
+        //    //        mainForm.BeginInvoke((MethodInvoker)delegate ()
+        //    //        {
+        //    //            mainForm.setRomName(RomName);
+        //    //        });
+        //    //    }
+        //    //}
+        //}
+
+        //private static void LoadTableData(string name)
+        //{
+        //    dataProcessor.LoadTableInformation(name);
+        //}
 
         public static void HandleCommands()
         {
             while (true)
             {
                 var cmd = commandQueue.Take();
+                Debug.WriteLine(cmd);
                 string[] commandParts = cmd.Split(' ');
 
                 if (mainForm.IsHandleCreated)
@@ -238,13 +244,13 @@ namespace Pin80Server
                 // PinballY 
                 if (source.StartsWith("PBY"))
                 {
-                    vbyProcessor.processCommand(cmd, processUI);
+                    vbyProcessor.processCommand(cmd, mainForm);
                 }
                 // Virutal Pinball X
                 else if (source == "VPX")
                 {
                     string command = string.Join(" ", commandParts.Skip(1)); // Don't care about the source
-                    vpxProcessor.processCommand(command, processUI);
+                    vpxProcessor.processCommand(command, mainForm);
                 }
             }
         }

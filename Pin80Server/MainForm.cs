@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -8,11 +9,17 @@ namespace Pin80Server
     {
         private const int maxLogLength = 1000;
         private string filterValue = "";
+        private BlockingCollection<string> commandQueue;
 
         public MainForm()
         {
             InitializeComponent();
             Load += new EventHandler(Form1_Load);
+        }
+
+        public void setQueueRef(ref BlockingCollection<string>  cq)
+        {
+            commandQueue = cq;
         }
 
         public void setDataProcessor(DataProcessor dp)
@@ -32,7 +39,7 @@ namespace Pin80Server
 
         public void addLogEntry(string entry)
         {
-            if (tabView.SelectedIndex == 3)
+            if (tabView.SelectedIndex == 4)
             {
                 if (filterValue == "" || entry.StartsWith(filterValue))
                 {
@@ -162,10 +169,12 @@ namespace Pin80Server
                 if (e.Value != null)
                 {
                     string actionId = (string)e.Value;
-                    string friendlyName = dp.getTrigger(actionId).ToString();
-                    e.Value = friendlyName;
-
-                    cell.ToolTipText = dp.getTrigger(actionId).name;
+                    var trigger = dp.getTrigger(actionId);
+                    if (trigger != null)
+                    {
+                        e.Value = dp.getTrigger(actionId).ToString();
+                        cell.ToolTipText = dp.getTrigger(actionId).name;
+                    }
                 }
             }
             else if (controlDataGridView.Columns[e.ColumnIndex].Name == "targetColumn")
@@ -183,6 +192,24 @@ namespace Pin80Server
 
         private void jsonTableBindingSource_CurrentChanged(object sender, EventArgs e)
         {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // Save
+            var dp = controlDataGridView.DataSource as DataProcessor;
+            dp.saveControllerData();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var dp = controlDataGridView.DataSource as DataProcessor;
+            var f = dp.GetList();
+            var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+            string cmd = string.Format("VPX E101 1 {0}", now);
+            commandQueue.Add(cmd);
 
         }
     }

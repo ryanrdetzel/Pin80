@@ -8,22 +8,55 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Pin80Server
 {
     public class DataProcessor : IListSource
     {
+        private string Romname;
+
         private readonly BindingList<ControlItem> controllerData = new BindingList<ControlItem>();
         public Dictionary<string, Trigger> triggers = new Dictionary<string, Trigger>();
-        public Dictionary<string, Target> targets = new Dictionary<string, Target>();
 
+        public Dictionary<string, Target> targets = new Dictionary<string, Target>();
         public Dictionary<string, IAction> actionMap = new Dictionary<string, IAction>();
 
         public bool ContainsListCollection => throw new System.NotImplementedException();
 
+        public DataProcessor()
+        {
+            controllerData.ListChanged += listOfParts_ListChanged;
+        }
+
+        void listOfParts_ListChanged(object sender, ListChangedEventArgs e)
+        {
+            //MessageBox.Show(e.ListChangedType.ToString());
+            Debug.WriteLine("Data changed " + e.ListChangedType.ToString());
+        }
+
         public IList GetList()
         {
             return controllerData;
+        }
+
+        public void saveControllerData()
+        {
+            var fullPath = Path.Combine(@"Data", $"{Romname}.json");
+            Debug.WriteLine("Saving to " + fullPath);
+
+            using (StreamWriter file = File.CreateText(fullPath))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, controllerData);
+            }
+        }
+
+        /* For this table see if there is a control item for this trigger */
+        public List<ControlItem> getControlItems(string trigger)
+        {
+            return controllerData.Where(item => item.trigger == trigger && item.enabled).ToList();
         }
 
         public IAction getAction(string actionId)
@@ -33,7 +66,7 @@ namespace Pin80Server
 
         public Trigger getTrigger(string command)
         {
-            return triggers[command];
+            return triggers.ContainsKey(command) ? triggers[command] : null;
         }
 
         public Target getTarget(string id)
@@ -63,7 +96,7 @@ namespace Pin80Server
             });
         }
 
-        private void populateTriggers(string Romname)
+        private void populateTriggers()
         {
             var fullPath = Path.Combine(@"Data", $"{Romname}-triggers.json");
             var triggerList = LoadTriggers(fullPath);
@@ -87,14 +120,30 @@ namespace Pin80Server
             });
         }
 
-        public void LoadTableInformation(string Romname)
+        public void LoadTableInformation(string Romname, MainForm mainForm)
         {
+            this.Romname = Romname;
+
+            actionMap.Clear();
+            targets.Clear();
+            triggers.Clear();
+            if (mainForm.IsHandleCreated)
+            {
+                mainForm.BeginInvoke((MethodInvoker)delegate ()
+                {
+                    controllerData.Clear();
+                });
+            }
+            // TODO Need this refresh but it breaks threads
+            // controllerData.Clear();
+
+
             // Search for various combinations of files.
             // actions and triggers and default
 
             //Can't continue unless we have actions and triggers.
             populateActions();
-            populateTriggers(Romname);
+            populateTriggers();
             populateTargets();
 
             // Exact match, remove version, default?
@@ -103,7 +152,14 @@ namespace Pin80Server
 
             foreach (var d in ldata)
             {
-                controllerData.Add(d);
+                if (mainForm.IsHandleCreated)
+                {
+                    mainForm.BeginInvoke((MethodInvoker)delegate ()
+                    {
+                        controllerData.Add(d);
+                    });
+                }
+                
             }
 
             // TODO handle exceptions here.

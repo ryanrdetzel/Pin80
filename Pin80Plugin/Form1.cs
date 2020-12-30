@@ -8,7 +8,7 @@ namespace Pin80Plugin
     {
         public void updateLog(string log)
         {
-            this.pluginLog.Text = log;
+            pluginLog.Text = log;
         }
 
         public Form1()
