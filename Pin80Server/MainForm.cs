@@ -19,7 +19,7 @@ namespace Pin80Server
         private bool loggingEnabled = true;
         private bool ignoreDuplicates = false;
 
-        private List<string> recentLogEntries = new List<string>();
+        private readonly List<string> recentLogEntries = new List<string>();
 
         private BlockingCollection<string> commandQueue;
         private DataProcessor dataProcessor;
@@ -54,7 +54,11 @@ namespace Pin80Server
             if (controlDataGridView.SortOrder != SortOrder.None && controlDataGridView.SortedColumn != null)
             {
                 ListSortDirection dir = ListSortDirection.Ascending;
-                if (controlDataGridView.SortOrder == SortOrder.Descending) dir = ListSortDirection.Descending;
+                if (controlDataGridView.SortOrder == SortOrder.Descending)
+                {
+                    dir = ListSortDirection.Descending;
+                }
+
                 controlDataGridView.Sort(controlDataGridView.SortedColumn, dir);
             }
         }
@@ -84,7 +88,8 @@ namespace Pin80Server
             {
                 if (filterTextBox.Text == "" || entry.StartsWith(filterTextBox.Text))
                 {
-                    if (!ignoreDuplicates || !recentLogEntries.Contains(entry)) {
+                    if (!ignoreDuplicates || !recentLogEntries.Contains(entry))
+                    {
                         recentLogEntries.Add(entry);
                         logListViews.Items.Insert(0, entry);
                     }
@@ -339,7 +344,7 @@ namespace Pin80Server
                 if (logValue.StartsWith("VPX"))
                 {
                     Debug.WriteLine(logListViews.SelectedItem.ToString());
-                    var (success, triggerString, valueString, extraString) = VPXProcessor.splitCommandString(logValue.Replace("VPX ",""));
+                    var (success, triggerString, valueString, extraString) = VPXProcessor.splitCommandString(logValue.Replace("VPX ", ""));
                     if (success)
                     {
                         ControlItem newItem = new ControlItem(triggerString, valueString);

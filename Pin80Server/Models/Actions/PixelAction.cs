@@ -1,6 +1,5 @@
 ﻿using Pin80Server.Models.JSONSerializer;
 using System;
-using System.Diagnostics;
 using System.IO.Ports;
 using System.Threading.Tasks;
 
@@ -10,7 +9,7 @@ namespace Pin80Server.Models.Actions
     {
         public string color { get; set; }
 
-        public PixelAction(JSONSerializer.ActionSerializer action): base(action)
+        public PixelAction(JSONSerializer.ActionSerializer action) : base(action)
         {
             color = action.colors[0];
         }

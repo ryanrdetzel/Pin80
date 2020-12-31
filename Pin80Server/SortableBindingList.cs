@@ -35,34 +35,22 @@ namespace Library.Forms
         /// <summary>
         /// Gets a value indicating whether the list supports sorting.
         /// </summary>
-        protected override bool SupportsSortingCore
-        {
-            get { return true; }
-        }
+        protected override bool SupportsSortingCore => true;
 
         /// <summary>
         /// Gets a value indicating whether the list is sorted.
         /// </summary>
-        protected override bool IsSortedCore
-        {
-            get { return _isSorted; }
-        }
+        protected override bool IsSortedCore => _isSorted;
 
         /// <summary>
         /// Gets the direction the list is sorted.
         /// </summary>
-        protected override ListSortDirection SortDirectionCore
-        {
-            get { return _sortDirection; }
-        }
+        protected override ListSortDirection SortDirectionCore => _sortDirection;
 
         /// <summary>
         /// Gets the property descriptor that is used for sorting the list if sorting is implemented in a derived class; otherwise, returns null
         /// </summary>
-        protected override PropertyDescriptor SortPropertyCore
-        {
-            get { return _sortProperty; }
-        }
+        protected override PropertyDescriptor SortPropertyCore => _sortProperty;
 
         /// <summary>
         /// Removes any sort applied with ApplySortCore if sorting is implemented
@@ -85,7 +73,10 @@ namespace Library.Forms
             _sortDirection = direction;
 
             List<T> list = Items as List<T>;
-            if (list == null) return;
+            if (list == null)
+            {
+                return;
+            }
 
             list.Sort(Compare);
 
@@ -100,7 +91,10 @@ namespace Library.Forms
             var result = OnComparison(lhs, rhs);
             //invert if descending
             if (_sortDirection == ListSortDirection.Descending)
+            {
                 result = -result;
+            }
+
             return result;
         }
 

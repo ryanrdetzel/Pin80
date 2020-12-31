@@ -1,7 +1,5 @@
 ﻿using Pin80Server.Models.JSONSerializer;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO.Ports;
 using System.Threading.Tasks;
 
@@ -11,7 +9,7 @@ namespace Pin80Server.Models.Actions
     {
         //public int leds { get; set; }
 
-        public PixelRunAction(ActionSerializer action): base(action)
+        public PixelRunAction(ActionSerializer action) : base(action)
         {
             //name = action.name;
             //id = action.id;
@@ -32,7 +30,7 @@ namespace Pin80Server.Models.Actions
             string off = "000000";
 
             //Figure out how long each pixel has based on count and duration
-            int msEach = duration / numberOfLeds; 
+            int msEach = duration / numberOfLeds;
 
             Task.Run(async delegate
             {
@@ -53,7 +51,7 @@ namespace Pin80Server.Models.Actions
                     {
                         color = colors[1];
                     }
-                    for (int x = numberOfLeds; x >= 0 ; x--)
+                    for (int x = numberOfLeds; x >= 0; x--)
                     {
                         serial.Write(string.Format("{0} PXSTART\n", port));
                         serial.Write(string.Format("{0} PX{1} {2}\n", port, x, color));

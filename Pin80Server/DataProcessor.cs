@@ -1,6 +1,5 @@
 ﻿using Library.Forms;
 using Newtonsoft.Json;
-using Pin80Server.Models;
 using Pin80Server.Models.Actions;
 using Pin80Server.Models.JSONSerializer;
 using System;
@@ -209,7 +208,7 @@ namespace Pin80Server
             populateTriggers();
             populateTargets();
 
-            var ldata = LoadFile(fullPath);
+            var controlItems = LoadFile(fullPath);
 
             //var sortedListInstance = new BindingList<ControlItem>(ldata.OrderBy(x => !x.enabled).ThenBy(x => x.triggerString).ToList());
 
@@ -218,9 +217,26 @@ namespace Pin80Server
             {
                 mainForm.BeginInvoke((MethodInvoker)delegate ()
                 {
-                    foreach (var d in ldata)
+                    foreach (var item in controlItems)
                     {
-                        controllerData.Add(d);
+                        // Make sure actions and targets still exist for all the controlItems.
+                        // If they don't, clear it and disable the item
+                        Models.Action action = getAction(item.actionString);
+                        Target target = getTarget(item.targetString);
+
+                        if (action == null)
+                        {
+                            item.actionString = null;
+                            item.enabled = false;
+                        }
+
+                        if (target == null)
+                        {
+                            item.targetString = null;
+                            item.enabled = false;
+                        }
+
+                        controllerData.Add(item);
                     }
                     unsavedChanges = false;
                     //SortList();
@@ -242,7 +258,7 @@ namespace Pin80Server
                     return JsonConvert.DeserializeObject<List<Trigger>>(json);
                 }
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 return new List<Trigger>();
             }
@@ -276,7 +292,7 @@ namespace Pin80Server
                     return JsonConvert.DeserializeObject<List<ControlItem>>(json);
                 }
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 return new List<ControlItem>();
             }

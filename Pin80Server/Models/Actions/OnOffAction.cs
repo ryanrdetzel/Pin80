@@ -1,6 +1,5 @@
 ﻿using Pin80Server.Models.JSONSerializer;
 using System;
-using System.Diagnostics;
 using System.IO.Ports;
 using System.Threading.Tasks;
 
@@ -8,7 +7,7 @@ namespace Pin80Server.Models.Actions
 {
     public class OnOffAction : Action
     {
-        public OnOffAction(ActionSerializer action): base(action)
+        public OnOffAction(ActionSerializer action) : base(action)
         {
         }
 

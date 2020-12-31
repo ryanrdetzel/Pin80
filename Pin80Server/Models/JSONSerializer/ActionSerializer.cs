@@ -5,8 +5,13 @@ namespace Pin80Server.Models.JSONSerializer
 {
     public class ActionSerializer
     {
+        [JsonProperty(Required = Required.Always)]
         public string id { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public string name { get; set; }
+
+        [JsonProperty(Required = Required.Always)]
         public string kind { get; set; }
         public int delay { get; set; }
         public int duration { get; set; }

@@ -1,5 +1,4 @@
-﻿using Pin80Server.Models;
-using Pin80Server.Models.JSONSerializer;
+﻿using Pin80Server.Models.JSONSerializer;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -63,7 +62,10 @@ namespace Pin80Server
 
         private void updateActionsDropdown()
         {
-            if (targetsComboBox.SelectedItem == null) return;
+            if (targetsComboBox.SelectedItem == null)
+            {
+                return;
+            }
 
             Debug.WriteLine("Target combo changed");
 
