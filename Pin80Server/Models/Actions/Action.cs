@@ -1,4 +1,5 @@
 ﻿using Pin80Server.Models.JSONSerializer;
+using System.Collections.Generic;
 using System.IO.Ports;
 
 namespace Pin80Server.Models
@@ -7,6 +8,28 @@ namespace Pin80Server.Models
     {
         public string name { get; set; }
         public string id { get; set; }
+        public string kind { get; set; }
+        public List<string> colors { get; set; }
+
+        public int delay { get; set; }
+        public int duration { get; set; }
+        public int speed { get; set; }
+        public bool reverse { get; set; }
+
+        public abstract void Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial);
+
+        public Action(JSONSerializer.ActionSerializer action)
+        {
+            name = action.name;
+            id = action.id;
+            kind = action.kind;
+            colors = action.colors;
+
+            delay = action.delay;   // TODO Set reasonable limts 
+            duration = (action.duration > 0) ? action.duration : 200;
+            speed = action.speed; // TODO not using.
+            reverse = action.reverse;
+        }
 
         /* Checks the value to see if this action should fire */
         public bool Validate(string value, ControlItem item)
@@ -48,6 +71,9 @@ namespace Pin80Server.Models
             return true;
         }
 
-        public abstract void Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial);
+        public override string ToString()
+        {
+            return name;
+        }
     }
 }

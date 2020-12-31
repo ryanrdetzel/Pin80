@@ -1,21 +1,43 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Pin80Server.Models.JSONSerializer
 {
     public class Target
     {
-        [JsonProperty("id")]
         public string id { get; set; }
 
-        [JsonProperty("name")]
         public string name { get; set; }
+        public string kind { get; set; }
 
-        [JsonProperty("port")]
         public string port { get; set; }
 
+        public int leds { get; set; }
         public override string ToString()
         {
             return name;
+        }
+
+        public List<string> validActions()
+        {
+            return validActions(kind);
+        }
+
+        public static List<string> validActions(string kind)
+        {
+            var list = new List<string>();
+
+            switch (kind)
+            {
+                case "PIXEL":
+                    list.Add("PIXELRUN");
+                    list.Add("PIXEL");
+                    break;
+                case "LED":
+                    list.Add("ONOFF");
+                    break;
+            }
+            return list;
         }
     }
 }

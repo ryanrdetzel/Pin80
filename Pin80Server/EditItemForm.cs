@@ -21,6 +21,13 @@ namespace Pin80Server
         {
             InitializeComponent();
         }
+
+        private void EditItemForm_Load(object sender, EventArgs e)
+        {
+            // Make sure a valid target is selected?
+            updateActionsDropdown();
+        }
+
         public void setQueueRef(ref BlockingCollection<string> cq)
         {
             commandQueue = cq;
@@ -48,10 +55,32 @@ namespace Pin80Server
             targetsComboBox.Items.AddRange(targetValues);
             targetsComboBox.SelectedItem = item.targetString;
 
-            var actionValues = dp.actionsDict.Keys.ToArray();
-            actionComboBox.Items.Clear();
-            actionComboBox.Items.AddRange(actionValues);
-            actionComboBox.SelectedItem = item.actionString;
+            //var actionValues = dp.actionsDict.Keys.ToArray();
+            //actionComboBox.Items.Clear();
+            //actionComboBox.Items.AddRange(actionValues);
+            //actionComboBox.SelectedItem = item.actionString;
+        }
+
+        private void updateActionsDropdown()
+        {
+            if (targetsComboBox.SelectedItem == null) return;
+
+            Debug.WriteLine("Target combo changed");
+
+            var targetId = targetsComboBox.SelectedItem.ToString();
+            var target = dataProcessor.getTarget(targetId);
+
+            if (target != null)
+            {
+                var validActionNames = target.validActions();
+
+                var validActions = dataProcessor.actionsDict.Where(a => validActionNames.Contains(a.Value.kind)).ToDictionary(p => p.Key, p => p.Value);
+
+                var actionValues = validActions.Keys.ToArray();
+                actionComboBox.Items.Clear();
+                actionComboBox.Items.AddRange(actionValues);
+                actionComboBox.SelectedItem = item.actionString;
+            }
         }
 
         private void saveButton_Click(object sender, EventArgs e)
@@ -71,7 +100,7 @@ namespace Pin80Server
 
             dataProcessor.updateControlItem(item);
 
-            Close();
+            //Close();
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
@@ -129,6 +158,11 @@ namespace Pin80Server
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void targetsComboBox_SelectedValueChanged(object sender, EventArgs e)
+        {
+            updateActionsDropdown();
         }
     }
 }

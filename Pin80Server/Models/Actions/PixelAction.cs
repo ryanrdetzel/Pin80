@@ -8,32 +8,38 @@ namespace Pin80Server.Models.Actions
 {
     public class PixelAction : Action
     {
-        public int delay { get; set; }
-        public int duration { get; set; }
+        public string color { get; set; }
 
-        public PixelAction(JSONSerializer.Action action)
+        public PixelAction(JSONSerializer.ActionSerializer action): base(action)
         {
-            name = action.name;
-            id = action.id;
-            delay = action.delay;   // TODO Set reasonable limts 
-            duration = (action.duration > 0) ? action.duration : 200;
-        }
-
-        public override string ToString()
-        {
-            return name;
+            color = action.colors[0];
         }
 
         public override void Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial)
         {
             var port = target.port;
+            int startRange = 0;
+            int endRange = target.leds - 1;
 
-            // TODO If there is a delay work with that first
-            serial.Write(string.Format("{0} ON\n", port));
+            //TODO check that the range makes sense.
+
+            // Calculate all the pixel colors and send them.
+            string OnCmd = string.Format("{0} PX{1}-{2} {3}\n", port, startRange, endRange, color);
+            string OffCmd = string.Format("{0} PX{1}-{2} {3}\n", port, startRange, endRange, "000000");
+
             Task.Run(async delegate
             {
+                await Task.Delay(TimeSpan.FromMilliseconds(delay));
+
+                serial.Write(string.Format("{0} PXSTART\n", port)); // Include how many we're updating?
+                serial.Write(OnCmd);
+                serial.Write(string.Format("{0} PXEND\n", port));
+
                 await Task.Delay(TimeSpan.FromMilliseconds(duration));
-                serial.Write(string.Format("{0} OFF\n", port));
+
+                serial.Write(string.Format("{0} PXSTART\n", port));
+                serial.Write(OffCmd);
+                serial.Write(string.Format("{0} PXEND\n", port));
             });
         }
     }

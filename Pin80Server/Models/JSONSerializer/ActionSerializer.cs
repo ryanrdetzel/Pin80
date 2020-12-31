@@ -1,25 +1,19 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Pin80Server.Models.JSONSerializer
 {
-    public class Action
+    public class ActionSerializer
     {
-        [JsonProperty("id")]
         public string id { get; set; }
-
-        [JsonProperty("name")]
         public string name { get; set; }
-
-        [JsonProperty("kind")]
         public string kind { get; set; }
-
-        [JsonProperty("delay")]
         public int delay { get; set; }
-
-        [JsonProperty("duration")]
         public int duration { get; set; }
-
-        [JsonProperty("speed")]
         public int speed { get; set; }
+        public bool reverse { get; set; }
+        public bool interpolate { get; set; } //TODO
+
+        public List<string> colors { get; set; }
     }
 }

@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Actions\PixelRunAction.cs" />
     <Compile Include="Models\Actions\PixelAction.cs" />
     <Compile Include="SortableBindingList.cs" />
     <Compile Include="Settings.cs" />
@@ -64,8 +65,7 @@
       <DependentUpon>EditItemForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\Actions\OnOffAction.cs" />
-    <Compile Include="Models\Actions\BlinkAction.cs" />
-    <Compile Include="Models\JSONSerializer\Action.cs" />
+    <Compile Include="Models\JSONSerializer\ActionSerializer.cs" />
     <Compile Include="Models\Actions\Action.cs" />
     <Compile Include="Models\JSONSerializer\Target.cs" />
     <Compile Include="Models\JSONSerializer\Trigger.cs" />

@@ -8,20 +8,8 @@ namespace Pin80Server.Models.Actions
 {
     public class OnOffAction : Action
     {
-        public int delay { get; set; }
-        public int duration { get; set; }
-
-        public OnOffAction(JSONSerializer.Action action)
+        public OnOffAction(ActionSerializer action): base(action)
         {
-            name = action.name;
-            id = action.id;
-            delay = action.delay;   // TODO Set reasonable limts 
-            duration = (action.duration > 0) ? action.duration : 200;
-        }
-
-        public override string ToString()
-        {
-            return name;
         }
 
         public override void Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial)
@@ -29,9 +17,12 @@ namespace Pin80Server.Models.Actions
             var port = target.port;
 
             // TODO If there is a delay work with that first
-            serial.Write(string.Format("{0} ON\n", port));
             Task.Run(async delegate
             {
+                await Task.Delay(TimeSpan.FromMilliseconds(delay));
+
+                serial.Write(string.Format("{0} ON\n", port));
+
                 await Task.Delay(TimeSpan.FromMilliseconds(duration));
                 serial.Write(string.Format("{0} OFF\n", port));
             });

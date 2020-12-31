@@ -33,6 +33,7 @@ namespace Pin80Server
             this.saveButton = new System.Windows.Forms.Button();
             this.enabledCheckbox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.triggerTextBox = new System.Windows.Forms.TextBox();
             this.triggerNameField = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -51,7 +52,7 @@ namespace Pin80Server
             this.targetsComboBox = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.actionComboBox = new System.Windows.Forms.ComboBox();
-            this.triggerTextBox = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -67,7 +68,7 @@ namespace Pin80Server
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 0;
-            this.cancelButton.Text = "Cancel";
+            this.cancelButton.Text = "Close";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
@@ -102,6 +103,18 @@ namespace Pin80Server
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Trigger";
+            // 
+            // triggerTextBox
+            // 
+            this.triggerTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.triggerTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.triggerTextBox.Location = new System.Drawing.Point(43, 22);
+            this.triggerTextBox.Name = "triggerTextBox";
+            this.triggerTextBox.Size = new System.Drawing.Size(60, 24);
+            this.triggerTextBox.TabIndex = 8;
+            this.triggerTextBox.Text = "W123";
+            this.triggerTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // triggerNameField
             // 
@@ -142,7 +155,7 @@ namespace Pin80Server
             this.groupBox5.Controls.Add(this.label6);
             this.groupBox5.Controls.Add(this.testTextBox);
             this.groupBox5.Controls.Add(this.button1);
-            this.groupBox5.Location = new System.Drawing.Point(18, 418);
+            this.groupBox5.Location = new System.Drawing.Point(18, 436);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(335, 62);
             this.groupBox5.TabIndex = 18;
@@ -183,7 +196,7 @@ namespace Pin80Server
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(20, 278);
+            this.label5.Location = new System.Drawing.Point(20, 296);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(83, 16);
             this.label5.TabIndex = 16;
@@ -244,7 +257,7 @@ namespace Pin80Server
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(18, 369);
+            this.label3.Location = new System.Drawing.Point(18, 387);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(51, 13);
             this.label3.TabIndex = 12;
@@ -252,7 +265,7 @@ namespace Pin80Server
             // 
             // commentTextBox
             // 
-            this.commentTextBox.Location = new System.Drawing.Point(18, 384);
+            this.commentTextBox.Location = new System.Drawing.Point(18, 402);
             this.commentTextBox.Name = "commentTextBox";
             this.commentTextBox.Size = new System.Drawing.Size(335, 20);
             this.commentTextBox.TabIndex = 11;
@@ -260,7 +273,7 @@ namespace Pin80Server
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.targetsComboBox);
-            this.groupBox3.Location = new System.Drawing.Point(16, 303);
+            this.groupBox3.Location = new System.Drawing.Point(16, 321);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(335, 57);
             this.groupBox3.TabIndex = 10;
@@ -276,13 +289,15 @@ namespace Pin80Server
             this.targetsComboBox.Size = new System.Drawing.Size(320, 21);
             this.targetsComboBox.TabIndex = 10;
             this.targetsComboBox.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.targetsComboBox_Format);
+            this.targetsComboBox.SelectedValueChanged += new System.EventHandler(this.targetsComboBox_SelectedValueChanged);
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.actionComboBox);
             this.groupBox2.Location = new System.Drawing.Point(16, 212);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(335, 59);
+            this.groupBox2.Size = new System.Drawing.Size(335, 81);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Action";
@@ -292,22 +307,21 @@ namespace Pin80Server
             this.actionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.actionComboBox.FormattingEnabled = true;
             this.actionComboBox.Location = new System.Drawing.Point(9, 19);
+            this.actionComboBox.MaxDropDownItems = 20;
             this.actionComboBox.Name = "actionComboBox";
             this.actionComboBox.Size = new System.Drawing.Size(320, 21);
             this.actionComboBox.TabIndex = 9;
             this.actionComboBox.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.actionComboBox_Format);
             // 
-            // triggerTextBox
+            // label7
             // 
-            this.triggerTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.triggerTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.triggerTextBox.Location = new System.Drawing.Point(43, 22);
-            this.triggerTextBox.Name = "triggerTextBox";
-            this.triggerTextBox.Size = new System.Drawing.Size(60, 24);
-            this.triggerTextBox.TabIndex = 8;
-            this.triggerTextBox.Text = "W123";
-            this.triggerTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(9, 47);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(143, 13);
+            this.label7.TabIndex = 10;
+            this.label7.Text = "Change target to see actions";
             // 
             // EditItemForm
             // 
@@ -320,6 +334,7 @@ namespace Pin80Server
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "EditItemForm";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.EditItemForm_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -330,6 +345,7 @@ namespace Pin80Server
             this.groupBox4.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -359,5 +375,6 @@ namespace Pin80Server
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox testTextBox;
         private System.Windows.Forms.TextBox triggerTextBox;
+        private System.Windows.Forms.Label label7;
     }
 }

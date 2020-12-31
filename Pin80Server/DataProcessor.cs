@@ -140,16 +140,19 @@ namespace Pin80Server
             //Convert the json to actual actions
             actionList.ForEach(action =>
             {
+                /**
+                 * Make sure to add these to the target validActions
+                 */
                 switch (action.kind)
                 {
                     case "ONOFF":
                         actionsDict[action.id] = new OnOffAction(action);
                         break;
-                    case "BLINK":
-                        actionsDict[action.id] = new BlinkAction(action);
-                        break;
                     case "PIXEL":
                         actionsDict[action.id] = new PixelAction(action);
+                        break;
+                    case "PIXELRUN":
+                        actionsDict[action.id] = new PixelRunAction(action);
                         break;
                     default:
                         throw new Exception("Not a valid action");
@@ -254,12 +257,12 @@ namespace Pin80Server
             }
         }
 
-        private List<Models.JSONSerializer.Action> LoadActions(string fullPath)
+        private List<Models.JSONSerializer.ActionSerializer> LoadActions(string fullPath)
         {
             using (StreamReader r = new StreamReader(fullPath))
             {
                 string json = r.ReadToEnd();
-                return JsonConvert.DeserializeObject<List<Models.JSONSerializer.Action>>(json);
+                return JsonConvert.DeserializeObject<List<Models.JSONSerializer.ActionSerializer>>(json);
             }
         }
 
