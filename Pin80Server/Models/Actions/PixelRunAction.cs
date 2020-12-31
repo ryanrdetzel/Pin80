@@ -1,6 +1,8 @@
-﻿using Pin80Server.Models.JSONSerializer;
+﻿using Pin80Server.CommandProcessors;
+using Pin80Server.Models.JSONSerializer;
 using System;
 using System.IO.Ports;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Pin80Server.Models.Actions
@@ -35,7 +37,7 @@ namespace Pin80Server.Models.Actions
             return str;
         }
 
-        public override void Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial)
+        public override ProcessorTask Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial)
         {
             var port = target.port;
             int numberOfLeds = target.leds;
@@ -48,9 +50,13 @@ namespace Pin80Server.Models.Actions
             //Figure out how long each pixel has based on count and duration
             int msEach = duration / numberOfLeds;
 
-            Task.Run(async delegate
+            var tokenSource = new CancellationTokenSource();
+            var token = tokenSource.Token;
+
+            var task = Task.Run(async delegate
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(delay));
+                token.ThrowIfCancellationRequested();
 
                 for (int x = 0; x < numberOfLeds; x++)
                 {
@@ -59,6 +65,7 @@ namespace Pin80Server.Models.Actions
                     serial.Write(string.Format("{0} PXEND\n", port));
 
                     await Task.Delay(TimeSpan.FromMilliseconds(msEach));
+                    token.ThrowIfCancellationRequested();
                 }
                 if (reverse)
                 {
@@ -74,6 +81,7 @@ namespace Pin80Server.Models.Actions
                         serial.Write(string.Format("{0} PXEND\n", port));
 
                         await Task.Delay(TimeSpan.FromMilliseconds(msEach));
+                        token.ThrowIfCancellationRequested();
                     }
                 }
                 // All off
@@ -81,7 +89,9 @@ namespace Pin80Server.Models.Actions
                 serial.Write(string.Format("{0} PXSTART\n", port));
                 serial.Write(string.Format("{0} PX{1}-{2} {3}\n", port, startRange, endRange, color));
                 serial.Write(string.Format("{0} PXEND\n", port));
-            });
+            }, token);
+
+            return new ProcessorTask(task, tokenSource);
         }
     }
 }

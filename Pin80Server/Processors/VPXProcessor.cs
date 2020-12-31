@@ -1,18 +1,24 @@
 ﻿using Pin80Server.Models.JSONSerializer;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Pin80Server.CommandProcessors
 {
     public class VPXProcessor : Processor
     {
-
         private const int LagIgnoreMS = 30;
 
-        public VPXProcessor(DataProcessor d, SerialPort s): base(d,s)
+        // Store tasks by target
+        private Dictionary<string, List<ProcessorTask>> targetTasks = new Dictionary<string, List<ProcessorTask>>();
+
+        public VPXProcessor(DataProcessor d, SerialPort s) : base(d, s)
         {
         }
 
@@ -68,7 +74,6 @@ namespace Pin80Server.CommandProcessors
                         }
                         return true;
                     }
-
                     return false;
                 }
 
@@ -101,12 +106,15 @@ namespace Pin80Server.CommandProcessors
                     }
                 }
 
+                /* Pretection so we don't run items with the same target */
+                HashSet<string> processedTargets = new HashSet<string>();
                 foreach (var item in items)
                 {
                     if (!item.enabled)
                     {
                         continue;
                     }
+
                     var target = dataProcessor.getTarget(item.targetString);
                     var trigger = dataProcessor.getTrigger(item.triggerString);
                     var action = dataProcessor.getAction(item.actionString);
@@ -116,12 +124,54 @@ namespace Pin80Server.CommandProcessors
                         throw new Exception("Could not handle action");
                     }
 
+                    if (processedTargets.Contains(target.id))
+                    {
+                        Debug.WriteLine("Already processed an item for this target!");
+                        continue;
+                    }
+
                     // TODO Check serial connection is all set still.
                     if (action.Validate(valueString, item))
                     {
-                        action.Handle(valueString, item, trigger, target, serial);
+                        // First check if this target is already executing tasks
+                        if (targetTasks.ContainsKey(target.id) && targetTasks[target.id].Count > 0)
+                        {
+                            var runningTasks = targetTasks[target.id];
+                            foreach (var pt in runningTasks)
+                            {
+                                if (!pt.task.IsCompleted)
+                                {
+                                    Debug.WriteLine("Task is still running, issuing stop");
+                                    pt.token.Cancel();
+                                }
+                            }
+                            runningTasks.Clear();
+                        }
+
+                        Debug.WriteLine("Process task.");
+                        var processorTask = action.Handle(valueString, item, trigger, target, serial);
+
+                        processedTargets.Add(target.id);
+
+                        if (targetTasks.ContainsKey(target.id))
+                        {
+                            Debug.WriteLine("Key exists, adding.");
+                            targetTasks[target.id].Add(processorTask);
+                        }
+                        else
+                        {
+                            targetTasks[target.id] = new List<ProcessorTask>();
+                            targetTasks[target.id].Add(processorTask);
+                        }
                     }
                 }
+                //var task = Task.Run(async delegate
+                //{
+                //    if (targetTasks.ContainsKey(Target.id))
+                //    var allTasks = targetTasks[target.id];
+                //    await Task.WhenAll(tasks.Select(t => t.task).ToArray());
+                //    Debug.WriteLine("All tasks are done");
+                //});
 
                 return true;
             }

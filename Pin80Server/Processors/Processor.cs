@@ -1,4 +1,6 @@
 ﻿using System.IO.Ports;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Pin80Server.CommandProcessors
 {
@@ -24,6 +26,18 @@ namespace Pin80Server.CommandProcessors
         string romName()
         {
             return _romName;
+        }
+    }
+
+    public class ProcessorTask
+    {
+        public Task task { get; set; }
+        public CancellationTokenSource token { get; set; }
+
+        public ProcessorTask(Task task, CancellationTokenSource token)
+        {
+            this.task = task;
+            this.token = token;
         }
     }
 }

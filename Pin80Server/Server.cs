@@ -87,6 +87,8 @@ namespace Pin80Server
             mainForm.setQueueRef(ref commandQueue);
 
             dataProcessor.setMainForm(mainForm);
+            dataProcessor.setQueueRef(ref commandQueue);
+
             vpxProcessor.setMainForm(mainForm);
             vbyProcessor.setMainForm(mainForm);
 

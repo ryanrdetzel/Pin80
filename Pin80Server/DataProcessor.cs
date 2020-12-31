@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Pin80Server.Models.Actions;
 using Pin80Server.Models.JSONSerializer;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -16,6 +17,7 @@ namespace Pin80Server
     {
         private string Romname;
         private MainForm mainForm;
+        private BlockingCollection<string> commandQueue;
 
         public bool autoAddItems = false;
         public bool unsavedChanges = false;
@@ -54,6 +56,11 @@ namespace Pin80Server
         private void ControllerData_ListChanged(object sender, ListChangedEventArgs e)
         {
             unsavedChanges = true;
+        }
+
+        public void setQueueRef(ref BlockingCollection<string> cq)
+        {
+            commandQueue = cq;
         }
 
         public void setMainForm(MainForm mf)
@@ -239,6 +246,10 @@ namespace Pin80Server
                         controllerData.Add(item);
                     }
                     unsavedChanges = false;
+
+                    var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                    commandQueue.Add(string.Format("VPX START 1 {0}", now));
+
                     //SortList();
                 });
             }
