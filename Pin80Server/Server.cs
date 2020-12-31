@@ -85,22 +85,12 @@ namespace Pin80Server
             mainForm = new MainForm();
             mainForm.setDataProcessor(dataProcessor);
             mainForm.setQueueRef(ref commandQueue);
-            mainForm.Shown += mainForm_Shown;
 
             dataProcessor.setMainForm(mainForm);
             vpxProcessor.setMainForm(mainForm);
             vbyProcessor.setMainForm(mainForm);
 
             Application.Run(mainForm);
-        }
-
-        private static void mainForm_Shown(object sender, EventArgs e)
-        {
-            // Load available Tables
-            mainForm.loadAvailableTables();
-
-            // Testing
-            commandQueue.Add("VPX INFO ROM dof_test");
         }
 
         public static void HandleIncomingHttpConnections()

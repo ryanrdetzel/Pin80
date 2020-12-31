@@ -11,6 +11,20 @@ namespace Pin80Server.Models.Actions
         {
         }
 
+        public override string ToString()
+        {
+            if (name != null) return name;
+
+            string timeStr = timeString(duration);
+
+            string str = string.Format("On for {0}", timeStr);
+            if (delay > 0)
+            {
+                str += string.Format(" w/ {0} delay", timeString(delay));
+            }
+            return str;
+        }
+
         public override void Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial)
         {
             var port = target.port;

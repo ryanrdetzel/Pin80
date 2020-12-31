@@ -35,6 +35,9 @@ namespace Pin80Server
         {
             SetupDataGridView();
 
+            loadAvailableTables();
+            tableComboBox.SelectedItem = Settings.ReadSetting(Constants.SettingLastTable);
+
             var itemFilter = Settings.ReadSetting(Constants.SettingItemFilter);
             if (itemFilter == "")
             {
@@ -111,8 +114,8 @@ namespace Pin80Server
                     e.Cancel = true;
                     dataProcessor.saveControllerData();
 
-                    //Application.Exit();
-                    Environment.Exit(Environment.ExitCode);
+                    Application.Exit();
+                    //Environment.Exit(Environment.ExitCode);
                 }
             }
         }
@@ -170,11 +173,6 @@ namespace Pin80Server
         private void Form1_Move(object sender, EventArgs e)
         {
             saveWindowState();
-        }
-
-        private void dataGridView1_RowEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            Debug.WriteLine("Row Click {0}", e.RowIndex);
         }
 
         private void controlDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -399,6 +397,7 @@ namespace Pin80Server
         private void tableComboBox_TextChanged(object sender, EventArgs e)
         {
             var Romname = tableComboBox.Text;
+            Settings.SaveSetting(Constants.SettingLastTable, Romname);
 
             if (dataProcessor.unsavedChanges)
             {

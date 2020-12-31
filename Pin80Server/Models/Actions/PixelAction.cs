@@ -14,6 +14,20 @@ namespace Pin80Server.Models.Actions
             color = action.colors[0];
         }
 
+        public override string ToString()
+        {
+            if (name != null) return name;
+
+            string timeStr = timeString(duration);
+
+            string str = string.Format("Pixel On {1} for {0}", timeStr, nameForColor(color));
+            if (delay > 0)
+            {
+                str += string.Format(" w/ {0} delay", timeString(delay));
+            }
+            return str;
+        }
+
         public override void Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial)
         {
             var port = target.port;

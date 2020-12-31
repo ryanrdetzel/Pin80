@@ -31,6 +31,30 @@ namespace Pin80Server.Models
             reverse = action.reverse;
         }
 
+        public string timeString(int durationMs)
+        {
+            string timeStr = string.Format("{0}ms", durationMs);
+
+            if (durationMs >= 1000)
+            {
+                double seconds = System.Math.Round(((float)durationMs / 1000), 3);
+                timeStr = string.Format("{0}s", seconds);
+            }
+            return timeStr;
+        }
+
+        public string nameForColor(string colorHex)
+        {
+            switch (colorHex)
+            {
+                case "000016": return "Dim Blue";
+                case "001600": return "Dim Green";
+                case "160000": return "Dim Red";
+            }
+
+            return colorHex;
+        }
+
         /* Checks the value to see if this action should fire */
         public bool Validate(string value, ControlItem item)
         {
@@ -73,7 +97,7 @@ namespace Pin80Server.Models
 
         public override string ToString()
         {
-            return name;
+            return name ?? id;
         }
     }
 }

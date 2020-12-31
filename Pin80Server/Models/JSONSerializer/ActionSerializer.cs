@@ -7,8 +7,6 @@ namespace Pin80Server.Models.JSONSerializer
     {
         [JsonProperty(Required = Required.Always)]
         public string id { get; set; }
-
-        [JsonProperty(Required = Required.Always)]
         public string name { get; set; }
 
         [JsonProperty(Required = Required.Always)]

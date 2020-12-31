@@ -129,7 +129,7 @@ namespace Pin80Server
             var actionId = e.ListItem.ToString();
             var action = dataProcessor.getAction(actionId);
 
-            var value = (action == null) ? actionId : string.Format("{0} ({1})", action.name, actionId);
+            var value = (action == null) ? actionId : action.ToString();
             e.Value = value;
         }
 

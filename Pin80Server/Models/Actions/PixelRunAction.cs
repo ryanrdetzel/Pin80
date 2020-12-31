@@ -7,16 +7,32 @@ namespace Pin80Server.Models.Actions
 {
     public class PixelRunAction : Action
     {
-        //public int leds { get; set; }
-
         public PixelRunAction(ActionSerializer action) : base(action)
         {
-            //name = action.name;
-            //id = action.id;
-            //delay = action.delay;   // TODO Set reasonable limts 
-            //duration = (action.duration > 0) ? action.duration : 200;
-            //colors = action.colors;
-            //reverse = action.reverse;
+        }
+
+        public override string ToString()
+        {
+            if (name != null) return name;
+
+            string timeStr = timeString(duration);
+            string color = colors[0];
+
+            string str = string.Format("Pixel Run {1} for {0}", timeStr, nameForColor(color));
+            if (delay > 0)
+            {
+                str += string.Format(" w/ {0} delay", timeString(delay));
+            }
+            if (reverse)
+            {
+                str += string.Format(" then reverse", timeString(delay));
+                if (colors.Count == 2)
+                {
+                    str += string.Format(" in {0}", nameForColor(colors[1]));
+                }
+            }
+
+            return str;
         }
 
         public override void Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial)
