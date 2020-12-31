@@ -58,17 +58,17 @@ namespace Pin80Server
             Debug.WriteLine("Listening for http connections on {0}", url);
 
             // TCP Connection Listener
-            Thread tcpthread = new Thread(new ThreadStart(HandleIncomingTCPConnections));
+            Thread tcpthread = new Thread(HandleIncomingTCPConnections);
             tcpthread.IsBackground = true;
             tcpthread.Start();
 
             // HTTP Connection Listener
-            Thread httpthread = new Thread(new ThreadStart(HandleIncomingHttpConnections));
+            Thread httpthread = new Thread(HandleIncomingHttpConnections);
             httpthread.IsBackground = true;
             httpthread.Start();
 
             // Command Processor Thread
-            Thread p = new Thread(new ThreadStart(HandleCommands));
+            Thread p = new Thread(HandleCommands);
             p.IsBackground = true;
             p.Start();
 
@@ -150,13 +150,14 @@ namespace Pin80Server
                     TcpClient client = server.AcceptTcpClient();
                     Console.WriteLine("TCP client connected!");
                     Thread tcpClientThread = new Thread(new ParameterizedThreadStart(HandleTCPClint));
+                    tcpClientThread.IsBackground = true;
                     tcpClientThread.Start(client);
                 }
             }
             catch (SocketException e)
             {
                 Console.WriteLine("SocketException: {0}", e);
-                server.Stop(); //TODO What do we do in this case?
+                //server.Stop(); //TODO What do we do in this case?
             }
         }
 

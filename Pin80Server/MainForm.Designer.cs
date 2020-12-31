@@ -32,9 +32,11 @@ namespace Pin80Server
             this.components = new System.ComponentModel.Container();
             this.itemMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.stripMenuIgnore = new System.Windows.Forms.ToolStripMenuItem();
+            this.logFilter = new System.Windows.Forms.ToolStripMenuItem();
+            this.duplicate = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.deleteItemItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.logFilter = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteAllDisabled = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tableComboBox = new System.Windows.Forms.ComboBox();
             this.itemFilterCombo = new System.Windows.Forms.ComboBox();
@@ -45,20 +47,6 @@ namespace Pin80Server
             this.tabView = new System.Windows.Forms.TabControl();
             this.Control = new System.Windows.Forms.TabPage();
             this.controlDataGridView = new System.Windows.Forms.DataGridView();
-            this.Triggers = new System.Windows.Forms.TabPage();
-            this.autoAddItemsCheckbox = new System.Windows.Forms.CheckBox();
-            this.filterTextBox = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.logListViews = new System.Windows.Forms.ListBox();
-            this.logMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.clearLogItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.disableLogItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.logginStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.autoAddEnabledLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.deleteAllDisabled = new System.Windows.Forms.ToolStripMenuItem();
-            this.duplicate = new System.Windows.Forms.ToolStripMenuItem();
-            this.addAsItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.triggerString = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -66,9 +54,21 @@ namespace Pin80Server
             this.actionString = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.targetString = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.commnet = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.clearLogButton = new System.Windows.Forms.Button();
-            this.disableButton = new System.Windows.Forms.Button();
+            this.Triggers = new System.Windows.Forms.TabPage();
+            this.autoAddItemsCheckbox = new System.Windows.Forms.CheckBox();
             this.ignoreDuplicatesCheckbox = new System.Windows.Forms.CheckBox();
+            this.disableButton = new System.Windows.Forms.Button();
+            this.clearLogButton = new System.Windows.Forms.Button();
+            this.filterTextBox = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.logListViews = new System.Windows.Forms.ListBox();
+            this.logMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.clearLogItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.disableLogItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addAsItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.logginStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.autoAddEnabledLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.itemMenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -104,6 +104,18 @@ namespace Pin80Server
             this.stripMenuIgnore.Size = new System.Drawing.Size(172, 22);
             this.stripMenuIgnore.Text = "Ignore";
             // 
+            // logFilter
+            // 
+            this.logFilter.Name = "logFilter";
+            this.logFilter.Size = new System.Drawing.Size(172, 22);
+            this.logFilter.Text = "Set as log filter";
+            // 
+            // duplicate
+            // 
+            this.duplicate.Name = "duplicate";
+            this.duplicate.Size = new System.Drawing.Size(172, 22);
+            this.duplicate.Text = "Duplicate Item";
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -115,11 +127,11 @@ namespace Pin80Server
             this.deleteItemItem.Size = new System.Drawing.Size(172, 22);
             this.deleteItemItem.Text = "Delete Item";
             // 
-            // logFilter
+            // deleteAllDisabled
             // 
-            this.logFilter.Name = "logFilter";
-            this.logFilter.Size = new System.Drawing.Size(172, 22);
-            this.logFilter.Text = "Set as log filter";
+            this.deleteAllDisabled.Name = "deleteAllDisabled";
+            this.deleteAllDisabled.Size = new System.Drawing.Size(172, 22);
+            this.deleteAllDisabled.Text = "Delete All Disabled";
             // 
             // panel1
             // 
@@ -278,125 +290,6 @@ namespace Pin80Server
             this.controlDataGridView.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowEnter);
             this.controlDataGridView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.controlDataGridView_MouseDoubleClick);
             // 
-            // Triggers
-            // 
-            this.Triggers.Controls.Add(this.autoAddItemsCheckbox);
-            this.Triggers.Location = new System.Drawing.Point(4, 24);
-            this.Triggers.Name = "Triggers";
-            this.Triggers.Padding = new System.Windows.Forms.Padding(3);
-            this.Triggers.Size = new System.Drawing.Size(831, 266);
-            this.Triggers.TabIndex = 1;
-            this.Triggers.Text = "Settings";
-            this.Triggers.UseVisualStyleBackColor = true;
-            // 
-            // autoAddItemsCheckbox
-            // 
-            this.autoAddItemsCheckbox.AutoSize = true;
-            this.autoAddItemsCheckbox.Location = new System.Drawing.Point(18, 18);
-            this.autoAddItemsCheckbox.Name = "autoAddItemsCheckbox";
-            this.autoAddItemsCheckbox.Size = new System.Drawing.Size(98, 17);
-            this.autoAddItemsCheckbox.TabIndex = 0;
-            this.autoAddItemsCheckbox.Text = "Auto Add Items";
-            this.autoAddItemsCheckbox.UseVisualStyleBackColor = true;
-            this.autoAddItemsCheckbox.CheckedChanged += new System.EventHandler(this.autoAddItemsCheckbox_CheckedChanged);
-            // 
-            // filterTextBox
-            // 
-            this.filterTextBox.Location = new System.Drawing.Point(37, 5);
-            this.filterTextBox.Name = "filterTextBox";
-            this.filterTextBox.Size = new System.Drawing.Size(100, 20);
-            this.filterTextBox.TabIndex = 4;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 8);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 13);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Filter";
-            // 
-            // logListViews
-            // 
-            this.logListViews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.logListViews.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.logListViews.ContextMenuStrip = this.logMenuStrip;
-            this.logListViews.FormattingEnabled = true;
-            this.logListViews.Location = new System.Drawing.Point(5, 31);
-            this.logListViews.Margin = new System.Windows.Forms.Padding(1);
-            this.logListViews.Name = "logListViews";
-            this.logListViews.Size = new System.Drawing.Size(837, 171);
-            this.logListViews.TabIndex = 2;
-            // 
-            // logMenuStrip
-            // 
-            this.logMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.clearLogItem,
-            this.disableLogItem,
-            this.addAsItem});
-            this.logMenuStrip.Name = "logMenuStrip";
-            this.logMenuStrip.Size = new System.Drawing.Size(138, 70);
-            this.logMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.logMenuStrip_ItemClicked);
-            // 
-            // clearLogItem
-            // 
-            this.clearLogItem.Name = "clearLogItem";
-            this.clearLogItem.Size = new System.Drawing.Size(137, 22);
-            this.clearLogItem.Text = "Clear Log";
-            // 
-            // disableLogItem
-            // 
-            this.disableLogItem.Name = "disableLogItem";
-            this.disableLogItem.Size = new System.Drawing.Size(137, 22);
-            this.disableLogItem.Tag = "disableLogItem";
-            this.disableLogItem.Text = "Disable Log";
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.logginStatusLabel,
-            this.autoAddEnabledLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 578);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(869, 24);
-            this.statusStrip1.TabIndex = 10;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // logginStatusLabel
-            // 
-            this.logginStatusLabel.Name = "logginStatusLabel";
-            this.logginStatusLabel.Padding = new System.Windows.Forms.Padding(20, 0, 20, 0);
-            this.logginStatusLabel.Size = new System.Drawing.Size(147, 19);
-            this.logginStatusLabel.Text = "Logging is enabled";
-            // 
-            // autoAddEnabledLabel
-            // 
-            this.autoAddEnabledLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)));
-            this.autoAddEnabledLabel.Name = "autoAddEnabledLabel";
-            this.autoAddEnabledLabel.Padding = new System.Windows.Forms.Padding(20, 0, 20, 0);
-            this.autoAddEnabledLabel.Size = new System.Drawing.Size(179, 19);
-            this.autoAddEnabledLabel.Text = "Auto Add Items Enabled";
-            // 
-            // deleteAllDisabled
-            // 
-            this.deleteAllDisabled.Name = "deleteAllDisabled";
-            this.deleteAllDisabled.Size = new System.Drawing.Size(172, 22);
-            this.deleteAllDisabled.Text = "Delete All Disabled";
-            // 
-            // duplicate
-            // 
-            this.duplicate.Name = "duplicate";
-            this.duplicate.Size = new System.Drawing.Size(172, 22);
-            this.duplicate.Text = "Duplicate Item";
-            // 
-            // addAsItem
-            // 
-            this.addAsItem.Name = "addAsItem";
-            this.addAsItem.Size = new System.Drawing.Size(137, 22);
-            this.addAsItem.Text = "Add as Item";
-            // 
             // enabled
             // 
             this.enabled.DataPropertyName = "enabled";
@@ -457,25 +350,27 @@ namespace Pin80Server
             this.commnet.Name = "commnet";
             this.commnet.ReadOnly = true;
             // 
-            // clearLogButton
+            // Triggers
             // 
-            this.clearLogButton.Location = new System.Drawing.Point(144, 4);
-            this.clearLogButton.Name = "clearLogButton";
-            this.clearLogButton.Size = new System.Drawing.Size(75, 23);
-            this.clearLogButton.TabIndex = 5;
-            this.clearLogButton.Text = "Clear";
-            this.clearLogButton.UseVisualStyleBackColor = true;
-            this.clearLogButton.Click += new System.EventHandler(this.clearLogButton_Click);
+            this.Triggers.Controls.Add(this.autoAddItemsCheckbox);
+            this.Triggers.Location = new System.Drawing.Point(4, 24);
+            this.Triggers.Name = "Triggers";
+            this.Triggers.Padding = new System.Windows.Forms.Padding(3);
+            this.Triggers.Size = new System.Drawing.Size(831, 266);
+            this.Triggers.TabIndex = 1;
+            this.Triggers.Text = "Settings";
+            this.Triggers.UseVisualStyleBackColor = true;
             // 
-            // disableButton
+            // autoAddItemsCheckbox
             // 
-            this.disableButton.Enabled = false;
-            this.disableButton.Location = new System.Drawing.Point(220, 5);
-            this.disableButton.Name = "disableButton";
-            this.disableButton.Size = new System.Drawing.Size(75, 23);
-            this.disableButton.TabIndex = 6;
-            this.disableButton.Text = "Disable";
-            this.disableButton.UseVisualStyleBackColor = true;
+            this.autoAddItemsCheckbox.AutoSize = true;
+            this.autoAddItemsCheckbox.Location = new System.Drawing.Point(18, 18);
+            this.autoAddItemsCheckbox.Name = "autoAddItemsCheckbox";
+            this.autoAddItemsCheckbox.Size = new System.Drawing.Size(98, 17);
+            this.autoAddItemsCheckbox.TabIndex = 0;
+            this.autoAddItemsCheckbox.Text = "Auto Add Items";
+            this.autoAddItemsCheckbox.UseVisualStyleBackColor = true;
+            this.autoAddItemsCheckbox.CheckedChanged += new System.EventHandler(this.autoAddItemsCheckbox_CheckedChanged);
             // 
             // ignoreDuplicatesCheckbox
             // 
@@ -488,6 +383,111 @@ namespace Pin80Server
             this.ignoreDuplicatesCheckbox.Text = "Ignore Duplicates";
             this.ignoreDuplicatesCheckbox.UseVisualStyleBackColor = true;
             this.ignoreDuplicatesCheckbox.CheckedChanged += new System.EventHandler(this.ignoreDuplicatesCheckbox_CheckedChanged);
+            // 
+            // disableButton
+            // 
+            this.disableButton.Enabled = false;
+            this.disableButton.Location = new System.Drawing.Point(220, 5);
+            this.disableButton.Name = "disableButton";
+            this.disableButton.Size = new System.Drawing.Size(75, 23);
+            this.disableButton.TabIndex = 6;
+            this.disableButton.Text = "Disable";
+            this.disableButton.UseVisualStyleBackColor = true;
+            // 
+            // clearLogButton
+            // 
+            this.clearLogButton.Location = new System.Drawing.Point(144, 4);
+            this.clearLogButton.Name = "clearLogButton";
+            this.clearLogButton.Size = new System.Drawing.Size(75, 23);
+            this.clearLogButton.TabIndex = 5;
+            this.clearLogButton.Text = "Clear";
+            this.clearLogButton.UseVisualStyleBackColor = true;
+            this.clearLogButton.Click += new System.EventHandler(this.clearLogButton_Click);
+            // 
+            // filterTextBox
+            // 
+            this.filterTextBox.Location = new System.Drawing.Point(37, 5);
+            this.filterTextBox.Name = "filterTextBox";
+            this.filterTextBox.Size = new System.Drawing.Size(100, 20);
+            this.filterTextBox.TabIndex = 4;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(29, 13);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Filter";
+            // 
+            // logListViews
+            // 
+            this.logListViews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.logListViews.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.logListViews.ContextMenuStrip = this.logMenuStrip;
+            this.logListViews.FormattingEnabled = true;
+            this.logListViews.Location = new System.Drawing.Point(5, 31);
+            this.logListViews.Margin = new System.Windows.Forms.Padding(1);
+            this.logListViews.Name = "logListViews";
+            this.logListViews.Size = new System.Drawing.Size(837, 171);
+            this.logListViews.TabIndex = 2;
+            // 
+            // logMenuStrip
+            // 
+            this.logMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.clearLogItem,
+            this.disableLogItem,
+            this.addAsItem});
+            this.logMenuStrip.Name = "logMenuStrip";
+            this.logMenuStrip.Size = new System.Drawing.Size(138, 70);
+            this.logMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.logMenuStrip_ItemClicked);
+            // 
+            // clearLogItem
+            // 
+            this.clearLogItem.Name = "clearLogItem";
+            this.clearLogItem.Size = new System.Drawing.Size(137, 22);
+            this.clearLogItem.Text = "Clear Log";
+            // 
+            // disableLogItem
+            // 
+            this.disableLogItem.Name = "disableLogItem";
+            this.disableLogItem.Size = new System.Drawing.Size(137, 22);
+            this.disableLogItem.Tag = "disableLogItem";
+            this.disableLogItem.Text = "Disable Log";
+            // 
+            // addAsItem
+            // 
+            this.addAsItem.Name = "addAsItem";
+            this.addAsItem.Size = new System.Drawing.Size(137, 22);
+            this.addAsItem.Text = "Add as Item";
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.logginStatusLabel,
+            this.autoAddEnabledLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 578);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(869, 24);
+            this.statusStrip1.TabIndex = 10;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // logginStatusLabel
+            // 
+            this.logginStatusLabel.Name = "logginStatusLabel";
+            this.logginStatusLabel.Padding = new System.Windows.Forms.Padding(20, 0, 20, 0);
+            this.logginStatusLabel.Size = new System.Drawing.Size(147, 19);
+            this.logginStatusLabel.Text = "Logging is enabled";
+            // 
+            // autoAddEnabledLabel
+            // 
+            this.autoAddEnabledLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right)));
+            this.autoAddEnabledLabel.Name = "autoAddEnabledLabel";
+            this.autoAddEnabledLabel.Padding = new System.Windows.Forms.Padding(20, 0, 20, 0);
+            this.autoAddEnabledLabel.Size = new System.Drawing.Size(179, 19);
+            this.autoAddEnabledLabel.Text = "Auto Add Items Enabled";
             // 
             // MainForm
             // 
