@@ -2,30 +2,13 @@
 
 namespace Pin80Server.CommandProcessors
 {
-    internal class PBYProcessor : IProcessor
+    public class PBYProcessor : Processor
     {
-        private readonly SerialPort serial;
-        private readonly DataProcessor dataProcessor;
-        private MainForm mainForm;
-
-        private string _romName;
-
-        public PBYProcessor(DataProcessor d, SerialPort s)
+        public PBYProcessor(DataProcessor d, SerialPort s): base(d, s)
         {
-            serial = s;
-            dataProcessor = d;
         }
 
-        public string romName()
-        {
-            return _romName;
-        }
-        public void setMainForm(MainForm mf)
-        {
-            mainForm = mf;
-        }
-
-        public bool processCommand(string command)
+        override public bool processCommand(string command)
         {
             if (serial == null)
             {
@@ -37,7 +20,6 @@ namespace Pin80Server.CommandProcessors
             string value = commandParts[1];
 
             _romName = value;
-            //callback(this);
 
             // PinballY start animation
             if (_romName == "afm")

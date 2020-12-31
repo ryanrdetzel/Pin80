@@ -53,11 +53,6 @@ namespace Pin80Server
             targetsComboBox.Items.Clear();
             targetsComboBox.Items.AddRange(targetValues);
             targetsComboBox.SelectedItem = item.targetString;
-
-            //var actionValues = dp.actionsDict.Keys.ToArray();
-            //actionComboBox.Items.Clear();
-            //actionComboBox.Items.AddRange(actionValues);
-            //actionComboBox.SelectedItem = item.actionString;
         }
 
         private void updateActionsDropdown()

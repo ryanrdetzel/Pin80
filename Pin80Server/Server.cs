@@ -198,8 +198,6 @@ namespace Pin80Server
                     });
                 }
 
-                // Process the command through the appropriate processor
-
                 // PinballY 
                 if (source.StartsWith("PBY"))
                 {
@@ -213,7 +211,13 @@ namespace Pin80Server
                 }
                 else
                 {
-                    mainForm.addLogEntry(string.Format("ERR Unknown command: {0}", cmd));
+                    if (mainForm.IsHandleCreated)
+                    {
+                        mainForm.BeginInvoke((MethodInvoker)delegate ()
+                        {
+                            mainForm.addLogEntry(string.Format("ERR Unknown command: {0}", cmd));
+                        });
+                    }
                 }
             }
         }

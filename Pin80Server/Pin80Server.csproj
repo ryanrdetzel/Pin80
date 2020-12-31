@@ -69,7 +69,7 @@
     <Compile Include="Models\Actions\Action.cs" />
     <Compile Include="Models\JSONSerializer\Target.cs" />
     <Compile Include="Models\JSONSerializer\Trigger.cs" />
-    <Compile Include="Processors\IProcessor.cs" />
+    <Compile Include="Processors\Processor.cs" />
     <Compile Include="Processors\PBYProcessor.cs" />
     <Compile Include="Processors\VPXProcessor.cs" />
     <Compile Include="Models\JSONSerializer\ControlItem.cs" />

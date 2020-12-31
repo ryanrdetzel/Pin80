@@ -7,27 +7,13 @@ using System.Windows.Forms;
 
 namespace Pin80Server.CommandProcessors
 {
-    internal class VPXProcessor : IProcessor
+    public class VPXProcessor : Processor
     {
-        private readonly SerialPort serial;
-        private readonly DataProcessor dataProcessor;
-        private MainForm mainForm;
 
-        private string _romName;
         private const int LagIgnoreMS = 30;
 
-        public VPXProcessor(DataProcessor d, SerialPort s)
+        public VPXProcessor(DataProcessor d, SerialPort s): base(d,s)
         {
-            serial = s;
-            dataProcessor = d;
-        }
-        public string romName()
-        {
-            return _romName;
-        }
-        public void setMainForm(MainForm mf)
-        {
-            mainForm = mf;
         }
 
         public static (bool, string, string, string) splitCommandString(string command)
@@ -49,7 +35,7 @@ namespace Pin80Server.CommandProcessors
          * Commands are broken down as:
          * TRIGGER ACTION TIMESTAMP
          */
-        public bool processCommand(string command)
+        override public bool processCommand(string command)
         {
             if (serial == null)
             {
