@@ -71,11 +71,7 @@ namespace Pin80Server.Models.Actions
                 var port = target.port;
 
                 // TODO If there is a delay work with that first
-
                 serial.Write(string.Format("{0} ON\n", port));
-
-                Debug.WriteLine("ON " + port);
-
                 Task.Run(async delegate
                 {
                     await Task.Delay(TimeSpan.FromMilliseconds(duration));

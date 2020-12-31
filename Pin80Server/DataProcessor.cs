@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Library.Forms;
+using Newtonsoft.Json;
 using Pin80Server.Models;
 using Pin80Server.Models.Actions;
 using Pin80Server.Models.JSONSerializer;
@@ -22,7 +23,7 @@ namespace Pin80Server
 
         public BindingSource bSource;
 
-        public BindingList<ControlItem> controllerData = new BindingList<ControlItem>();
+        public SortableBindingList<ControlItem> controllerData = new SortableBindingList<ControlItem>();
 
         public Dictionary<string, Trigger> triggersDict = new Dictionary<string, Trigger>();
         public Dictionary<string, Target> targetsDict = new Dictionary<string, Target>();
@@ -40,6 +41,17 @@ namespace Pin80Server
             controllerData.ListChanged += ControllerData_ListChanged;
         }
 
+        public void SortList()
+        {
+            //var sortedListInstance = new BindingList<ControlItem>(controllerData
+            //    .OrderBy(x => !x.enabled)
+            //    .ThenBy(x => x.triggerString).ToList());
+            //var sortedList = controllerData.OrderBy(x => !x.enabled).ToList();
+            //controllerData = new BindingList<ControlItem>(sortedList);
+            ////bSource.DataSource = sortedListInstance;
+            //controllerData.ResetBindings();
+        }
+
         private void ControllerData_ListChanged(object sender, ListChangedEventArgs e)
         {
             unsavedChanges = true;
@@ -52,12 +64,30 @@ namespace Pin80Server
 
         public void addControlItem(ControlItem item)
         {
-            controllerData.Add(item);
+            controllerData.Insert(0, item);
         }
 
         public void deleteControlItem(ControlItem item)
         {
             controllerData.Remove(item);
+        }
+
+        public void duplicateItem(ControlItem item)
+        {
+            ControlItem newItem = new ControlItem(item.triggerString, item.value);
+            newItem.actionString = item.actionString;
+            newItem.targetString = item.targetString;
+            newItem.comment = item.comment;
+            addControlItem(newItem);
+        }
+
+        public void deleteAllDisabled()
+        {
+            var co = controllerData.Where(item => !item.enabled).ToList();
+            foreach (ControlItem item in co)
+            {
+                controllerData.Remove(item);
+            }
         }
 
         public void updateControlItem(ControlItem NewItem)
@@ -175,18 +205,19 @@ namespace Pin80Server
 
             var ldata = LoadFile(fullPath);
 
-            var sortedListInstance = new BindingList<ControlItem>(ldata.OrderBy(x => x.triggerString).ToList());
+            //var sortedListInstance = new BindingList<ControlItem>(ldata.OrderBy(x => !x.enabled).ThenBy(x => x.triggerString).ToList());
 
             // Add each item on the UI thread
             if (mainForm.IsHandleCreated)
             {
                 mainForm.BeginInvoke((MethodInvoker)delegate ()
                 {
-                    foreach (var d in sortedListInstance)
+                    foreach (var d in ldata)
                     {
                         controllerData.Add(d);
                     }
                     unsavedChanges = false;
+                    //SortList();
                 });
             }
 

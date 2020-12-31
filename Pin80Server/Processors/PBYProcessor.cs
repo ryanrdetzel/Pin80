@@ -2,10 +2,11 @@
 
 namespace Pin80Server.CommandProcessors
 {
-    internal class PBYProcessor : Processor
+    internal class PBYProcessor : IProcessor
     {
         private readonly SerialPort serial;
         private readonly DataProcessor dataProcessor;
+        private MainForm mainForm;
 
         private string _romName;
 
@@ -19,8 +20,12 @@ namespace Pin80Server.CommandProcessors
         {
             return _romName;
         }
+        public void setMainForm(MainForm mf)
+        {
+            mainForm = mf;
+        }
 
-        public bool processCommand(string command, MainForm mainForm)
+        public bool processCommand(string command)
         {
             if (serial == null)
             {

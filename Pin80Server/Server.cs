@@ -89,6 +89,8 @@ namespace Pin80Server
             mainForm.Shown += mainForm_Shown;
 
             dataProcessor.setMainForm(mainForm);
+            vpxProcessor.setMainForm(mainForm);
+            vbyProcessor.setMainForm(mainForm);
 
             Application.Run(mainForm);
         }
@@ -195,8 +197,8 @@ namespace Pin80Server
             while (true)
             {
                 var cmd = commandQueue.Take();
-                Debug.WriteLine(cmd);
                 string[] commandParts = cmd.Split(' ');
+                string source = commandParts[0];
 
                 if (mainForm.IsHandleCreated)
                 {
@@ -206,20 +208,22 @@ namespace Pin80Server
                     });
                 }
 
-                string source = commandParts[0];
-
                 // Process the command through the appropriate processor
 
                 // PinballY 
                 if (source.StartsWith("PBY"))
                 {
-                    vbyProcessor.processCommand(cmd, mainForm);
+                    vbyProcessor.processCommand(cmd);
                 }
                 // Virutal Pinball X
                 else if (source == "VPX")
                 {
                     string command = string.Join(" ", commandParts.Skip(1)); // Don't care about the source
-                    vpxProcessor.processCommand(command, mainForm);
+                    vpxProcessor.processCommand(command);
+                }
+                else
+                {
+                    mainForm.addLogEntry(string.Format("ERR Unknown command: {0}", cmd));
                 }
             }
         }

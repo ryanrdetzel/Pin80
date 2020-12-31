@@ -4,6 +4,7 @@
     {
         public const string SettingAutoAddItems = "AutoAddItems";
         public const string SettingItemFilter = "ItemFilter";
+        public const string SettingLogBlockDuplicates = "LogBlockDuplicates";
 
     }
 }

@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SortableBindingList.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataProcessor.cs" />
@@ -67,7 +68,7 @@
     <Compile Include="Models\Actions\IAction.cs" />
     <Compile Include="Models\JSONSerializer\Target.cs" />
     <Compile Include="Models\JSONSerializer\Trigger.cs" />
-    <Compile Include="Processors\Processor.cs" />
+    <Compile Include="Processors\IProcessor.cs" />
     <Compile Include="Processors\PBYProcessor.cs" />
     <Compile Include="Processors\VPXProcessor.cs" />
     <Compile Include="Models\JSONSerializer\ControlItem.cs" />

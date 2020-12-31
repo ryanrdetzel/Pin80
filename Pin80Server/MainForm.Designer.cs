@@ -31,10 +31,10 @@ namespace Pin80Server
         {
             this.components = new System.ComponentModel.Container();
             this.itemMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.stripMenuTest = new System.Windows.Forms.ToolStripMenuItem();
             this.stripMenuIgnore = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.deleteItemItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.logFilter = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tableComboBox = new System.Windows.Forms.ComboBox();
             this.itemFilterCombo = new System.Windows.Forms.ComboBox();
@@ -45,6 +45,20 @@ namespace Pin80Server
             this.tabView = new System.Windows.Forms.TabControl();
             this.Control = new System.Windows.Forms.TabPage();
             this.controlDataGridView = new System.Windows.Forms.DataGridView();
+            this.Triggers = new System.Windows.Forms.TabPage();
+            this.autoAddItemsCheckbox = new System.Windows.Forms.CheckBox();
+            this.filterTextBox = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.logListViews = new System.Windows.Forms.ListBox();
+            this.logMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.clearLogItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.disableLogItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.logginStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.autoAddEnabledLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.deleteAllDisabled = new System.Windows.Forms.ToolStripMenuItem();
+            this.duplicate = new System.Windows.Forms.ToolStripMenuItem();
+            this.addAsItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.triggerString = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -52,15 +66,9 @@ namespace Pin80Server
             this.actionString = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.targetString = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.commnet = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Triggers = new System.Windows.Forms.TabPage();
-            this.autoAddItemsCheckbox = new System.Windows.Forms.CheckBox();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.logMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.clearLogItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.disableLogItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.logginStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.autoAddEnabledLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.clearLogButton = new System.Windows.Forms.Button();
+            this.disableButton = new System.Windows.Forms.Button();
+            this.ignoreDuplicatesCheckbox = new System.Windows.Forms.CheckBox();
             this.itemMenuStrip.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -78,37 +86,40 @@ namespace Pin80Server
             // itemMenuStrip
             // 
             this.itemMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.stripMenuTest,
             this.stripMenuIgnore,
+            this.logFilter,
+            this.duplicate,
             this.toolStripSeparator1,
-            this.deleteItemItem});
+            this.deleteItemItem,
+            this.deleteAllDisabled});
             this.itemMenuStrip.Name = "contextMenuStrip1";
-            this.itemMenuStrip.Size = new System.Drawing.Size(135, 76);
+            this.itemMenuStrip.Size = new System.Drawing.Size(173, 120);
             this.itemMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             this.itemMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.contextMenuStrip1_ItemClicked);
             // 
-            // stripMenuTest
-            // 
-            this.stripMenuTest.Name = "stripMenuTest";
-            this.stripMenuTest.Size = new System.Drawing.Size(134, 22);
-            this.stripMenuTest.Text = "Test";
-            // 
             // stripMenuIgnore
             // 
+            this.stripMenuIgnore.Enabled = false;
             this.stripMenuIgnore.Name = "stripMenuIgnore";
-            this.stripMenuIgnore.Size = new System.Drawing.Size(134, 22);
+            this.stripMenuIgnore.Size = new System.Drawing.Size(172, 22);
             this.stripMenuIgnore.Text = "Ignore";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(131, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(169, 6);
             // 
             // deleteItemItem
             // 
             this.deleteItemItem.Name = "deleteItemItem";
-            this.deleteItemItem.Size = new System.Drawing.Size(134, 22);
+            this.deleteItemItem.Size = new System.Drawing.Size(172, 22);
             this.deleteItemItem.Text = "Delete Item";
+            // 
+            // logFilter
+            // 
+            this.logFilter.Name = "logFilter";
+            this.logFilter.Size = new System.Drawing.Size(172, 22);
+            this.logFilter.Text = "Set as log filter";
             // 
             // panel1
             // 
@@ -135,6 +146,7 @@ namespace Pin80Server
             // 
             // itemFilterCombo
             // 
+            this.itemFilterCombo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.itemFilterCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.itemFilterCombo.Enabled = false;
             this.itemFilterCombo.FormattingEnabled = true;
@@ -156,7 +168,7 @@ namespace Pin80Server
             this.addItemButton.Name = "addItemButton";
             this.addItemButton.Size = new System.Drawing.Size(75, 23);
             this.addItemButton.TabIndex = 6;
-            this.addItemButton.Text = "New Item";
+            this.addItemButton.Text = "Add Item";
             this.addItemButton.UseVisualStyleBackColor = true;
             this.addItemButton.Click += new System.EventHandler(this.addItemButton_Click);
             // 
@@ -195,7 +207,12 @@ namespace Pin80Server
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.listBox1);
+            this.splitContainer1.Panel2.Controls.Add(this.ignoreDuplicatesCheckbox);
+            this.splitContainer1.Panel2.Controls.Add(this.disableButton);
+            this.splitContainer1.Panel2.Controls.Add(this.clearLogButton);
+            this.splitContainer1.Panel2.Controls.Add(this.filterTextBox);
+            this.splitContainer1.Panel2.Controls.Add(this.label1);
+            this.splitContainer1.Panel2.Controls.Add(this.logListViews);
             this.splitContainer1.Size = new System.Drawing.Size(845, 511);
             this.splitContainer1.SplitterDistance = 300;
             this.splitContainer1.TabIndex = 8;
@@ -249,7 +266,6 @@ namespace Pin80Server
             this.controlDataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnKeystroke;
             this.controlDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
             this.controlDataGridView.Location = new System.Drawing.Point(6, 6);
-            this.controlDataGridView.MultiSelect = false;
             this.controlDataGridView.Name = "controlDataGridView";
             this.controlDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
             this.controlDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -261,63 +277,6 @@ namespace Pin80Server
             this.controlDataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.controlDataGridView_CellValueChanged);
             this.controlDataGridView.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowEnter);
             this.controlDataGridView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.controlDataGridView_MouseDoubleClick);
-            // 
-            // enabled
-            // 
-            this.enabled.DataPropertyName = "enabled";
-            this.enabled.HeaderText = "Enabled";
-            this.enabled.Name = "enabled";
-            this.enabled.Width = 52;
-            // 
-            // Id
-            // 
-            this.Id.DataPropertyName = "id";
-            this.Id.HeaderText = "ID";
-            this.Id.Name = "Id";
-            this.Id.ReadOnly = true;
-            this.Id.Visible = false;
-            this.Id.Width = 43;
-            // 
-            // triggerString
-            // 
-            this.triggerString.DataPropertyName = "triggerString";
-            this.triggerString.HeaderText = "Trigger";
-            this.triggerString.Name = "triggerString";
-            this.triggerString.ReadOnly = true;
-            this.triggerString.Width = 65;
-            // 
-            // valueString
-            // 
-            this.valueString.DataPropertyName = "value";
-            this.valueString.HeaderText = "Value";
-            this.valueString.Name = "valueString";
-            this.valueString.ReadOnly = true;
-            this.valueString.Width = 59;
-            // 
-            // actionString
-            // 
-            this.actionString.DataPropertyName = "actionString";
-            this.actionString.FillWeight = 120F;
-            this.actionString.HeaderText = "Action";
-            this.actionString.Name = "actionString";
-            this.actionString.ReadOnly = true;
-            this.actionString.Width = 62;
-            // 
-            // targetString
-            // 
-            this.targetString.DataPropertyName = "targetString";
-            this.targetString.HeaderText = "Target";
-            this.targetString.Name = "targetString";
-            this.targetString.ReadOnly = true;
-            this.targetString.Width = 63;
-            // 
-            // commnet
-            // 
-            this.commnet.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.commnet.DataPropertyName = "comment";
-            this.commnet.HeaderText = "Comment";
-            this.commnet.Name = "commnet";
-            this.commnet.ReadOnly = true;
             // 
             // Triggers
             // 
@@ -341,39 +300,56 @@ namespace Pin80Server
             this.autoAddItemsCheckbox.UseVisualStyleBackColor = true;
             this.autoAddItemsCheckbox.CheckedChanged += new System.EventHandler(this.autoAddItemsCheckbox_CheckedChanged);
             // 
-            // listBox1
+            // filterTextBox
             // 
-            this.listBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.filterTextBox.Location = new System.Drawing.Point(37, 5);
+            this.filterTextBox.Name = "filterTextBox";
+            this.filterTextBox.Size = new System.Drawing.Size(100, 20);
+            this.filterTextBox.TabIndex = 4;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(29, 13);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Filter";
+            // 
+            // logListViews
+            // 
+            this.logListViews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.listBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listBox1.ContextMenuStrip = this.logMenuStrip;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(5, 5);
-            this.listBox1.Margin = new System.Windows.Forms.Padding(1);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(837, 197);
-            this.listBox1.TabIndex = 2;
+            this.logListViews.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.logListViews.ContextMenuStrip = this.logMenuStrip;
+            this.logListViews.FormattingEnabled = true;
+            this.logListViews.Location = new System.Drawing.Point(5, 31);
+            this.logListViews.Margin = new System.Windows.Forms.Padding(1);
+            this.logListViews.Name = "logListViews";
+            this.logListViews.Size = new System.Drawing.Size(837, 171);
+            this.logListViews.TabIndex = 2;
             // 
             // logMenuStrip
             // 
             this.logMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.clearLogItem,
-            this.disableLogItem});
+            this.disableLogItem,
+            this.addAsItem});
             this.logMenuStrip.Name = "logMenuStrip";
-            this.logMenuStrip.Size = new System.Drawing.Size(136, 48);
+            this.logMenuStrip.Size = new System.Drawing.Size(138, 70);
             this.logMenuStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.logMenuStrip_ItemClicked);
             // 
             // clearLogItem
             // 
             this.clearLogItem.Name = "clearLogItem";
-            this.clearLogItem.Size = new System.Drawing.Size(135, 22);
+            this.clearLogItem.Size = new System.Drawing.Size(137, 22);
             this.clearLogItem.Text = "Clear Log";
             // 
             // disableLogItem
             // 
             this.disableLogItem.Name = "disableLogItem";
-            this.disableLogItem.Size = new System.Drawing.Size(135, 22);
+            this.disableLogItem.Size = new System.Drawing.Size(137, 22);
             this.disableLogItem.Tag = "disableLogItem";
             this.disableLogItem.Text = "Disable Log";
             // 
@@ -403,6 +379,116 @@ namespace Pin80Server
             this.autoAddEnabledLabel.Size = new System.Drawing.Size(179, 19);
             this.autoAddEnabledLabel.Text = "Auto Add Items Enabled";
             // 
+            // deleteAllDisabled
+            // 
+            this.deleteAllDisabled.Name = "deleteAllDisabled";
+            this.deleteAllDisabled.Size = new System.Drawing.Size(172, 22);
+            this.deleteAllDisabled.Text = "Delete All Disabled";
+            // 
+            // duplicate
+            // 
+            this.duplicate.Name = "duplicate";
+            this.duplicate.Size = new System.Drawing.Size(172, 22);
+            this.duplicate.Text = "Duplicate Item";
+            // 
+            // addAsItem
+            // 
+            this.addAsItem.Name = "addAsItem";
+            this.addAsItem.Size = new System.Drawing.Size(137, 22);
+            this.addAsItem.Text = "Add as Item";
+            // 
+            // enabled
+            // 
+            this.enabled.DataPropertyName = "enabled";
+            this.enabled.HeaderText = "Enabled";
+            this.enabled.Name = "enabled";
+            this.enabled.Width = 52;
+            // 
+            // Id
+            // 
+            this.Id.DataPropertyName = "id";
+            this.Id.HeaderText = "ID";
+            this.Id.Name = "Id";
+            this.Id.ReadOnly = true;
+            this.Id.Visible = false;
+            this.Id.Width = 43;
+            // 
+            // triggerString
+            // 
+            this.triggerString.DataPropertyName = "triggerString";
+            this.triggerString.FillWeight = 120F;
+            this.triggerString.HeaderText = "Trigger";
+            this.triggerString.Name = "triggerString";
+            this.triggerString.ReadOnly = true;
+            this.triggerString.Width = 65;
+            // 
+            // valueString
+            // 
+            this.valueString.DataPropertyName = "value";
+            this.valueString.FillWeight = 120F;
+            this.valueString.HeaderText = "Value";
+            this.valueString.Name = "valueString";
+            this.valueString.ReadOnly = true;
+            this.valueString.Width = 59;
+            // 
+            // actionString
+            // 
+            this.actionString.DataPropertyName = "actionString";
+            this.actionString.FillWeight = 120F;
+            this.actionString.HeaderText = "Action";
+            this.actionString.Name = "actionString";
+            this.actionString.ReadOnly = true;
+            this.actionString.Width = 62;
+            // 
+            // targetString
+            // 
+            this.targetString.DataPropertyName = "targetString";
+            this.targetString.FillWeight = 120F;
+            this.targetString.HeaderText = "Target";
+            this.targetString.Name = "targetString";
+            this.targetString.ReadOnly = true;
+            this.targetString.Width = 63;
+            // 
+            // commnet
+            // 
+            this.commnet.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.commnet.DataPropertyName = "comment";
+            this.commnet.HeaderText = "Comment";
+            this.commnet.Name = "commnet";
+            this.commnet.ReadOnly = true;
+            // 
+            // clearLogButton
+            // 
+            this.clearLogButton.Location = new System.Drawing.Point(144, 4);
+            this.clearLogButton.Name = "clearLogButton";
+            this.clearLogButton.Size = new System.Drawing.Size(75, 23);
+            this.clearLogButton.TabIndex = 5;
+            this.clearLogButton.Text = "Clear";
+            this.clearLogButton.UseVisualStyleBackColor = true;
+            this.clearLogButton.Click += new System.EventHandler(this.clearLogButton_Click);
+            // 
+            // disableButton
+            // 
+            this.disableButton.Enabled = false;
+            this.disableButton.Location = new System.Drawing.Point(220, 5);
+            this.disableButton.Name = "disableButton";
+            this.disableButton.Size = new System.Drawing.Size(75, 23);
+            this.disableButton.TabIndex = 6;
+            this.disableButton.Text = "Disable";
+            this.disableButton.UseVisualStyleBackColor = true;
+            // 
+            // ignoreDuplicatesCheckbox
+            // 
+            this.ignoreDuplicatesCheckbox.AutoSize = true;
+            this.ignoreDuplicatesCheckbox.Enabled = false;
+            this.ignoreDuplicatesCheckbox.Location = new System.Drawing.Point(301, 8);
+            this.ignoreDuplicatesCheckbox.Name = "ignoreDuplicatesCheckbox";
+            this.ignoreDuplicatesCheckbox.Size = new System.Drawing.Size(109, 17);
+            this.ignoreDuplicatesCheckbox.TabIndex = 7;
+            this.ignoreDuplicatesCheckbox.Text = "Ignore Duplicates";
+            this.ignoreDuplicatesCheckbox.UseVisualStyleBackColor = true;
+            this.ignoreDuplicatesCheckbox.CheckedChanged += new System.EventHandler(this.ignoreDuplicatesCheckbox_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -423,6 +509,7 @@ namespace Pin80Server
             this.panel1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.tabView.ResumeLayout(false);
@@ -443,10 +530,9 @@ namespace Pin80Server
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button addItemButton;
         private System.Windows.Forms.ContextMenuStrip itemMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem stripMenuTest;
         private System.Windows.Forms.ToolStripMenuItem stripMenuIgnore;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox logListViews;
         private System.Windows.Forms.TabControl tabView;
         private System.Windows.Forms.TabPage Control;
         private System.Windows.Forms.DataGridView controlDataGridView;
@@ -462,6 +548,13 @@ namespace Pin80Server
         private System.Windows.Forms.ToolStripMenuItem deleteItemItem;
         private System.Windows.Forms.ComboBox itemFilterCombo;
         private System.Windows.Forms.Label tableNameLabel;
+        private System.Windows.Forms.ComboBox tableComboBox;
+        private System.Windows.Forms.TextBox filterTextBox;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStripMenuItem logFilter;
+        private System.Windows.Forms.ToolStripMenuItem deleteAllDisabled;
+        private System.Windows.Forms.ToolStripMenuItem duplicate;
+        private System.Windows.Forms.ToolStripMenuItem addAsItem;
         private System.Windows.Forms.DataGridViewCheckBoxColumn enabled;
         private System.Windows.Forms.DataGridViewTextBoxColumn Id;
         private System.Windows.Forms.DataGridViewTextBoxColumn triggerString;
@@ -469,7 +562,9 @@ namespace Pin80Server
         private System.Windows.Forms.DataGridViewTextBoxColumn actionString;
         private System.Windows.Forms.DataGridViewTextBoxColumn targetString;
         private System.Windows.Forms.DataGridViewTextBoxColumn commnet;
-        private System.Windows.Forms.ComboBox tableComboBox;
+        private System.Windows.Forms.Button clearLogButton;
+        private System.Windows.Forms.CheckBox ignoreDuplicatesCheckbox;
+        private System.Windows.Forms.Button disableButton;
     }
 }
 

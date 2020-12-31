@@ -7,10 +7,11 @@ using System.Windows.Forms;
 
 namespace Pin80Server.CommandProcessors
 {
-    internal class VPXProcessor : Processor
+    internal class VPXProcessor : IProcessor
     {
         private readonly SerialPort serial;
         private readonly DataProcessor dataProcessor;
+        private MainForm mainForm;
 
         private string _romName;
         private const int LagIgnoreMS = 30;
@@ -24,12 +25,31 @@ namespace Pin80Server.CommandProcessors
         {
             return _romName;
         }
+        public void setMainForm(MainForm mf)
+        {
+            mainForm = mf;
+        }
+
+        public static (bool, string, string, string) splitCommandString(string command)
+        {
+            string[] commandParts = command.Split(' ');
+            if (commandParts.Length < 3)
+            {
+                Debug.WriteLine(string.Format("Command is not valid: {0}", command));
+                return (false, null, null, null);
+            }
+            string triggerString = commandParts[0];
+            string valueString = commandParts[1];
+            string extraString = string.Join(" ", commandParts.Skip(2));
+
+            return (true, triggerString, valueString, extraString);
+        }
 
         /*
          * Commands are broken down as:
          * TRIGGER ACTION TIMESTAMP
          */
-        public bool processCommand(string command, MainForm mainForm)
+        public bool processCommand(string command)
         {
             if (serial == null)
             {
@@ -38,17 +58,25 @@ namespace Pin80Server.CommandProcessors
 
             try
             {
-                string[] commandParts = command.Split(' ');
-
-                if (commandParts.Length < 3)
+                var (success, triggerString, valueString, extraString) = splitCommandString(command);
+                if (!success)
                 {
-                    Debug.WriteLine(string.Format("Command is not valid: {0}", command));
+                    mainForm.addLogEntry(string.Format("ERR command is not valid: {0}", command));
                     return false;
                 }
+                //string[] commandParts = command.Split(' ');
 
-                string triggerString = commandParts[0];
-                string valueString = commandParts[1];
-                string extraString = string.Join(" ", commandParts.Skip(2));
+                //if (commandParts.Length < 3)
+                //{
+                //    Debug.WriteLine(string.Format("Command is not valid: {0}", command));
+                //    mainForm.addLogEntry(string.Format("ERR command is not valid: {0}", command));
+
+                //    return false;
+                //}
+
+                //string triggerString = commandParts[0];
+                //string valueString = commandParts[1];
+                //string extraString = string.Join(" ", commandParts.Skip(2));
 
                 var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
@@ -80,7 +108,7 @@ namespace Pin80Server.CommandProcessors
                     {
                         mainForm.BeginInvoke((MethodInvoker)delegate ()
                         {
-                            mainForm.addLogEntry(string.Format("Ignoring command {0} as it's too old: {1}", command, lag));
+                            mainForm.addLogEntry(string.Format("ERR Ignoring command {0} as it's too old: {1}", command, lag));
                         });
                     }
                 }
@@ -123,14 +151,9 @@ namespace Pin80Server.CommandProcessors
             catch (Exception e)
             {
                 Debug.WriteLine(string.Format("Could not process command: {0} {1}", command, e));
+                mainForm.addLogEntry(string.Format("ERR failed to process: {0}", command));
                 return false;
             }
-        }
-
-        private string getSetting(string name)
-        {
-            // Read registry
-            return "";
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using Pin80Server.Models.JSONSerializer;
+﻿using Pin80Server.CommandProcessors;
+using Pin80Server.Models.JSONSerializer;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -13,9 +15,11 @@ namespace Pin80Server
     public partial class MainForm : Form
     {
         private const int maxLogLength = 1000;
-        private readonly string filterValue = "";
 
         private bool loggingEnabled = true;
+        private bool ignoreDuplicates = false;
+
+        private List<string> recentLogEntries = new List<string>();
 
         private BlockingCollection<string> commandQueue;
         private DataProcessor dataProcessor;
@@ -37,6 +41,22 @@ namespace Pin80Server
                 itemFilter = itemFilterCombo.Items[0].ToString();
             }
             itemFilterCombo.SelectedItem = itemFilter;
+
+            ignoreDuplicates = Settings.ReadBoolSetting(Constants.SettingLogBlockDuplicates);
+            ignoreDuplicatesCheckbox.Checked = false; // ignoreDuplicates;
+
+            logListViews.LostFocus += (s, fe) => logListViews.SelectedIndices.Clear();
+            controlDataGridView.LostFocus += (s, fe) => controlDataGridView.ClearSelection();
+        }
+
+        public void sortRefresh()
+        {
+            if (controlDataGridView.SortOrder != SortOrder.None && controlDataGridView.SortedColumn != null)
+            {
+                ListSortDirection dir = ListSortDirection.Ascending;
+                if (controlDataGridView.SortOrder == SortOrder.Descending) dir = ListSortDirection.Descending;
+                controlDataGridView.Sort(controlDataGridView.SortedColumn, dir);
+            }
         }
 
         public void setQueueRef(ref BlockingCollection<string> cq)
@@ -55,7 +75,6 @@ namespace Pin80Server
 
         public void setRomName(string name)
         {
-
             tableComboBox.Text = name;
         }
 
@@ -63,13 +82,16 @@ namespace Pin80Server
         {
             if (loggingEnabled)
             {
-                if (filterValue == "" || entry.StartsWith(filterValue))
+                if (filterTextBox.Text == "" || entry.StartsWith(filterTextBox.Text))
                 {
-                    listBox1.Items.Insert(0, entry);
+                    if (!ignoreDuplicates || !recentLogEntries.Contains(entry)) {
+                        recentLogEntries.Add(entry);
+                        logListViews.Items.Insert(0, entry);
+                    }
 
-                    if (listBox1.Items.Count > maxLogLength)
+                    if (logListViews.Items.Count > maxLogLength)
                     {
-                        listBox1.Items.RemoveAt(maxLogLength);
+                        logListViews.Items.RemoveAt(maxLogLength);
                     }
                 }
             }
@@ -250,18 +272,21 @@ namespace Pin80Server
             var row = controlDataGridView.CurrentCell.RowIndex;
             var item = dataProcessor.controllerData[row];
 
-            if (e.ClickedItem.Name == "stripMenuTest")
-            {
-                var trigger = item.triggerString;
-                var value = 0; // item.value;
-
-                var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-                string cmd = string.Format("VPX {0} {1} {2}", trigger, value, now);
-                commandQueue.Add(cmd);
-            }
-            else if (e.ClickedItem.Name == "deleteItemItem")
+            if (e.ClickedItem.Name == "deleteItemItem")
             {
                 dataProcessor.deleteControlItem(item);
+            }
+            else if (e.ClickedItem.Name == "logFilter")
+            {
+                filterTextBox.Text = string.Format("VPX {0}", item.triggerString);
+            }
+            else if (e.ClickedItem.Name == "deleteAllDisabled")
+            {
+                dataProcessor.deleteAllDisabled();
+            }
+            else if (e.ClickedItem.Name == "duplicate")
+            {
+                dataProcessor.duplicateItem(item);
             }
         }
 
@@ -287,9 +312,9 @@ namespace Pin80Server
         {
             if (e.ClickedItem.Name == "clearLogItem")
             {
-                listBox1.Items.Clear();
+                logListViews.Items.Clear();
             }
-            else if (e.ClickedItem.Tag.ToString() == "disableLogItem")
+            else if (e.ClickedItem.Tag != null && e.ClickedItem.Tag.ToString() == "disableLogItem")
             {
                 if (e.ClickedItem.Text == "Disable Log")
                 {
@@ -302,6 +327,24 @@ namespace Pin80Server
                     e.ClickedItem.Text = "Disable Log";
                     statusStrip1.Items[0].Text = "Logging is enabled";
                     loggingEnabled = true;
+                }
+            }
+            else if (e.ClickedItem.Name == "addAsItem")
+            {
+                if (logListViews.SelectedItem == null)
+                {
+                    return;
+                }
+                var logValue = logListViews.SelectedItem.ToString();
+                if (logValue.StartsWith("VPX"))
+                {
+                    Debug.WriteLine(logListViews.SelectedItem.ToString());
+                    var (success, triggerString, valueString, extraString) = VPXProcessor.splitCommandString(logValue.Replace("VPX ",""));
+                    if (success)
+                    {
+                        ControlItem newItem = new ControlItem(triggerString, valueString);
+                        dataProcessor.addControlItem(newItem);
+                    }
                 }
             }
         }
@@ -360,6 +403,16 @@ namespace Pin80Server
                 }
             }
             dataProcessor.LoadTableInformation(Romname);
+        }
+
+        private void clearLogButton_Click(object sender, EventArgs e)
+        {
+            logListViews.Items.Clear();
+        }
+
+        private void ignoreDuplicatesCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.SaveBoolSetting(Constants.SettingLogBlockDuplicates, ignoreDuplicatesCheckbox.Checked);
         }
     }
 }
