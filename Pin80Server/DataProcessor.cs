@@ -27,7 +27,7 @@ namespace Pin80Server
 
         public Dictionary<string, Trigger> triggersDict = new Dictionary<string, Trigger>();
         public Dictionary<string, Target> targetsDict = new Dictionary<string, Target>();
-        public Dictionary<string, IAction> actionsDict = new Dictionary<string, IAction>();
+        public Dictionary<string, Models.Action> actionsDict = new Dictionary<string, Models.Action>();
 
         public bool ContainsListCollection => throw new System.NotImplementedException();
 
@@ -117,7 +117,7 @@ namespace Pin80Server
             return controllerData.Where(item => item.triggerString == trigger).ToList();
         }
 
-        public IAction getAction(string actionId)
+        public Models.Action getAction(string actionId)
         {
             return actionId != null && actionsDict.ContainsKey(actionId) ? actionsDict[actionId] : null;
         }
@@ -147,6 +147,9 @@ namespace Pin80Server
                         break;
                     case "BLINK":
                         actionsDict[action.id] = new BlinkAction(action);
+                        break;
+                    case "PIXEL":
+                        actionsDict[action.id] = new PixelAction(action);
                         break;
                     default:
                         throw new Exception("Not a valid action");

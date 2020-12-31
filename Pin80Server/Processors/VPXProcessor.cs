@@ -64,19 +64,6 @@ namespace Pin80Server.CommandProcessors
                     mainForm.addLogEntry(string.Format("ERR command is not valid: {0}", command));
                     return false;
                 }
-                //string[] commandParts = command.Split(' ');
-
-                //if (commandParts.Length < 3)
-                //{
-                //    Debug.WriteLine(string.Format("Command is not valid: {0}", command));
-                //    mainForm.addLogEntry(string.Format("ERR command is not valid: {0}", command));
-
-                //    return false;
-                //}
-
-                //string triggerString = commandParts[0];
-                //string valueString = commandParts[1];
-                //string extraString = string.Join(" ", commandParts.Skip(2));
 
                 var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
@@ -143,7 +130,11 @@ namespace Pin80Server.CommandProcessors
                         throw new Exception("Could not handle action");
                     }
 
-                    action.handle(valueString, item, trigger, target, serial);
+                    // TODO Check serial connection is all set still.
+                    if (action.Validate(valueString, item))
+                    {
+                        action.Handle(valueString, item, trigger, target, serial);
+                    }
                 }
 
                 return true;

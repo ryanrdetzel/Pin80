@@ -12,7 +12,7 @@ namespace Pin80Server
     {
         private ControlItem item;
         private Trigger trigger;
-        private IAction action;
+        private Models.Action action;
         private Target target;
         private DataProcessor dataProcessor;
         private BlockingCollection<string> commandQueue;

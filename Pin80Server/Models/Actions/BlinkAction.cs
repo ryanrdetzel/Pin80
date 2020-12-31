@@ -4,7 +4,7 @@ using System.IO.Ports;
 
 namespace Pin80Server.Models.Actions
 {
-    public class BlinkAction : IAction
+    public class BlinkAction : Action
     {
         public string name { get; set; }
         public string id { get; set; }
@@ -26,7 +26,7 @@ namespace Pin80Server.Models.Actions
             return name;
         }
 
-        public void handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial)
+        public override void Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial)
         {
             throw new System.NotImplementedException();
         }

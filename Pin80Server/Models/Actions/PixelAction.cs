@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Pin80Server.Models.Actions
 {
-    public class OnOffAction : Action
+    public class PixelAction : Action
     {
         public int delay { get; set; }
         public int duration { get; set; }
 
-        public OnOffAction(JSONSerializer.Action action)
+        public PixelAction(JSONSerializer.Action action)
         {
             name = action.name;
             id = action.id;
