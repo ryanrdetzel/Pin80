@@ -28,19 +28,19 @@ namespace Pin80Server.Models
             }
         }
 
-        public void updatePixel(int number, PixelColor color, long actionStarted)
+        public void updatePixel(int number, PixelColor color, long effectStarted)
         {
             lock (_valueLock)
             {
-                pixels[number].updateColor(color, actionStarted);
+                pixels[number].updateColor(color, effectStarted);
             }
         }
 
-        public void updateAllPixels(PixelColor color, long actionStarted)
+        public void updateAllPixels(PixelColor color, long effectStarted)
         {
             foreach (var pixel in pixels)
             {
-                updatePixel(pixel.num, color, actionStarted);
+                updatePixel(pixel.num, color, effectStarted);
             }
         }
 

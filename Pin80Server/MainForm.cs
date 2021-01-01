@@ -206,12 +206,12 @@ namespace Pin80Server
             }
 
             // Render the cell so it's readable
-            if (controlDataGridView.Columns[e.ColumnIndex].Name == "actionString")
+            if (controlDataGridView.Columns[e.ColumnIndex].Name == "effectString")
             {
                 if (e.Value != null)
                 {
-                    string actionId = (string)e.Value;
-                    string friendlyName = dataProcessor.getAction(actionId).ToString();
+                    string effectId = (string)e.Value;
+                    string friendlyName = dataProcessor.getEffect(effectId).ToString();
                     e.Value = friendlyName;
                 }
             }
@@ -219,12 +219,12 @@ namespace Pin80Server
             {
                 if (e.Value != null)
                 {
-                    string actionId = (string)e.Value;
-                    var trigger = dataProcessor.getTrigger(actionId);
+                    string effectId = (string)e.Value;
+                    var trigger = dataProcessor.getTrigger(effectId);
                     if (trigger != null)
                     {
-                        e.Value = dataProcessor.getTrigger(actionId).ToString();
-                        cell.ToolTipText = dataProcessor.getTrigger(actionId).name;
+                        e.Value = dataProcessor.getTrigger(effectId).ToString();
+                        cell.ToolTipText = dataProcessor.getTrigger(effectId).name;
                     }
                 }
             }
@@ -232,11 +232,11 @@ namespace Pin80Server
             {
                 if (e.Value != null)
                 {
-                    string actionId = (string)e.Value;
-                    string friendlyName = dataProcessor.getTarget(actionId).ToString();
+                    string effectId = (string)e.Value;
+                    string friendlyName = dataProcessor.getTarget(effectId).ToString();
                     e.Value = friendlyName;
 
-                    cell.ToolTipText = dataProcessor.getTarget(actionId).id;
+                    cell.ToolTipText = dataProcessor.getTarget(effectId).id;
                 }
             }
         }

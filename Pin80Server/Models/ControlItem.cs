@@ -75,8 +75,8 @@ namespace Pin80Server.Models.JSONSerializer
         [JsonProperty("value")]
         public string value { get; set; }
 
-        [JsonProperty("action")]
-        public string actionString { get; set; }
+        [JsonProperty("effect")]
+        public string effectString { get; set; }
 
         [JsonProperty("target")]
         public string targetString { get; set; }
@@ -88,7 +88,7 @@ namespace Pin80Server.Models.JSONSerializer
         {
             if (triggerString != null && triggerString != "")
             {
-                if (actionString != null && actionString != "")
+                if (effectString != null && effectString != "")
                 {
                     if (targetString != null && targetString != "")
                     {
@@ -101,7 +101,7 @@ namespace Pin80Server.Models.JSONSerializer
 
         public override string ToString()
         {
-            return string.Format("{0} {1}", triggerString, actionString);
+            return string.Format("{0} {1}", triggerString, effectString);
         }
     }
 }

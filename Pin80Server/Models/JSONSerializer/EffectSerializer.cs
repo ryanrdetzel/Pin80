@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Pin80Server.Models.JSONSerializer
 {
-    public class ActionSerializer
+    public class EffectSerializer
     {
         [JsonProperty(Required = Required.Always)]
         public string id { get; set; }

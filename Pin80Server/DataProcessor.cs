@@ -1,7 +1,7 @@
 ﻿using Library.Forms;
 using Newtonsoft.Json;
 using Pin80Server.Models;
-using Pin80Server.Models.Actions;
+using Pin80Server.Models.Effects;
 using Pin80Server.Models.JSONSerializer;
 using System;
 using System.Collections.Concurrent;
@@ -29,7 +29,7 @@ namespace Pin80Server
 
         public Dictionary<string, Trigger> triggersDict = new Dictionary<string, Trigger>();
         public Dictionary<string, Models.Target> targetsDict = new Dictionary<string, Models.Target>();
-        public Dictionary<string, Models.Action> actionsDict = new Dictionary<string, Models.Action>();
+        public Dictionary<string, Effect> effectsDict = new Dictionary<string, Effect>();
 
         public bool ContainsListCollection => throw new System.NotImplementedException();
 
@@ -82,7 +82,7 @@ namespace Pin80Server
         public void duplicateItem(ControlItem item)
         {
             ControlItem newItem = new ControlItem(item.triggerString, item.value);
-            newItem.actionString = item.actionString;
+            newItem.effectString = item.effectString;
             newItem.targetString = item.targetString;
             newItem.comment = item.comment;
             addControlItem(newItem);
@@ -124,9 +124,9 @@ namespace Pin80Server
             return controllerData.Where(item => item.triggerString == trigger).ToList();
         }
 
-        public Models.Action getAction(string actionId)
+        public Effect getEffect(string effectId)
         {
-            return actionId != null && actionsDict.ContainsKey(actionId) ? actionsDict[actionId] : null;
+            return effectId != null && effectsDict.ContainsKey(effectId) ? effectsDict[effectId] : null;
         }
 
         /* Always returns a trigger */
@@ -140,32 +140,32 @@ namespace Pin80Server
             return id != null && targetsDict.ContainsKey(id) ? targetsDict[id] : null;
         }
 
-        private void populateActions()
+        private void populateEffects()
         {
-            var actionFullPath = Path.Combine(@"Data", $"actions.json");
-            var actionList = LoadActions(actionFullPath);
-            //Convert the json to actual actions
-            actionList.ForEach(action =>
+            var effectFullPath = Path.Combine(@"Data", $"effects.json");
+            var effectList = LoadEffect(effectFullPath);
+            //Convert the json to actual effects
+            effectList.ForEach(effect =>
             {
                 /**
-                 * Make sure to add these to the target validActions
+                 * Make sure to add these to the target validEffects
                  */
-                switch (action.kind)
+                switch (effect.kind)
                 {
                     case "ONOFF":
-                        actionsDict[action.id] = new OnOffAction(action);
+                        effectsDict[effect.id] = new OnOffEffect(effect);
                         break;
                     case "PIXEL":
-                        actionsDict[action.id] = new PixelAction(action);
+                        effectsDict[effect.id] = new PixelEffect(effect);
                         break;
                     case "PIXELRUN":
-                        actionsDict[action.id] = new PixelRunAction(action);
+                        effectsDict[effect.id] = new PixelRunEffect(effect);
                         break;
                     case "PIXELCOMIT":
-                        actionsDict[action.id] = new PixelComitAction(action);
+                        effectsDict[effect.id] = new PixelComitEffect(effect);
                         break;
                     default:
-                        throw new Exception("Not a valid action");
+                        throw new Exception("Not a valid effect");
                 }
             });
         }
@@ -175,7 +175,7 @@ namespace Pin80Server
             var fullPath = Path.Combine(@"Data", "Tables", $"{Romname}-triggers.json");
             var triggerList = LoadTriggers(fullPath);
 
-            //Convert the json to actual actions
+            //Convert the json to actual effects
             triggerList.ForEach(trigger =>
             {
                 triggersDict[trigger.command] = trigger;
@@ -187,7 +187,7 @@ namespace Pin80Server
             var fullPath = Path.Combine(@"Data", $"targets.json");
             var targetList = LoadTargets(fullPath);
 
-            //Convert the json to actual actions
+            //Convert the json to actual effects
             targetList.ForEach(target =>
             {
                 switch (target.kind)
@@ -209,7 +209,7 @@ namespace Pin80Server
             this.Romname = Romname;
             var fullPath = Path.Combine(@"Data", "Tables", $"{Romname}.json");
 
-            actionsDict.Clear();
+            effectsDict.Clear();
             targetsDict.Clear();
             triggersDict.Clear();
 
@@ -224,8 +224,8 @@ namespace Pin80Server
 
             // TODO Search for various combinations of files.
 
-            // TODO Can't continue unless we have actions and triggers.
-            populateActions();
+            // TODO Can't continue unless we have effects and triggers.
+            populateEffects();
             populateTriggers();
             populateTargets();
 
@@ -240,14 +240,14 @@ namespace Pin80Server
                 {
                     foreach (var item in controlItems)
                     {
-                        // Make sure actions and targets still exist for all the controlItems.
+                        // Make sure effects and targets still exist for all the controlItems.
                         // If they don't, clear it and disable the item
-                        Models.Action action = getAction(item.actionString);
+                        Effect effect = getEffect(item.effectString);
                         Models.Target target = getTarget(item.targetString);
 
-                        if (action == null)
+                        if (effect == null)
                         {
-                            item.actionString = null;
+                            item.effectString = null;
                             item.enabled = false;
                         }
 
@@ -298,12 +298,12 @@ namespace Pin80Server
             }
         }
 
-        private List<Models.JSONSerializer.ActionSerializer> LoadActions(string fullPath)
+        private List<Models.JSONSerializer.EffectSerializer> LoadEffect(string fullPath)
         {
             using (StreamReader r = new StreamReader(fullPath))
             {
                 string json = r.ReadToEnd();
-                return JsonConvert.DeserializeObject<List<Models.JSONSerializer.ActionSerializer>>(json);
+                return JsonConvert.DeserializeObject<List<Models.JSONSerializer.EffectSerializer>>(json);
             }
         }
 

@@ -15,13 +15,13 @@
             this.num = num;
         }
 
-        public void updateColor(PixelColor color, long actionStarted)
+        public void updateColor(PixelColor color, long effectStarted)
         {
-            if (actionStarted >= lastUpdate) // Only update if it's more recent.
+            if (effectStarted >= lastUpdate) // Only update if it's more recent.
             {
                 this.color = color;
                 needsUpdate = true;
-                lastUpdate = actionStarted;
+                lastUpdate = effectStarted;
             }
         }
     }

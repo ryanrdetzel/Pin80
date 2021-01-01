@@ -4,11 +4,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Pin80Server.Models.Actions
+namespace Pin80Server.Models.Effects
 {
-    public class PixelRunAction : Action
+    public class PixelRunEffect : Effect
     {
-        public PixelRunAction(ActionSerializer action) : base(action)
+        public PixelRunEffect(EffectSerializer effect) : base(effect)
         {
         }
 
@@ -29,7 +29,7 @@ namespace Pin80Server.Models.Actions
                 await Task.Delay(TimeSpan.FromMilliseconds(delay));
                 token.ThrowIfCancellationRequested();
 
-                long actionStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                long effectStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
                 var nextUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
                 bool running = true;
@@ -43,7 +43,7 @@ namespace Pin80Server.Models.Actions
                     {
                         token.ThrowIfCancellationRequested();
 
-                        pixelTarget.updatePixel(onLedNumber, color, actionStarted);
+                        pixelTarget.updatePixel(onLedNumber, color, effectStarted);
 
                         if (onLedNumber++ >= numberOfLeds - 1)
                         {
@@ -67,7 +67,7 @@ namespace Pin80Server.Models.Actions
                         {
                             token.ThrowIfCancellationRequested();
 
-                            pixelTarget.updatePixel(onLedNumber, color, actionStarted);
+                            pixelTarget.updatePixel(onLedNumber, color, effectStarted);
 
                             if (onLedNumber-- <= 0)
                             {
@@ -76,15 +76,13 @@ namespace Pin80Server.Models.Actions
                             nextUpdate = now + msEach;
                         }
                     }
+                    while (DateTimeOffset.Now.ToUnixTimeMilliseconds() < nextUpdate) { };
+                    pixelTarget.updateAllPixels(PixelColor.Black, effectStarted);
                 }
                 else
                 {
-                    while (DateTimeOffset.Now.ToUnixTimeMilliseconds() < nextUpdate)
-                    {
-                        ;
-                    }
-
-                    pixelTarget.updateAllPixels(PixelColor.Black, actionStarted);
+                    while (DateTimeOffset.Now.ToUnixTimeMilliseconds() < nextUpdate) { };
+                    pixelTarget.updateAllPixels(PixelColor.Black, effectStarted);
                 }
             }, token);
 

@@ -3,12 +3,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Pin80Server.Models.Actions
+namespace Pin80Server.Models.Effects
 {
-    public class PixelAction : Action
+    public class PixelEffect : Effect
     {
 
-        public PixelAction(JSONSerializer.ActionSerializer action) : base(action)
+        public PixelEffect(JSONSerializer.EffectSerializer effect) : base(effect)
         {
         }
 
@@ -22,17 +22,17 @@ namespace Pin80Server.Models.Actions
 
             var task = Task.Run(async delegate
             {
-                long actionStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                long effectStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
                 await Task.Delay(TimeSpan.FromMilliseconds(delay));
                 token.ThrowIfCancellationRequested();
 
-                pixelTarget.updateAllPixels(color, actionStarted);
+                pixelTarget.updateAllPixels(color, effectStarted);
 
                 await Task.Delay(TimeSpan.FromMilliseconds(duration)); //TODO CHANGE ME to loop so it's more accurate
 
                 token.ThrowIfCancellationRequested();
-                pixelTarget.updateAllPixels(PixelColor.Black, actionStarted);
+                pixelTarget.updateAllPixels(PixelColor.Black, effectStarted);
             }, token);
 
             return new ProcessorTask(task, tokenSource);

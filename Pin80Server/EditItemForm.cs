@@ -1,4 +1,5 @@
-﻿using Pin80Server.Models.JSONSerializer;
+﻿using Pin80Server.Models.Effects;
+using Pin80Server.Models.JSONSerializer;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
@@ -11,7 +12,7 @@ namespace Pin80Server
     {
         private ControlItem item;
         private Trigger trigger;
-        private Models.Action action;
+        private Effect effect;
         private Models.Target target;
         private DataProcessor dataProcessor;
         private BlockingCollection<string> commandQueue;
@@ -24,7 +25,7 @@ namespace Pin80Server
         private void EditItemForm_Load(object sender, EventArgs e)
         {
             // Make sure a valid target is selected?
-            updateActionsDropdown();
+            updateEffectsDropdown();
         }
 
         public void setQueueRef(ref BlockingCollection<string> cq)
@@ -37,7 +38,7 @@ namespace Pin80Server
             this.item = item;
             dataProcessor = dp;
             trigger = dp.getTrigger(item.triggerString);
-            action = dp.getAction(item.actionString);
+            effect = dp.getEffect(item.effectString);
             target = dp.getTarget(item.targetString);
 
             // TODO we should check if any of these are null
@@ -55,7 +56,7 @@ namespace Pin80Server
             targetsComboBox.SelectedItem = item.targetString;
         }
 
-        private void updateActionsDropdown()
+        private void updateEffectsDropdown()
         {
             if (targetsComboBox.SelectedItem == null)
             {
@@ -69,14 +70,14 @@ namespace Pin80Server
 
             if (target != null)
             {
-                var validActionNames = target.validActions();
+                var validEffectNames = target.validEffects();
 
-                var validActions = dataProcessor.actionsDict.Where(a => validActionNames.Contains(a.Value.kind)).ToDictionary(p => p.Key, p => p.Value);
+                var validEffects = dataProcessor.effectsDict.Where(a => validEffectNames.Contains(a.Value.kind)).ToDictionary(p => p.Key, p => p.Value);
 
-                var actionValues = validActions.Keys.ToArray();
-                actionComboBox.Items.Clear();
-                actionComboBox.Items.AddRange(actionValues);
-                actionComboBox.SelectedItem = item.actionString;
+                var effectValues = validEffects.Keys.ToArray();
+                effectComboBox.Items.Clear();
+                effectComboBox.Items.AddRange(effectValues);
+                effectComboBox.SelectedItem = item.effectString;
             }
         }
 
@@ -87,7 +88,7 @@ namespace Pin80Server
 
             // TODO - Update the triggers file
 
-            item.actionString = actionComboBox.SelectedItem?.ToString();
+            item.effectString = effectComboBox.SelectedItem?.ToString();
             item.targetString = targetsComboBox.SelectedItem?.ToString();
 
             item.comment = commentTextBox.Text;
@@ -119,12 +120,12 @@ namespace Pin80Server
             e.Value = value;
         }
 
-        private void actionComboBox_Format(object sender, ListControlConvertEventArgs e)
+        private void effectComboBox_Format(object sender, ListControlConvertEventArgs e)
         {
-            var actionId = e.ListItem.ToString();
-            var action = dataProcessor.getAction(actionId);
+            var effectId = e.ListItem.ToString();
+            var effect = dataProcessor.getEffect(effectId);
 
-            var value = (action == null) ? actionId : action.ToString();
+            var value = (effect == null) ? effectId : effect.ToString();
             e.Value = value;
         }
 
@@ -159,7 +160,7 @@ namespace Pin80Server
 
         private void targetsComboBox_SelectedValueChanged(object sender, EventArgs e)
         {
-            updateActionsDropdown();
+            updateEffectsDropdown();
         }
     }
 }

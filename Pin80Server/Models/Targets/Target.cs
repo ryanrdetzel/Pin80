@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO.Ports;
 
 namespace Pin80Server.Models
@@ -11,6 +12,8 @@ namespace Pin80Server.Models
         public string port { get; set; }
 
         public abstract bool hasUpdate { get; }
+
+        //private string exclusiveId; // Only this effect can change the target until it's released.
 
         public Target(string id, string name, string kind, string port)
         {
@@ -28,15 +31,25 @@ namespace Pin80Server.Models
             this.port = target.port;
         }
 
+        //public bool makeExclusive(out string exclusiveId)
+        //{
+        //    if (this.exclusiveId == null)
+        //    {
+        //        this.exclusiveId = exclusiveId = Guid.NewGuid().ToString("N");
+        //        return true;
+        //    }
+        //    exclusiveId = null;
+        //    return false;
+        //}
 
         public abstract void Run(SerialPort serialPort);
 
-        public List<string> validActions()
+        public List<string> validEffects()
         {
-            return validActions(kind);
+            return validEffects(kind);
         }
 
-        public static List<string> validActions(string kind)
+        public static List<string> validEffects(string kind)
         {
             var list = new List<string>();
 

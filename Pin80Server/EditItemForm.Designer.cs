@@ -51,8 +51,8 @@ namespace Pin80Server
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.targetsComboBox = new System.Windows.Forms.ComboBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.actionComboBox = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
+            this.effectComboBox = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -208,9 +208,9 @@ namespace Pin80Server
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.Location = new System.Drawing.Point(18, 188);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(116, 16);
+            this.label4.Size = new System.Drawing.Size(112, 16);
             this.label4.TabIndex = 15;
-            this.label4.Text = "perform this action";
+            this.label4.Text = "perform this effect";
             // 
             // label2
             // 
@@ -294,24 +294,13 @@ namespace Pin80Server
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.label7);
-            this.groupBox2.Controls.Add(this.actionComboBox);
+            this.groupBox2.Controls.Add(this.effectComboBox);
             this.groupBox2.Location = new System.Drawing.Point(16, 212);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(335, 81);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Action";
-            // 
-            // actionComboBox
-            // 
-            this.actionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.actionComboBox.FormattingEnabled = true;
-            this.actionComboBox.Location = new System.Drawing.Point(9, 19);
-            this.actionComboBox.MaxDropDownItems = 20;
-            this.actionComboBox.Name = "actionComboBox";
-            this.actionComboBox.Size = new System.Drawing.Size(320, 21);
-            this.actionComboBox.TabIndex = 9;
-            this.actionComboBox.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.actionComboBox_Format);
+            this.groupBox2.Text = "Effect";
             // 
             // label7
             // 
@@ -319,9 +308,20 @@ namespace Pin80Server
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.Location = new System.Drawing.Point(9, 47);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(143, 13);
+            this.label7.Size = new System.Drawing.Size(141, 13);
             this.label7.TabIndex = 10;
-            this.label7.Text = "Change target to see actions";
+            this.label7.Text = "Change target to see effects";
+            // 
+            // effectComboBox
+            // 
+            this.effectComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.effectComboBox.FormattingEnabled = true;
+            this.effectComboBox.Location = new System.Drawing.Point(9, 19);
+            this.effectComboBox.MaxDropDownItems = 20;
+            this.effectComboBox.Name = "effectComboBox";
+            this.effectComboBox.Size = new System.Drawing.Size(320, 21);
+            this.effectComboBox.TabIndex = 9;
+            this.effectComboBox.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.effectComboBox_Format);
             // 
             // EditItemForm
             // 
@@ -363,7 +363,7 @@ namespace Pin80Server
         private System.Windows.Forms.TextBox commentTextBox;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.ComboBox targetsComboBox;
-        private System.Windows.Forms.ComboBox actionComboBox;
+        private System.Windows.Forms.ComboBox effectComboBox;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.TextBox valueTextBox;
         private System.Windows.Forms.Label label2;

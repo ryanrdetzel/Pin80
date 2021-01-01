@@ -36,7 +36,6 @@ namespace Pin80Server.CommandProcessors
 
         /*
          * Commands are broken down as:
-         * TRIGGER ACTION TIMESTAMP
          */
         public override bool processCommand(string command)
         {
@@ -114,14 +113,14 @@ namespace Pin80Server.CommandProcessors
 
                     var target = dataProcessor.getTarget(item.targetString);
                     var trigger = dataProcessor.getTrigger(item.triggerString);
-                    var action = dataProcessor.getAction(item.actionString);
+                    var effect = dataProcessor.getEffect(item.effectString);
 
-                    if (action == null || trigger == null || target == null)
+                    if (effect == null || trigger == null || target == null)
                     {
-                        throw new Exception("Could not handle action");
+                        throw new Exception("Could not handle effect");
                     }
 
-                    var stopDuplicateKey = string.Format("{0}{1}", target.id, action.delay);
+                    var stopDuplicateKey = string.Format("{0}{1}", target.id, effect.delay);
 
                     if (processedTargets.Contains(stopDuplicateKey))
                     {
@@ -131,9 +130,9 @@ namespace Pin80Server.CommandProcessors
                     }
 
                     // TODO Check serial connection is all set still.
-                    if (action.Validate(valueString, item))
+                    if (effect.Validate(valueString, item))
                     {
-                        action.Handle(target);
+                        effect.Handle(target);
                         processedTargets.Add(stopDuplicateKey);
                     }
                 }

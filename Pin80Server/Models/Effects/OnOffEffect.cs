@@ -4,11 +4,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Pin80Server.Models.Actions
+namespace Pin80Server.Models.Effects
 {
-    public class OnOffAction : Action
+    public class OnOffEffect : Effect
     {
-        public OnOffAction(ActionSerializer action) : base(action)
+        public OnOffEffect(EffectSerializer effect) : base(effect)
         {
         }
 

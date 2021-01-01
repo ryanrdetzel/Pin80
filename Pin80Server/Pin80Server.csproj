@@ -52,9 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\Actions\PixelRunAction.cs" />
-    <Compile Include="Models\Actions\PixelCometAction.cs" />
-    <Compile Include="Models\Actions\PixelAction.cs" />
+    <Compile Include="Models\Effects\PixelRunEffect.cs" />
+    <Compile Include="Models\Effects\PixelCometAction.cs" />
+    <Compile Include="Models\Effects\PixelEffect.cs" />
     <Compile Include="Models\PixelColor.cs" />
     <Compile Include="Models\Pixel.cs" />
     <Compile Include="Models\Targets\PixelTarget.cs" />
@@ -70,9 +70,9 @@
     <Compile Include="EditItemForm.Designer.cs">
       <DependentUpon>EditItemForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Models\Actions\OnOffAction.cs" />
-    <Compile Include="Models\JSONSerializer\ActionSerializer.cs" />
-    <Compile Include="Models\Actions\Action.cs" />
+    <Compile Include="Models\Effects\OnOffEffect.cs" />
+    <Compile Include="Models\JSONSerializer\EffectSerializer.cs" />
+    <Compile Include="Models\Effects\Effect.cs" />
     <Compile Include="Models\JSONSerializer\TargetSerializer.cs" />
     <Compile Include="Models\Trigger.cs" />
     <Compile Include="Processors\Processor.cs" />

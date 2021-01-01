@@ -3,9 +3,9 @@ using Pin80Server.Models.JSONSerializer;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Pin80Server.Models
+namespace Pin80Server.Models.Effects
 {
-    public abstract class Action
+    public abstract class Effect
     {
         public string name { get; set; }
         public string id { get; set; }
@@ -18,22 +18,22 @@ namespace Pin80Server.Models
 
         public abstract ProcessorTask Handle(Target target);
 
-        public Action(JSONSerializer.ActionSerializer action)
+        public Effect(JSONSerializer.EffectSerializer effect)
         {
-            name = action.name;
-            id = action.id;
-            kind = action.kind;
+            name = effect.name;
+            id = effect.id;
+            kind = effect.kind;
             colors = new List<PixelColor>();
 
-            if (action.colors != null)
+            if (effect.colors != null)
             {
-                colors.AddRange(action.colors.Select(cs => new PixelColor(cs)).ToList());
+                colors.AddRange(effect.colors.Select(cs => new PixelColor(cs)).ToList());
             }
 
-            delay = action.delay;   // TODO Set reasonable limts 
-            duration = (action.duration > 0) ? action.duration : 200;
-            speed = action.speed; // TODO not using.
-            reverse = action.reverse;
+            delay = effect.delay;   // TODO Set reasonable limts 
+            duration = (effect.duration > 0) ? effect.duration : 200;
+            speed = effect.speed; // TODO not using.
+            reverse = effect.reverse;
         }
 
         public string timeString(int durationMs)
@@ -48,7 +48,7 @@ namespace Pin80Server.Models
             return timeStr;
         }
 
-        /* Checks the value to see if this action should fire */
+        /* Checks the value to see if this effect should fire */
         public bool Validate(string value, ControlItem item)
         {
             // TODO Make this work for all cases.
