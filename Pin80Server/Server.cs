@@ -59,18 +59,24 @@ namespace Pin80Server
             Debug.WriteLine("Listening for http connections on {0}", url);
 
             // TCP Connection Listener
-            Thread tcpthread = new Thread(HandleIncomingTCPConnections);
-            tcpthread.IsBackground = true;
+            Thread tcpthread = new Thread(HandleIncomingTCPConnections)
+            {
+                IsBackground = true
+            };
             tcpthread.Start();
 
             // HTTP Connection Listener
-            Thread httpthread = new Thread(HandleIncomingHttpConnections);
-            httpthread.IsBackground = true;
+            Thread httpthread = new Thread(HandleIncomingHttpConnections)
+            {
+                IsBackground = true
+            };
             httpthread.Start();
 
             // Command Processor Thread
-            Thread p = new Thread(HandleCommands);
-            p.IsBackground = true;
+            Thread p = new Thread(HandleCommands)
+            {
+                IsBackground = true
+            };
             p.Start();
 
             try
@@ -88,8 +94,8 @@ namespace Pin80Server
             mainForm.setDataProcessor(dataProcessor);
             mainForm.setQueueRef(ref commandQueue);
 
-            dataProcessor.setMainForm(mainForm);
-            dataProcessor.setQueueRef(ref commandQueue);
+            dataProcessor.SetMainForm(mainForm);
+            dataProcessor.SetQueueRef(ref commandQueue);
 
             vpxProcessor.setMainForm(mainForm);
             vbyProcessor.setMainForm(mainForm);
@@ -142,8 +148,10 @@ namespace Pin80Server
                     Console.WriteLine("Waiting for a connection...");
                     TcpClient client = server.AcceptTcpClient();
                     Console.WriteLine("TCP client connected!");
-                    Thread tcpClientThread = new Thread(new ParameterizedThreadStart(HandleTCPClint));
-                    tcpClientThread.IsBackground = true;
+                    Thread tcpClientThread = new Thread(new ParameterizedThreadStart(HandleTCPClint))
+                    {
+                        IsBackground = true
+                    };
                     tcpClientThread.Start(client);
                 }
             }
@@ -158,7 +166,7 @@ namespace Pin80Server
         {
             TcpClient client = (TcpClient)obj;
             var stream = client.GetStream();
-            string data = null;
+            string data;
             byte[] bytes = new byte[256];
             int i;
             try
@@ -191,7 +199,6 @@ namespace Pin80Server
 
             List<EffectInstance> runningActions = new List<EffectInstance>();
             long now;
-            string cmd;
 
             //var targetList = dataProcessor.targetsDict.Values.ToList();
 
@@ -199,50 +206,43 @@ namespace Pin80Server
             {
                 now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-                if (commandQueue.TryTake(out cmd))
+                if (commandQueue.TryTake(out string cmd))
                 {
-                    if (cmd != null)
+                    string[] commandParts = cmd.Split(' ');
+                    string source = commandParts[0];
+
+                    if (mainForm.IsHandleCreated)
                     {
-                        string[] commandParts = cmd.Split(' ');
-                        string source = commandParts[0];
+                        mainForm.BeginInvoke((MethodInvoker)delegate ()
+                        {
+                            mainForm.addLogEntry(cmd);
+                        });
+                    }
 
-                        if (mainForm.IsHandleCreated)
+                    // PinballY 
+                    if (source.StartsWith("PBY"))
+                    {
+                        vbyProcessor.processCommand(cmd, now);
+                    }
+                    // Virutal Pinball X
+                    else if (source == "VPX")
+                    {
+                        string command = string.Join(" ", commandParts.Skip(1)); // Don't care about the source
+                        var list = vpxProcessor.processCommand(command, now);
+                        if (list != null)
                         {
-                            mainForm.BeginInvoke((MethodInvoker)delegate ()
-                            {
-                                mainForm.addLogEntry(cmd);
-                            });
-                        }
-
-                        // PinballY 
-                        if (source.StartsWith("PBY"))
-                        {
-                            vbyProcessor.processCommand(cmd, now);
-                        }
-                        // Virutal Pinball X
-                        else if (source == "VPX")
-                        {
-                            string command = string.Join(" ", commandParts.Skip(1)); // Don't care about the source
-                            var list = vpxProcessor.processCommand(command, now);
-                            if (list != null)
-                            {
-                                runningActions.AddRange(list);
-                            }
-                        }
-                        else
-                        {
-                            if (mainForm.IsHandleCreated)
-                            {
-                                mainForm.BeginInvoke((MethodInvoker)delegate ()
-                                {
-                                    mainForm.addLogEntry(string.Format("ERR Unknown command: {0}", cmd));
-                                });
-                            }
+                            runningActions.AddRange(list);
                         }
                     }
                     else
                     {
-                        Debug.WriteLine("");
+                        if (mainForm.IsHandleCreated)
+                        {
+                            mainForm.BeginInvoke((MethodInvoker)delegate ()
+                            {
+                                mainForm.addLogEntry(string.Format("ERR Unknown command: {0}", cmd));
+                            });
+                        }
                     }
                 }
 

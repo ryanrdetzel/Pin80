@@ -70,7 +70,7 @@ namespace Pin80Server
             this.cancelButton.TabIndex = 0;
             this.cancelButton.Text = "Close";
             this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            this.cancelButton.Click += new System.EventHandler(this.CancelButton_Click);
             // 
             // saveButton
             // 
@@ -81,7 +81,7 @@ namespace Pin80Server
             this.saveButton.TabIndex = 1;
             this.saveButton.Text = "Save";
             this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            this.saveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
             // enabledCheckbox
             // 
@@ -170,7 +170,6 @@ namespace Pin80Server
             this.label6.Size = new System.Drawing.Size(37, 13);
             this.label6.TabIndex = 20;
             this.label6.Text = "Value:";
-            this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // testTextBox
             // 
@@ -179,7 +178,6 @@ namespace Pin80Server
             this.testTextBox.Size = new System.Drawing.Size(136, 20);
             this.testTextBox.TabIndex = 19;
             this.testTextBox.Text = "1";
-            this.testTextBox.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // button1
             // 
@@ -190,7 +188,7 @@ namespace Pin80Server
             this.button1.TabIndex = 17;
             this.button1.Text = "Test";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // label5
             // 
@@ -223,7 +221,6 @@ namespace Pin80Server
             this.label2.Size = new System.Drawing.Size(186, 16);
             this.label2.TabIndex = 14;
             this.label2.Text = "and it matches this expression";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label1
             // 
@@ -288,8 +285,8 @@ namespace Pin80Server
             this.targetsComboBox.Name = "targetsComboBox";
             this.targetsComboBox.Size = new System.Drawing.Size(320, 21);
             this.targetsComboBox.TabIndex = 10;
-            this.targetsComboBox.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.targetsComboBox_Format);
-            this.targetsComboBox.SelectedValueChanged += new System.EventHandler(this.targetsComboBox_SelectedValueChanged);
+            this.targetsComboBox.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.TargetsComboBox_Format);
+            this.targetsComboBox.SelectedValueChanged += new System.EventHandler(this.TargetsComboBox_SelectedValueChanged);
             // 
             // groupBox2
             // 
@@ -321,7 +318,7 @@ namespace Pin80Server
             this.effectComboBox.Name = "effectComboBox";
             this.effectComboBox.Size = new System.Drawing.Size(320, 21);
             this.effectComboBox.TabIndex = 9;
-            this.effectComboBox.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.effectComboBox_Format);
+            this.effectComboBox.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.EffectComboBox_Format);
             // 
             // EditItemForm
             // 

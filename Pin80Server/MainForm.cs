@@ -98,7 +98,6 @@ namespace Pin80Server
                 {
                     if (!ignoreDuplicates || !recentLogEntries.Contains(entry))
                     {
-                        // TODO this doesn't work when processor? adds one because it's cross thread
                         recentLogEntries.Add(entry);
                         logListViews.Items.Insert(0, entry);
                     }
@@ -118,7 +117,7 @@ namespace Pin80Server
                 if (MessageBox.Show("Do you want to save your changes?", "Unsaved Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     e.Cancel = true;
-                    dataProcessor.saveControllerData();
+                    dataProcessor.SaveControllerData();
 
                     Application.Exit();
                     //Environment.Exit(Environment.ExitCode);
@@ -216,7 +215,7 @@ namespace Pin80Server
                 if (e.Value != null)
                 {
                     string effectId = (string)e.Value;
-                    string friendlyName = dataProcessor.getEffect(effectId).ToString();
+                    string friendlyName = dataProcessor.GetEffect(effectId).ToString();
                     e.Value = friendlyName;
                 }
             }
@@ -225,11 +224,11 @@ namespace Pin80Server
                 if (e.Value != null)
                 {
                     string effectId = (string)e.Value;
-                    var trigger = dataProcessor.getTrigger(effectId);
+                    var trigger = dataProcessor.GetTrigger(effectId);
                     if (trigger != null)
                     {
-                        e.Value = dataProcessor.getTrigger(effectId).ToString();
-                        cell.ToolTipText = dataProcessor.getTrigger(effectId).name;
+                        e.Value = dataProcessor.GetTrigger(effectId).ToString();
+                        cell.ToolTipText = dataProcessor.GetTrigger(effectId).name;
                     }
                 }
             }
@@ -238,23 +237,23 @@ namespace Pin80Server
                 if (e.Value != null)
                 {
                     string effectId = (string)e.Value;
-                    string friendlyName = dataProcessor.getTarget(effectId).ToString();
+                    string friendlyName = dataProcessor.GetTarget(effectId).ToString();
                     e.Value = friendlyName;
 
-                    cell.ToolTipText = dataProcessor.getTarget(effectId).id;
+                    cell.ToolTipText = dataProcessor.GetTarget(effectId).id;
                 }
             }
         }
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            dataProcessor.saveControllerData();
+            dataProcessor.SaveControllerData();
         }
 
         private void addItemButton_Click(object sender, EventArgs e)
         {
             ControlItem item = new ControlItem("T00", "0");
-            dataProcessor.addControlItem(item);
+            dataProcessor.AddControlItem(item);
         }
 
         private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
@@ -283,7 +282,7 @@ namespace Pin80Server
 
             if (e.ClickedItem.Name == "deleteItemItem")
             {
-                dataProcessor.deleteControlItem(item);
+                dataProcessor.DeleteControlItem(item);
             }
             else if (e.ClickedItem.Name == "logFilter")
             {
@@ -291,11 +290,11 @@ namespace Pin80Server
             }
             else if (e.ClickedItem.Name == "deleteAllDisabled")
             {
-                dataProcessor.deleteAllDisabled();
+                dataProcessor.DeleteAllDisabled();
             }
             else if (e.ClickedItem.Name == "duplicate")
             {
-                dataProcessor.duplicateItem(item);
+                dataProcessor.DuplicateItem(item);
             }
         }
 
@@ -307,14 +306,14 @@ namespace Pin80Server
             }
             var mainLocation = this.Location;
 
-            editForm.setQueueRef(ref commandQueue);
+            editForm.SetQueueRef(ref commandQueue);
             editForm.Show();
             editForm.Location = new Point(mainLocation.X - editForm.Size.Width, mainLocation.Y);
 
             var row = controlDataGridView.CurrentCell.RowIndex;
             var item = dataProcessor.controllerData[row];
 
-            editForm.setControlItem(dataProcessor, item);
+            editForm.SetControlItem(dataProcessor, item);
         }
 
         private void logMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -348,11 +347,11 @@ namespace Pin80Server
                 if (logValue.StartsWith("VPX"))
                 {
                     Debug.WriteLine(logListViews.SelectedItem.ToString());
-                    var (success, triggerString, valueString, extraString) = VPXProcessor.splitCommandString(logValue.Replace("VPX ", ""));
+                    var (success, triggerString, valueString, _) = VPXProcessor.splitCommandString(logValue.Replace("VPX ", ""));
                     if (success)
                     {
                         ControlItem newItem = new ControlItem(triggerString, valueString);
-                        dataProcessor.addControlItem(newItem);
+                        dataProcessor.AddControlItem(newItem);
                     }
                 }
             }
@@ -409,7 +408,7 @@ namespace Pin80Server
             {
                 if (MessageBox.Show("Do you want to save your changes before switching tables?", "Unsaved Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    dataProcessor.saveControllerData();
+                    dataProcessor.SaveControllerData();
                 }
             }
             dataProcessor.LoadTableInformation(Romname);

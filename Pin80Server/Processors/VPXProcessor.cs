@@ -88,7 +88,7 @@ namespace Pin80Server.CommandProcessors
                     }
                 }
 
-                var items = dataProcessor.getControlItems(triggerString);
+                var items = dataProcessor.GetControlItems(triggerString);
 
                 /* If we didn't match any items see if we should add this to the list */
                 if (items.Count == 0 && dataProcessor.autoAddItems)
@@ -98,7 +98,7 @@ namespace Pin80Server.CommandProcessors
                         mainForm.BeginInvoke((MethodInvoker)delegate ()
                         {
                             ControlItem item = new ControlItem(triggerString, valueString);
-                            dataProcessor.addControlItem(item);
+                            dataProcessor.AddControlItem(item);
                         });
                     }
                 }
@@ -114,9 +114,9 @@ namespace Pin80Server.CommandProcessors
                         continue;
                     }
 
-                    var trigger = dataProcessor.getTrigger(item.triggerString);
-                    var target = dataProcessor.getTarget(item.targetString);
-                    var effect = dataProcessor.getEffect(item.effectString);
+                    var trigger = dataProcessor.GetTrigger(item.triggerString);
+                    var target = dataProcessor.GetTarget(item.targetString);
+                    var effect = dataProcessor.GetEffect(item.effectString);
 
                     EffectInstance action = new EffectInstance(target, effect);
 

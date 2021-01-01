@@ -12,8 +12,6 @@ namespace Pin80Server
     {
         private ControlItem item;
         private Trigger trigger;
-        private Effect effect;
-        private Models.Target target;
         private DataProcessor dataProcessor;
         private BlockingCollection<string> commandQueue;
 
@@ -25,21 +23,19 @@ namespace Pin80Server
         private void EditItemForm_Load(object sender, EventArgs e)
         {
             // Make sure a valid target is selected?
-            updateEffectsDropdown();
+            UpdateEffectsDropdown();
         }
 
-        public void setQueueRef(ref BlockingCollection<string> cq)
+        public void SetQueueRef(ref BlockingCollection<string> cq)
         {
             commandQueue = cq;
         }
 
-        public void setControlItem(DataProcessor dp, ControlItem item)
+        public void SetControlItem(DataProcessor dp, ControlItem item)
         {
             this.item = item;
             dataProcessor = dp;
-            trigger = dp.getTrigger(item.triggerString);
-            effect = dp.getEffect(item.effectString);
-            target = dp.getTarget(item.targetString);
+            trigger = dp.GetTrigger(item.triggerString);
 
             // TODO we should check if any of these are null
 
@@ -56,7 +52,7 @@ namespace Pin80Server
             targetsComboBox.SelectedItem = item.targetString;
         }
 
-        private void updateEffectsDropdown()
+        private void UpdateEffectsDropdown()
         {
             if (targetsComboBox.SelectedItem == null)
             {
@@ -66,7 +62,7 @@ namespace Pin80Server
             Debug.WriteLine("Target combo changed");
 
             var targetId = targetsComboBox.SelectedItem.ToString();
-            var target = dataProcessor.getTarget(targetId);
+            var target = dataProcessor.GetTarget(targetId);
 
             if (target != null)
             {
@@ -81,7 +77,7 @@ namespace Pin80Server
             }
         }
 
-        private void saveButton_Click(object sender, EventArgs e)
+        private void SaveButton_Click(object sender, EventArgs e)
         {
             // Update the actual data item
             // TODO Validate this is okay
@@ -96,45 +92,36 @@ namespace Pin80Server
             item.value = valueTextBox.Text;
             item.triggerString = triggerTextBox.Text;
 
-            dataProcessor.updateControlItem(item);
+            dataProcessor.UpdateControlItem(item);
 
             //Close();
         }
 
-        private void cancelButton_Click(object sender, EventArgs e)
+        private void CancelButton_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void targetsComboBox_Format(object sender, ListControlConvertEventArgs e)
+        private void TargetsComboBox_Format(object sender, ListControlConvertEventArgs e)
         {
             var targetId = e.ListItem.ToString();
-            var target = dataProcessor.getTarget(targetId);
+            var target = dataProcessor.GetTarget(targetId);
 
             var value = (target == null) ? targetId : string.Format("{0} ({1}) Port: {2}", target.name, targetId, target.port);
             e.Value = value;
         }
 
-        private void effectComboBox_Format(object sender, ListControlConvertEventArgs e)
+        private void EffectComboBox_Format(object sender, ListControlConvertEventArgs e)
         {
             var effectId = e.ListItem.ToString();
-            var effect = dataProcessor.getEffect(effectId);
+            var effect = dataProcessor.GetEffect(effectId);
 
             var value = (effect == null) ? effectId : effect.ToString();
             e.Value = value;
         }
 
-        private void label2_Click(object sender, EventArgs e)
-        {
 
-        }
-
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             var trigger = item.triggerString;
             if (testTextBox.Text == "")
@@ -148,19 +135,9 @@ namespace Pin80Server
             commandQueue.Add(cmd);
         }
 
-        private void label6_Click(object sender, EventArgs e)
+        private void TargetsComboBox_SelectedValueChanged(object sender, EventArgs e)
         {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void targetsComboBox_SelectedValueChanged(object sender, EventArgs e)
-        {
-            updateEffectsDropdown();
+            UpdateEffectsDropdown();
         }
     }
 }

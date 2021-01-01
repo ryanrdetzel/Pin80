@@ -11,8 +11,7 @@ namespace Pin80Server.Models.Effects
             var ledTarget = (LEDTarget)triggeredAction.target;
 
             bool runAgain = true;
-            int step;
-            triggeredAction.state.TryGetValue("step", out step);
+            triggeredAction.state.TryGetValue(Constants.STEP, out int step);
 
             switch (step)
             {
@@ -29,7 +28,7 @@ namespace Pin80Server.Models.Effects
                     break;
             }
 
-            triggeredAction.state["step"] = step + 1;
+            triggeredAction.state[Constants.STEP] = step + 1;
             return runAgain;
         }
 

@@ -12,8 +12,7 @@
             PixelTarget pixelTarget = (PixelTarget)triggeredAction.target;
             PixelColor color = colors[0];
 
-            int step;
-            triggeredAction.state.TryGetValue("step", out step);
+            triggeredAction.state.TryGetValue(Constants.STEP, out int step);
 
             bool runAgain = true;
 
@@ -32,7 +31,7 @@
                     break;
             }
 
-            triggeredAction.state["step"] = step + 1;
+            triggeredAction.state[Constants.STEP] = step + 1;
             return runAgain;
         }
 

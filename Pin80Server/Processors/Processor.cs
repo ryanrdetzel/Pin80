@@ -24,11 +24,6 @@ namespace Pin80Server.CommandProcessors
         {
             mainForm = mf;
         }
-
-        private string romName()
-        {
-            return _romName;
-        }
     }
 
     public class ProcessorTask

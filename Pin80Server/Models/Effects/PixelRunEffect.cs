@@ -17,9 +17,8 @@ namespace Pin80Server.Models.Effects
             int numberOfLeds = pixelTarget.leds;
             int msEach = duration / numberOfLeds;
 
-            int step, onLedNumber;
-            triggeredAction.state.TryGetValue("step", out step);
-            triggeredAction.state.TryGetValue("onLedNumber", out onLedNumber);
+            triggeredAction.state.TryGetValue(Constants.STEP, out int step);
+            triggeredAction.state.TryGetValue(Constants.ONLED, out int onLedNumber);
 
             bool runAgain = true;
 
@@ -61,8 +60,8 @@ namespace Pin80Server.Models.Effects
                     break;
             }
 
-            triggeredAction.state["step"] = step;
-            triggeredAction.state["onLedNumber"] = onLedNumber;
+            triggeredAction.state[Constants.STEP] = step;
+            triggeredAction.state[Constants.ONLED] = onLedNumber;
 
             return runAgain;
         }

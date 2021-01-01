@@ -7,5 +7,7 @@
         public const string SettingItemFilter = "ItemFilter";
         public const string SettingLogBlockDuplicates = "LogBlockDuplicates";
 
+        public const string STEP = "step";
+        public const string ONLED = "onLedNumber";
     }
 }

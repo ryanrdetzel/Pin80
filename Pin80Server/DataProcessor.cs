@@ -37,8 +37,10 @@ namespace Pin80Server
         {
             autoAddItems = Settings.ReadBoolSetting(Constants.SettingAutoAddItems);
 
-            bSource = new BindingSource();
-            bSource.DataSource = controllerData;
+            bSource = new BindingSource
+            {
+                DataSource = controllerData
+            };
 
             controllerData.ListChanged += ControllerData_ListChanged;
         }
@@ -59,36 +61,38 @@ namespace Pin80Server
             unsavedChanges = true;
         }
 
-        public void setQueueRef(ref BlockingCollection<string> cq)
+        public void SetQueueRef(ref BlockingCollection<string> cq)
         {
             commandQueue = cq;
         }
 
-        public void setMainForm(MainForm mf)
+        public void SetMainForm(MainForm mf)
         {
             mainForm = mf;
         }
 
-        public void addControlItem(ControlItem item)
+        public void AddControlItem(ControlItem item)
         {
             controllerData.Insert(0, item);
         }
 
-        public void deleteControlItem(ControlItem item)
+        public void DeleteControlItem(ControlItem item)
         {
             controllerData.Remove(item);
         }
 
-        public void duplicateItem(ControlItem item)
+        public void DuplicateItem(ControlItem item)
         {
-            ControlItem newItem = new ControlItem(item.triggerString, item.value);
-            newItem.effectString = item.effectString;
-            newItem.targetString = item.targetString;
-            newItem.comment = item.comment;
-            addControlItem(newItem);
+            ControlItem newItem = new ControlItem(item.triggerString, item.value)
+            {
+                effectString = item.effectString,
+                targetString = item.targetString,
+                comment = item.comment
+            };
+            AddControlItem(newItem);
         }
 
-        public void deleteAllDisabled()
+        public void DeleteAllDisabled()
         {
             var co = controllerData.Where(item => !item.enabled).ToList();
             foreach (ControlItem item in co)
@@ -97,13 +101,13 @@ namespace Pin80Server
             }
         }
 
-        public void updateControlItem(ControlItem NewItem)
+        public void UpdateControlItem(ControlItem NewItem)
         {
             var index = controllerData.ToList().FindIndex(Item => Item.id == NewItem.id);
             controllerData[index] = NewItem;
         }
 
-        public void saveControllerData()
+        public void SaveControllerData()
         {
             var fullPath = Path.Combine(@"Data", "Tables", $"{Romname}.json");
             Debug.WriteLine("Saving to " + fullPath);
@@ -119,28 +123,28 @@ namespace Pin80Server
         }
 
         /* For this table see if there is a control item for this trigger */
-        public List<ControlItem> getControlItems(string trigger)
+        public List<ControlItem> GetControlItems(string trigger)
         {
             return controllerData.Where(item => item.triggerString == trigger).ToList();
         }
 
-        public Effect getEffect(string effectId)
+        public Effect GetEffect(string effectId)
         {
             return effectId != null && effectsDict.ContainsKey(effectId) ? effectsDict[effectId] : null;
         }
 
         /* Always returns a trigger */
-        public Trigger getTrigger(string command)
+        public Trigger GetTrigger(string command)
         {
             return command != null && triggersDict.ContainsKey(command) ? triggersDict[command] : new Trigger(command);
         }
 
-        public Models.Target getTarget(string id)
+        public Models.Target GetTarget(string id)
         {
             return id != null && targetsDict.ContainsKey(id) ? targetsDict[id] : null;
         }
 
-        private void populateEffects()
+        private void PopulateEffects()
         {
             var effectFullPath = Path.Combine(@"Data", $"effects.json");
             var effectList = LoadEffect(effectFullPath);
@@ -170,7 +174,7 @@ namespace Pin80Server
             });
         }
 
-        private void populateTriggers()
+        private void PopulateTriggers()
         {
             var fullPath = Path.Combine(@"Data", "Tables", $"{Romname}-triggers.json");
             var triggerList = LoadTriggers(fullPath);
@@ -182,7 +186,7 @@ namespace Pin80Server
             });
         }
 
-        private void populateTargets()
+        private void PopulateTargets()
         {
             var fullPath = Path.Combine(@"Data", $"targets.json");
             var targetList = LoadTargets(fullPath);
@@ -225,9 +229,9 @@ namespace Pin80Server
             // TODO Search for various combinations of files.
 
             // TODO Can't continue unless we have effects and triggers.
-            populateEffects();
-            populateTriggers();
-            populateTargets();
+            PopulateEffects();
+            PopulateTriggers();
+            PopulateTargets();
 
             var controlItems = LoadFile(fullPath);
 
@@ -242,8 +246,8 @@ namespace Pin80Server
                     {
                         // Make sure effects and targets still exist for all the controlItems.
                         // If they don't, clear it and disable the item
-                        Effect effect = getEffect(item.effectString);
-                        Models.Target target = getTarget(item.targetString);
+                        Effect effect = GetEffect(item.effectString);
+                        Models.Target target = GetTarget(item.targetString);
 
                         if (effect == null)
                         {
