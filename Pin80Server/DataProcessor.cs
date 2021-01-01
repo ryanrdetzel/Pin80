@@ -1,5 +1,6 @@
 ﻿using Library.Forms;
 using Newtonsoft.Json;
+using Pin80Server.Models;
 using Pin80Server.Models.Actions;
 using Pin80Server.Models.JSONSerializer;
 using System;
@@ -27,7 +28,7 @@ namespace Pin80Server
         public SortableBindingList<ControlItem> controllerData = new SortableBindingList<ControlItem>();
 
         public Dictionary<string, Trigger> triggersDict = new Dictionary<string, Trigger>();
-        public Dictionary<string, Target> targetsDict = new Dictionary<string, Target>();
+        public Dictionary<string, Models.Target> targetsDict = new Dictionary<string, Models.Target>();
         public Dictionary<string, Models.Action> actionsDict = new Dictionary<string, Models.Action>();
 
         public bool ContainsListCollection => throw new System.NotImplementedException();
@@ -134,7 +135,7 @@ namespace Pin80Server
             return command != null && triggersDict.ContainsKey(command) ? triggersDict[command] : new Trigger(command);
         }
 
-        public Target getTarget(string id)
+        public Models.Target getTarget(string id)
         {
             return id != null && targetsDict.ContainsKey(id) ? targetsDict[id] : null;
         }
@@ -189,7 +190,17 @@ namespace Pin80Server
             //Convert the json to actual actions
             targetList.ForEach(target =>
             {
-                targetsDict[target.id] = target;
+                switch (target.kind)
+                {
+                    case "LED":
+                        targetsDict[target.id] = new LEDTarget(target);
+                        break;
+                    case "PIXEL":
+                        targetsDict[target.id] = new PixelTarget(target);
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
             });
         }
 
@@ -232,7 +243,7 @@ namespace Pin80Server
                         // Make sure actions and targets still exist for all the controlItems.
                         // If they don't, clear it and disable the item
                         Models.Action action = getAction(item.actionString);
-                        Target target = getTarget(item.targetString);
+                        Models.Target target = getTarget(item.targetString);
 
                         if (action == null)
                         {
@@ -278,12 +289,12 @@ namespace Pin80Server
             }
         }
 
-        private List<Target> LoadTargets(string fullPath)
+        private List<TargetSerializer> LoadTargets(string fullPath)
         {
             using (StreamReader r = new StreamReader(fullPath))
             {
                 string json = r.ReadToEnd();
-                return JsonConvert.DeserializeObject<List<Target>>(json);
+                return JsonConvert.DeserializeObject<List<TargetSerializer>>(json);
             }
         }
 

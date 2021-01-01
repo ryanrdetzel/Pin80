@@ -30,37 +30,27 @@ namespace Pin80Server.Models.Actions
             return str;
         }
 
-        public override ProcessorTask Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial)
+        public override ProcessorTask Handle(Target target)
         {
-            var tokenSource = new CancellationTokenSource();
-            var token = tokenSource.Token;
+            PixelTarget pixelTarget = (PixelTarget)target;
             PixelColor color = colors[0];
 
-            var port = target.port;
-            int startRange = 0;
-            int endRange = target.leds - 1;
-
-            //TODO check that the range makes sense.
-
-            // Calculate all the pixel colors and send them.
-            string OnCmd = string.Format("{0} PX{1}-{2} {3}\n", port, startRange, endRange, color.hexValue);
-            string OffCmd = string.Format("{0} PX{1}-{2} {3}\n", port, startRange, endRange, "000000");
+            var tokenSource = new CancellationTokenSource();
+            var token = tokenSource.Token;
 
             var task = Task.Run(async delegate
             {
+                long actionStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
                 await Task.Delay(TimeSpan.FromMilliseconds(delay));
                 token.ThrowIfCancellationRequested();
 
-                serial.Write(string.Format("{0} PXSTART\n", port)); // Include how many we're updating?
-                serial.Write(OnCmd);
-                serial.Write(string.Format("{0} PXEND\n", port));
+                pixelTarget.updateAllPixels(color, actionStarted);
 
-                await Task.Delay(TimeSpan.FromMilliseconds(duration));
+                await Task.Delay(TimeSpan.FromMilliseconds(duration)); //TODO CHANGE ME to loop so it's more accurate
+
                 token.ThrowIfCancellationRequested();
-
-                serial.Write(string.Format("{0} PXSTART\n", port));
-                serial.Write(OffCmd);
-                serial.Write(string.Format("{0} PXEND\n", port));
+                pixelTarget.updateAllPixels(PixelColor.Black, actionStarted);
             }, token);
 
             return new ProcessorTask(task, tokenSource);

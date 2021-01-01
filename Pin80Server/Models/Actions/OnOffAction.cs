@@ -27,12 +27,16 @@ namespace Pin80Server.Models.Actions
             return str;
         }
 
-        public override ProcessorTask Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial)
+        public override ProcessorTask Handle(Target target)
         {
             var tokenSource = new CancellationTokenSource();
             var token = tokenSource.Token;
+            var ledTarget = (LEDTarget)target;
 
             var port = target.port;
+
+            var nextUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds() + duration;
+            bool running = true;
 
             // TODO If there is a delay work with that first
             var task = Task.Run(async delegate
@@ -40,12 +44,19 @@ namespace Pin80Server.Models.Actions
                 await Task.Delay(TimeSpan.FromMilliseconds(delay));
                 token.ThrowIfCancellationRequested();
 
-                serial.Write(string.Format("{0} ON\n", port));
+                ledTarget.updatePortValue(1);
 
-                await Task.Delay(TimeSpan.FromMilliseconds(duration));
-                token.ThrowIfCancellationRequested();
+                while (running)
+                {
+                    var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-                serial.Write(string.Format("{0} OFF\n", port));
+                    if (now >= nextUpdate)
+                    {
+                        token.ThrowIfCancellationRequested();
+                        ledTarget.updatePortValue(0);
+                        running = false;
+                    }
+                }
             }, token);
 
             return new ProcessorTask(task, tokenSource);

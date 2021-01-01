@@ -93,6 +93,7 @@ namespace Pin80Server
                 {
                     if (!ignoreDuplicates || !recentLogEntries.Contains(entry))
                     {
+                        // TODO this doesn't work when processor? adds one because it's cross thread
                         recentLogEntries.Add(entry);
                         logListViews.Items.Insert(0, entry);
                     }

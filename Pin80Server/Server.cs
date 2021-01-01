@@ -188,37 +188,49 @@ namespace Pin80Server
         {
             while (true)
             {
-                var cmd = commandQueue.Take();
-                string[] commandParts = cmd.Split(' ');
-                string source = commandParts[0];
+                //var cmd = commandQueue.Take();
+                string cmd;
+                if (commandQueue.TryTake(out cmd, 1)) // try to take for 1ms
+                {
+                    string[] commandParts = cmd.Split(' ');
+                    string source = commandParts[0];
 
-                if (mainForm.IsHandleCreated)
-                {
-                    mainForm.BeginInvoke((MethodInvoker)delegate ()
-                    {
-                        mainForm.addLogEntry(cmd);
-                    });
-                }
-
-                // PinballY 
-                if (source.StartsWith("PBY"))
-                {
-                    vbyProcessor.processCommand(cmd);
-                }
-                // Virutal Pinball X
-                else if (source == "VPX")
-                {
-                    string command = string.Join(" ", commandParts.Skip(1)); // Don't care about the source
-                    vpxProcessor.processCommand(command);
-                }
-                else
-                {
                     if (mainForm.IsHandleCreated)
                     {
                         mainForm.BeginInvoke((MethodInvoker)delegate ()
                         {
-                            mainForm.addLogEntry(string.Format("ERR Unknown command: {0}", cmd));
+                            mainForm.addLogEntry(cmd);
                         });
+                    }
+
+                    // PinballY 
+                    if (source.StartsWith("PBY"))
+                    {
+                        vbyProcessor.processCommand(cmd);
+                    }
+                    // Virutal Pinball X
+                    else if (source == "VPX")
+                    {
+                        string command = string.Join(" ", commandParts.Skip(1)); // Don't care about the source
+                        vpxProcessor.processCommand(command);
+                    }
+                    else
+                    {
+                        if (mainForm.IsHandleCreated)
+                        {
+                            mainForm.BeginInvoke((MethodInvoker)delegate ()
+                            {
+                                mainForm.addLogEntry(string.Format("ERR Unknown command: {0}", cmd));
+                            });
+                        }
+                    }
+                }
+                // Process targets
+                foreach (Models.Target target in dataProcessor.targetsDict.Values)
+                {
+                    if (target.hasUpdate)
+                    {
+                        target.Run(serial);
                     }
                 }
             }

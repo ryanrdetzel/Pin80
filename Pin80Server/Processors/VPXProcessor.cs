@@ -124,9 +124,12 @@ namespace Pin80Server.CommandProcessors
                         throw new Exception("Could not handle action");
                     }
 
-                    if (processedTargets.Contains(target.id))
+                    var stopDuplicateKey = string.Format("{0}{1}", target.id, action.delay);
+
+                    if (processedTargets.Contains(stopDuplicateKey))
                     {
                         Debug.WriteLine("Already processed an item for this target!");
+                        Debug.WriteLine(stopDuplicateKey);
                         continue;
                     }
 
@@ -134,44 +137,37 @@ namespace Pin80Server.CommandProcessors
                     if (action.Validate(valueString, item))
                     {
                         // First check if this target is already executing tasks
-                        if (targetTasks.ContainsKey(target.id) && targetTasks[target.id].Count > 0)
-                        {
-                            var runningTasks = targetTasks[target.id];
-                            foreach (var pt in runningTasks)
-                            {
-                                if (!pt.task.IsCompleted)
-                                {
-                                    Debug.WriteLine("Task is still running, issuing stop");
-                                    pt.token.Cancel();
-                                }
-                            }
-                            runningTasks.Clear();
-                        }
+                        //if (targetTasks.ContainsKey(target.id) && targetTasks[target.id].Count > 0)
+                        //{
+                        //    var runningTasks = targetTasks[target.id];
+                        //    foreach (var pt in runningTasks)
+                        //    {
+                        //        if (!pt.task.IsCompleted)
+                        //        {
+                        //            Debug.WriteLine("Task is still running, issuing stop");
+                        //            //pt.token.Cancel();
+                        //        }
+                        //    }
+                        //    runningTasks.Clear();
+                        //}
 
                         Debug.WriteLine("Process task.");
-                        var processorTask = action.Handle(valueString, item, trigger, target, serial);
+                        var processorTask = action.Handle(target);
 
-                        processedTargets.Add(target.id);
+                        processedTargets.Add(stopDuplicateKey);
 
-                        if (targetTasks.ContainsKey(target.id))
-                        {
-                            Debug.WriteLine("Key exists, adding.");
-                            targetTasks[target.id].Add(processorTask);
-                        }
-                        else
-                        {
-                            targetTasks[target.id] = new List<ProcessorTask>();
-                            targetTasks[target.id].Add(processorTask);
-                        }
+                        //if (targetTasks.ContainsKey(target.id))
+                        //{
+                        //    Debug.WriteLine("Key exists, adding.");
+                        //    targetTasks[target.id].Add(processorTask);
+                        //}
+                        //else
+                        //{
+                        //    targetTasks[target.id] = new List<ProcessorTask>();
+                        //    targetTasks[target.id].Add(processorTask);
+                        //}
                     }
                 }
-                //var task = Task.Run(async delegate
-                //{
-                //    if (targetTasks.ContainsKey(Target.id))
-                //    var allTasks = targetTasks[target.id];
-                //    await Task.WhenAll(tasks.Select(t => t.task).ToArray());
-                //    Debug.WriteLine("All tasks are done");
-                //});
 
                 return true;
             }

@@ -1,5 +1,6 @@
 ﻿using Pin80Server.CommandProcessors;
 using Pin80Server.Models.JSONSerializer;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
@@ -8,90 +9,6 @@ using System.Threading;
 
 namespace Pin80Server.Models
 {
-
-    public class PixelColor
-    {
-        public static PixelColor Black = new PixelColor("000000");
-
-        public int red;
-        public int green;
-        public int blue;
-
-        public PixelColor(int red, int green, int blue)
-        {
-            this.red = red;
-            this.green = green;
-            this.blue = blue;
-        }
-
-        public PixelColor(string hex)
-        {
-            red = int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-            green = int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-            blue = int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-        }
-
-        public string hexValue
-        {
-            get
-            {
-                {
-                    var rh = red.ToString("X").PadLeft(2, '0');
-                    var gh = green.ToString("X").PadLeft(2, '0');
-                    var bh = blue.ToString("X").PadLeft(2, '0');
-                    return string.Format("{0}{1}{2}", rh, gh, bh);
-                }
-            }
-        }
-
-        public string nameForColor
-        {
-            get
-            {
-                switch (hexValue)
-                {
-                    case "000016": return "Dim Blue";
-                    case "001600": return "Dim Green";
-                    case "160000": return "Dim Red";
-                }
-
-                return hexValue;
-            }
-        }
-
-        public void dimBy(int percent)
-        {
-            red = (int)((1 - (percent / 100.0)) * red);
-            green = (int)((1 - (percent / 100.0)) * green);
-            blue = (int)((1 - (percent / 100.0)) * blue);
-            //Debug.WriteLine(hexValue);
-        }
-
-        public bool isOff()
-        {
-            return red == 0 && green == 0 && blue == 0;
-        }
-
-        override public string ToString()
-        {
-            return nameForColor;
-        }
-    }
-
-    public class Pixel
-    {
-        public PixelColor color;
-        public int steps;
-        public int num;
-
-        public Pixel(int num, PixelColor color, int step)
-        {
-            this.color = color;
-            this.steps = step;
-            this.num = num;
-        }
-    }
-
     public abstract class Action
     {
         public string name { get; set; }
@@ -100,10 +17,11 @@ namespace Pin80Server.Models
         public List<PixelColor> colors { get; set; }
         public int delay { get; set; }
         public int duration { get; set; }
-        public int speed { get; set; }
+        public int speed { get; set; } // TODO use or remove
         public bool reverse { get; set; }
 
-        public abstract ProcessorTask Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial);
+        //public abstract ProcessorTask Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial);
+        public abstract ProcessorTask Handle(Target target);
 
         public Action(JSONSerializer.ActionSerializer action)
         {

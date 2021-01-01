@@ -34,12 +34,13 @@ namespace Pin80Server.Models.Actions
             return str;
         }
 
-        public override ProcessorTask Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial)
+        public override ProcessorTask Handle(Target target)
         {
+            PixelTarget pixelTarget = (PixelTarget)target;
+
             var port = target.port;
-            int numberOfLeds = target.leds;
-            int startRange = 0;
-            int endRange = target.leds - 1;
+            int numberOfLeds = pixelTarget.leds;
+            int endRange = pixelTarget.leds - 1;
 
             PixelColor color = colors[0];
 
@@ -54,56 +55,55 @@ namespace Pin80Server.Models.Actions
                 await Task.Delay(TimeSpan.FromMilliseconds(delay));
                 token.ThrowIfCancellationRequested();
 
+                long actionStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                Debug.WriteLine(string.Format("Action started: {0}", actionStarted));
+
                 // Start with x pixels in array.
                 // Starting with 0, full brightness at color
                 // every iteration subtract little off each in the array and resend.
                 // End when all pixels are off.
                 List<Pixel> pixels = new List<Pixel>(numberOfLeds);
 
-                pixels.Add(new Pixel(0, new PixelColor(255,0,0), 20));
+                pixels.Add(new Pixel(0, new PixelColor(255,0,0)));
 
                 int pixelsAdded = 1;
 
+                var nextUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds() + msEach;
 
-
-                while(pixels.Count > 0)
+                while (pixels.Count > 0)
                 {
-                    Debug.WriteLine(DateTimeOffset.Now.ToUnixTimeMilliseconds());
-                    //serial.Write(string.Format("{0} PXSTART\n", port));
-
-                    // Check pixels
-                    //var l = pixels.Where(pixel => pixel.steps > 0).ToList();
-                    foreach (var ll in pixels.ToList())
+                    var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                    if (now >= nextUpdate)
                     {
-                        if (ll.color.isOff())
-                        {
-                            //Debug.WriteLine(string.Format("Remove pixel it's over: {0}", ll.num));
-                            pixels.Remove(ll);
-                        }
-                        else
-                        {
-                            //Debug.WriteLine("Pixel not off yet");
-                            ll.color.dimBy(20);
-                        }
-                        //serial.Write(string.Format("{0} PX{1} {2}\n", port, ll.num, ll.color.hexValue));
-                    }
+                        nextUpdate = now + msEach;
+                        //Debug.WriteLine(DateTimeOffset.Now.ToUnixTimeMilliseconds());
+                        //serial.Write(string.Format("{0} PXSTART\n", port));
 
-                    //serial.Write(string.Format("{0} PXEND\n", port));
-                    //await Task.Delay(TimeSpan.FromMilliseconds(msEach));
+                        // Check pixels
+                        foreach (var ll in pixels.ToList())
+                        {
+                            if (ll.color.isOff())
+                            {
+                                pixels.Remove(ll);
+                            }
+                            else
+                            {
+                                ll.color.dimBy(20);
+                            }
+                            //serial.Write(string.Format("{0} PX{1} {2}\n", port, ll.num, ll.color.hexValue));
+                        }
 
-                    if (pixelsAdded < numberOfLeds)
-                    {
-                        pixels.Add(new Pixel(pixelsAdded++, new PixelColor(255, 0, 0), 20));
+                       // serial.Write(string.Format("{0} PXEND\n", port));
+
+                        if (pixelsAdded < numberOfLeds)
+                        {
+                            pixels.Add(new Pixel(pixelsAdded++, new PixelColor(255, 0, 0)));
+                        }
+
+                        token.ThrowIfCancellationRequested();
                     }
-                    //Debug.WriteLine(pixels.Count);
-                    token.ThrowIfCancellationRequested();
+                    /// Maybe small delay here?
                 }
-                
-                // All off
-                //color = off;
-                //serial.Write(string.Format("{0} PXSTART\n", port));
-                //serial.Write(string.Format("{0} PX{1}-{2} {3}\n", port, startRange, endRange, color));
-                //serial.Write(string.Format("{0} PXEND\n", port));
             }, token);
 
             return new ProcessorTask(task, tokenSource);
