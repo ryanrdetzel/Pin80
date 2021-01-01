@@ -31,6 +31,7 @@ namespace Pin80Server.Models.JSONSerializer
                 case "PIXEL":
                     list.Add("PIXELRUN");
                     list.Add("PIXEL");
+                    list.Add("PIXELCOMIT");
                     break;
                 case "LED":
                     list.Add("ONOFF");

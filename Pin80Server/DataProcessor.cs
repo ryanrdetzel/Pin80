@@ -160,6 +160,9 @@ namespace Pin80Server
                     case "PIXELRUN":
                         actionsDict[action.id] = new PixelRunAction(action);
                         break;
+                    case "PIXELCOMIT":
+                        actionsDict[action.id] = new PixelComitAction(action);
+                        break;
                     default:
                         throw new Exception("Not a valid action");
                 }

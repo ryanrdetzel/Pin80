@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Actions\PixelRunAction.cs" />
+    <Compile Include="Models\Actions\PixelCometAction.cs" />
     <Compile Include="Models\Actions\PixelAction.cs" />
     <Compile Include="SortableBindingList.cs" />
     <Compile Include="Settings.cs" />

@@ -18,9 +18,9 @@ namespace Pin80Server.Models.Actions
             if (name != null) return name;
 
             string timeStr = timeString(duration);
-            string color = colors[0];
+            PixelColor color = colors[0];
 
-            string str = string.Format("Pixel Run {1} for {0}", timeStr, nameForColor(color));
+            string str = string.Format("Pixel Runner {1} for {0}", timeStr, color.nameForColor);
             if (delay > 0)
             {
                 str += string.Format(" w/ {0} delay", timeString(delay));
@@ -30,7 +30,7 @@ namespace Pin80Server.Models.Actions
                 str += string.Format(" then reverse", timeString(delay));
                 if (colors.Count == 2)
                 {
-                    str += string.Format(" in {0}", nameForColor(colors[1]));
+                    str += string.Format(" in {0}", colors[1].nameForColor);
                 }
             }
 
@@ -44,8 +44,7 @@ namespace Pin80Server.Models.Actions
             int startRange = 0;
             int endRange = target.leds - 1;
 
-            string color = colors[0];
-            string off = "000000";
+            PixelColor color = colors[0];
 
             //Figure out how long each pixel has based on count and duration
             int msEach = duration / numberOfLeds;
@@ -61,7 +60,7 @@ namespace Pin80Server.Models.Actions
                 for (int x = 0; x < numberOfLeds; x++)
                 {
                     serial.Write(string.Format("{0} PXSTART\n", port));
-                    serial.Write(string.Format("{0} PX{1} {2}\n", port, x, color));
+                    serial.Write(string.Format("{0} PX{1} {2}\n", port, x, color.hexValue));
                     serial.Write(string.Format("{0} PXEND\n", port));
 
                     await Task.Delay(TimeSpan.FromMilliseconds(msEach));
@@ -69,7 +68,7 @@ namespace Pin80Server.Models.Actions
                 }
                 if (reverse)
                 {
-                    color = off;
+                    color = PixelColor.Black;
                     if (colors.Count == 2)
                     {
                         color = colors[1];
@@ -77,7 +76,7 @@ namespace Pin80Server.Models.Actions
                     for (int x = numberOfLeds; x >= 0; x--)
                     {
                         serial.Write(string.Format("{0} PXSTART\n", port));
-                        serial.Write(string.Format("{0} PX{1} {2}\n", port, x, color));
+                        serial.Write(string.Format("{0} PX{1} {2}\n", port, x, color.hexValue));
                         serial.Write(string.Format("{0} PXEND\n", port));
 
                         await Task.Delay(TimeSpan.FromMilliseconds(msEach));
@@ -85,9 +84,9 @@ namespace Pin80Server.Models.Actions
                     }
                 }
                 // All off
-                color = off;
+                color = PixelColor.Black;
                 serial.Write(string.Format("{0} PXSTART\n", port));
-                serial.Write(string.Format("{0} PX{1}-{2} {3}\n", port, startRange, endRange, color));
+                serial.Write(string.Format("{0} PX{1}-{2} {3}\n", port, startRange, endRange, color.hexValue));
                 serial.Write(string.Format("{0} PXEND\n", port));
             }, token);
 

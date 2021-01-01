@@ -9,20 +9,20 @@ namespace Pin80Server.Models.Actions
 {
     public class PixelAction : Action
     {
-        public string color { get; set; }
 
         public PixelAction(JSONSerializer.ActionSerializer action) : base(action)
         {
-            color = action.colors[0];
         }
 
         public override string ToString()
         {
+            PixelColor color = colors[0];
+
             if (name != null) return name;
 
             string timeStr = timeString(duration);
 
-            string str = string.Format("Pixel On {1} for {0}", timeStr, nameForColor(color));
+            string str = string.Format("Pixel On {1} for {0}", timeStr, color);
             if (delay > 0)
             {
                 str += string.Format(" w/ {0} delay", timeString(delay));
@@ -34,6 +34,7 @@ namespace Pin80Server.Models.Actions
         {
             var tokenSource = new CancellationTokenSource();
             var token = tokenSource.Token;
+            PixelColor color = colors[0];
 
             var port = target.port;
             int startRange = 0;
@@ -42,7 +43,7 @@ namespace Pin80Server.Models.Actions
             //TODO check that the range makes sense.
 
             // Calculate all the pixel colors and send them.
-            string OnCmd = string.Format("{0} PX{1}-{2} {3}\n", port, startRange, endRange, color);
+            string OnCmd = string.Format("{0} PX{1}-{2} {3}\n", port, startRange, endRange, color.hexValue);
             string OffCmd = string.Format("{0} PX{1}-{2} {3}\n", port, startRange, endRange, "000000");
 
             var task = Task.Run(async delegate
