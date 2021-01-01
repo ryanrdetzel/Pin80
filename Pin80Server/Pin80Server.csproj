@@ -74,11 +74,11 @@
     <Compile Include="Models\JSONSerializer\ActionSerializer.cs" />
     <Compile Include="Models\Actions\Action.cs" />
     <Compile Include="Models\JSONSerializer\TargetSerializer.cs" />
-    <Compile Include="Models\JSONSerializer\Trigger.cs" />
+    <Compile Include="Models\Trigger.cs" />
     <Compile Include="Processors\Processor.cs" />
     <Compile Include="Processors\PBYProcessor.cs" />
     <Compile Include="Processors\VPXProcessor.cs" />
-    <Compile Include="Models\JSONSerializer\ControlItem.cs" />
+    <Compile Include="Models\ControlItem.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

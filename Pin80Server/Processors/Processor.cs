@@ -23,7 +23,7 @@ namespace Pin80Server.CommandProcessors
             mainForm = mf;
         }
 
-        string romName()
+        private string romName()
         {
             return _romName;
         }

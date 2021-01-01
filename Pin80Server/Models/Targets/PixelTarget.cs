@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pin80Server.Models
 {
-    class PixelTarget : Target
+    internal class PixelTarget : Target
     {
         public int leds { get; set; }
         private readonly object _valueLock = new object();
@@ -52,7 +49,9 @@ namespace Pin80Server.Models
             lock (_valueLock)
             {
                 foreach (var pixel in pixels)
+                {
                     pixel.needsUpdate = false;
+                }
             }
         }
 

@@ -1,11 +1,7 @@
 ﻿using Pin80Server.CommandProcessors;
 using Pin80Server.Models.JSONSerializer;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO.Ports;
 using System.Linq;
-using System.Threading;
 
 namespace Pin80Server.Models
 {
@@ -20,7 +16,6 @@ namespace Pin80Server.Models
         public int speed { get; set; } // TODO use or remove
         public bool reverse { get; set; }
 
-        //public abstract ProcessorTask Handle(string value, ControlItem item, Trigger trigger, Target target, SerialPort serial);
         public abstract ProcessorTask Handle(Target target);
 
         public Action(JSONSerializer.ActionSerializer action)

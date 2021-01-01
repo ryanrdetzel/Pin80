@@ -4,11 +4,11 @@ namespace Pin80Server.CommandProcessors
 {
     public class PBYProcessor : Processor
     {
-        public PBYProcessor(DataProcessor d, SerialPort s): base(d, s)
+        public PBYProcessor(DataProcessor d, SerialPort s) : base(d, s)
         {
         }
 
-        override public bool processCommand(string command)
+        public override bool processCommand(string command)
         {
             if (serial == null)
             {

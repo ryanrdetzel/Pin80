@@ -3,7 +3,6 @@ using Pin80Server.Models.JSONSerializer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO.Ports;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +19,10 @@ namespace Pin80Server.Models.Actions
 
         public override string ToString()
         {
-            if (name != null) return name;
+            if (name != null)
+            {
+                return name;
+            }
 
             string timeStr = timeString(duration);
             PixelColor color = colors[0];
@@ -64,7 +66,7 @@ namespace Pin80Server.Models.Actions
                 // End when all pixels are off.
                 List<Pixel> pixels = new List<Pixel>(numberOfLeds);
 
-                pixels.Add(new Pixel(0, new PixelColor(255,0,0)));
+                pixels.Add(new Pixel(0, new PixelColor(255, 0, 0)));
 
                 int pixelsAdded = 1;
 
@@ -93,7 +95,7 @@ namespace Pin80Server.Models.Actions
                             //serial.Write(string.Format("{0} PX{1} {2}\n", port, ll.num, ll.color.hexValue));
                         }
 
-                       // serial.Write(string.Format("{0} PXEND\n", port));
+                        // serial.Write(string.Format("{0} PXEND\n", port));
 
                         if (pixelsAdded < numberOfLeds)
                         {

@@ -1,12 +1,9 @@
 ﻿using Pin80Server.Models.JSONSerializer;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Pin80Server.CommandProcessors
@@ -16,7 +13,7 @@ namespace Pin80Server.CommandProcessors
         private const int LagIgnoreMS = 30;
 
         // Store tasks by target
-        private Dictionary<string, List<ProcessorTask>> targetTasks = new Dictionary<string, List<ProcessorTask>>();
+        private readonly Dictionary<string, List<ProcessorTask>> targetTasks = new Dictionary<string, List<ProcessorTask>>();
 
         public VPXProcessor(DataProcessor d, SerialPort s) : base(d, s)
         {
@@ -41,7 +38,7 @@ namespace Pin80Server.CommandProcessors
          * Commands are broken down as:
          * TRIGGER ACTION TIMESTAMP
          */
-        override public bool processCommand(string command)
+        public override bool processCommand(string command)
         {
             if (serial == null)
             {
@@ -136,36 +133,8 @@ namespace Pin80Server.CommandProcessors
                     // TODO Check serial connection is all set still.
                     if (action.Validate(valueString, item))
                     {
-                        // First check if this target is already executing tasks
-                        //if (targetTasks.ContainsKey(target.id) && targetTasks[target.id].Count > 0)
-                        //{
-                        //    var runningTasks = targetTasks[target.id];
-                        //    foreach (var pt in runningTasks)
-                        //    {
-                        //        if (!pt.task.IsCompleted)
-                        //        {
-                        //            Debug.WriteLine("Task is still running, issuing stop");
-                        //            //pt.token.Cancel();
-                        //        }
-                        //    }
-                        //    runningTasks.Clear();
-                        //}
-
-                        Debug.WriteLine("Process task.");
-                        var processorTask = action.Handle(target);
-
+                        action.Handle(target);
                         processedTargets.Add(stopDuplicateKey);
-
-                        //if (targetTasks.ContainsKey(target.id))
-                        //{
-                        //    Debug.WriteLine("Key exists, adding.");
-                        //    targetTasks[target.id].Add(processorTask);
-                        //}
-                        //else
-                        //{
-                        //    targetTasks[target.id] = new List<ProcessorTask>();
-                        //    targetTasks[target.id].Add(processorTask);
-                        //}
                     }
                 }
 

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pin80Server.Models
 {
@@ -32,7 +28,7 @@ namespace Pin80Server.Models
             this.port = target.port;
         }
 
-        
+
         public abstract void Run(SerialPort serialPort);
 
         public List<string> validActions()
@@ -58,7 +54,7 @@ namespace Pin80Server.Models
             return list;
         }
 
-        override public string ToString()
+        public override string ToString()
         {
             return name;
         }

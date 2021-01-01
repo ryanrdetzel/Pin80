@@ -1,7 +1,6 @@
 ﻿using Pin80Server.CommandProcessors;
 using Pin80Server.Models.JSONSerializer;
 using System;
-using System.IO.Ports;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,20 +10,6 @@ namespace Pin80Server.Models.Actions
     {
         public OnOffAction(ActionSerializer action) : base(action)
         {
-        }
-
-        public override string ToString()
-        {
-            if (name != null) return name;
-
-            string timeStr = timeString(duration);
-
-            string str = string.Format("On for {0}", timeStr);
-            if (delay > 0)
-            {
-                str += string.Format(" w/ {0} delay", timeString(delay));
-            }
-            return str;
         }
 
         public override ProcessorTask Handle(Target target)
@@ -60,6 +45,23 @@ namespace Pin80Server.Models.Actions
             }, token);
 
             return new ProcessorTask(task, tokenSource);
+        }
+
+        public override string ToString()
+        {
+            if (name != null)
+            {
+                return name;
+            }
+
+            string timeStr = timeString(duration);
+
+            string str = string.Format("On for {0}", timeStr);
+            if (delay > 0)
+            {
+                str += string.Format(" w/ {0} delay", timeString(delay));
+            }
+            return str;
         }
     }
 }

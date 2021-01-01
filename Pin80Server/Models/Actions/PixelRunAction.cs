@@ -1,8 +1,6 @@
 ﻿using Pin80Server.CommandProcessors;
 using Pin80Server.Models.JSONSerializer;
 using System;
-using System.Diagnostics;
-using System.IO.Ports;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,7 +19,6 @@ namespace Pin80Server.Models.Actions
 
             int numberOfLeds = pixelTarget.leds;
 
-            //Figure out how long each pixel has based on count and duration
             int msEach = duration / numberOfLeds;
 
             var tokenSource = new CancellationTokenSource();
@@ -82,7 +79,11 @@ namespace Pin80Server.Models.Actions
                 }
                 else
                 {
-                    while (DateTimeOffset.Now.ToUnixTimeMilliseconds() < nextUpdate) ;
+                    while (DateTimeOffset.Now.ToUnixTimeMilliseconds() < nextUpdate)
+                    {
+                        ;
+                    }
+
                     pixelTarget.updateAllPixels(PixelColor.Black, actionStarted);
                 }
             }, token);
@@ -92,7 +93,10 @@ namespace Pin80Server.Models.Actions
 
         public override string ToString()
         {
-            if (name != null) return name;
+            if (name != null)
+            {
+                return name;
+            }
 
             string timeStr = timeString(duration);
             PixelColor color = colors[0];

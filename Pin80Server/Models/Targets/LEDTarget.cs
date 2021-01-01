@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO.Ports;
 
 namespace Pin80Server.Models
 {
@@ -14,20 +9,14 @@ namespace Pin80Server.Models
 
         private bool _hasUpdate;
 
-        public override bool hasUpdate
-        {
-            get
-            {
-                return _hasUpdate;
-            }
-        }
+        public override bool hasUpdate => _hasUpdate;
 
         public LEDTarget(JSONSerializer.TargetSerializer target) : base(target)
         {
             _hasUpdate = false;
         }
 
-        override public void Run(SerialPort serialPort)
+        public override void Run(SerialPort serialPort)
         {
             string value = (_portValue == 0) ? "OFF" : "ON";
             serialPort.Write(string.Format("{0} {1}\n", port, value));

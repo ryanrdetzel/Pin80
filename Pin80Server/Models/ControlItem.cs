@@ -2,6 +2,8 @@
 using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
+
+
 /**
 * Control Item
 */
@@ -12,13 +14,12 @@ namespace Pin80Server.Models.JSONSerializer
         // Used so we can set the actual value for the disabled instead of the validated one.
         private bool _processing = false;
 
-        /* Used for temp items */
         public ControlItem(string trigger, string value)
         {
             this.enabled = false;
             this.value = value;
             _id = Guid.NewGuid().ToString("N");
-            this.triggerString = trigger;
+            triggerString = trigger;
         }
 
         [OnDeserializing]

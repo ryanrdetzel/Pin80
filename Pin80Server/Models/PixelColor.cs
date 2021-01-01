@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pin80Server.Models
+﻿namespace Pin80Server.Models
 {
     public class PixelColor
     {
@@ -69,7 +63,7 @@ namespace Pin80Server.Models
             return red == 0 && green == 0 && blue == 0;
         }
 
-        override public string ToString()
+        public override string ToString()
         {
             return nameForColor;
         }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Pin80Server.Models.JSONSerializer
+﻿namespace Pin80Server.Models.JSONSerializer
 {
     public class TargetSerializer
     {
