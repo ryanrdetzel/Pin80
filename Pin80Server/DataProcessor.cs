@@ -161,8 +161,8 @@ namespace Pin80Server
                     case "PIXELRUN":
                         effectsDict[effect.id] = new PixelRunEffect(effect);
                         break;
-                    case "PIXELCOMIT":
-                        effectsDict[effect.id] = new PixelComitEffect(effect);
+                    case "PIXELCOMET":
+                        effectsDict[effect.id] = new PixelCometEffect(effect);
                         break;
                     default:
                         throw new Exception("Not a valid effect");

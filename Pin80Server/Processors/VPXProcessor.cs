@@ -1,4 +1,5 @@
-﻿using Pin80Server.Models.JSONSerializer;
+﻿using Pin80Server.Models;
+using Pin80Server.Models.JSONSerializer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +14,7 @@ namespace Pin80Server.CommandProcessors
         private const int LagIgnoreMS = 30;
 
         // Store tasks by target
-        private readonly Dictionary<string, List<ProcessorTask>> targetTasks = new Dictionary<string, List<ProcessorTask>>();
+        // private readonly Dictionary<string, List<ProcessorTask>> targetTasks = new Dictionary<string, List<ProcessorTask>>();
 
         public VPXProcessor(DataProcessor d, SerialPort s) : base(d, s)
         {
@@ -37,11 +38,11 @@ namespace Pin80Server.CommandProcessors
         /*
          * Commands are broken down as:
          */
-        public override bool processCommand(string command)
+        public override List<EffectInstance> processCommand(string command, long ts)
         {
             if (serial == null)
             {
-                return false;
+                return null;
             }
 
             try
@@ -50,7 +51,7 @@ namespace Pin80Server.CommandProcessors
                 if (!success)
                 {
                     mainForm.addLogEntry(string.Format("ERR command is not valid: {0}", command));
-                    return false;
+                    return null;
                 }
 
                 var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
@@ -68,9 +69,9 @@ namespace Pin80Server.CommandProcessors
                                 mainForm.setRomName(_romName);
                             });
                         }
-                        return true;
+                        return null;
                     }
-                    return false;
+                    return null;
                 }
 
                 var sentMS = Convert.ToInt64(extraString);
@@ -104,6 +105,8 @@ namespace Pin80Server.CommandProcessors
 
                 /* Pretection so we don't run items with the same target */
                 HashSet<string> processedTargets = new HashSet<string>();
+                List<EffectInstance> actions = new List<EffectInstance>();
+
                 foreach (var item in items)
                 {
                     if (!item.enabled)
@@ -111,39 +114,41 @@ namespace Pin80Server.CommandProcessors
                         continue;
                     }
 
-                    var target = dataProcessor.getTarget(item.targetString);
                     var trigger = dataProcessor.getTrigger(item.triggerString);
+                    var target = dataProcessor.getTarget(item.targetString);
                     var effect = dataProcessor.getEffect(item.effectString);
 
-                    if (effect == null || trigger == null || target == null)
+                    EffectInstance action = new EffectInstance(target, effect);
+
+                    if (!action.isValid())
                     {
                         throw new Exception("Could not handle effect");
                     }
 
-                    var stopDuplicateKey = string.Format("{0}{1}", target.id, effect.delay);
-
-                    if (processedTargets.Contains(stopDuplicateKey))
+                    if (processedTargets.Contains(action.dupeKey))
                     {
                         Debug.WriteLine("Already processed an item for this target!");
-                        Debug.WriteLine(stopDuplicateKey);
+                        Debug.WriteLine(action.dupeKey);
                         continue;
                     }
 
                     // TODO Check serial connection is all set still.
                     if (effect.Validate(valueString, item))
                     {
-                        effect.Handle(target);
-                        processedTargets.Add(stopDuplicateKey);
+                        effect.Tick(action, ts);
+                        actions.Add(action);
+
+                        processedTargets.Add(action.dupeKey);
                     }
                 }
 
-                return true;
+                return actions;
             }
             catch (Exception e)
             {
                 Debug.WriteLine(string.Format("Could not process command: {0} {1}", command, e));
                 mainForm.addLogEntry(string.Format("ERR failed to process: {0}", command));
-                return false;
+                return null;
             }
         }
     }

@@ -1,5 +1,4 @@
-﻿using Pin80Server.CommandProcessors;
-using Pin80Server.Models.JSONSerializer;
+﻿using Pin80Server.Models.JSONSerializer;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,8 +14,9 @@ namespace Pin80Server.Models.Effects
         public int duration { get; set; }
         public int speed { get; set; } // TODO use or remove
         public bool reverse { get; set; }
+        public int fade { get; set; }
 
-        public abstract ProcessorTask Handle(Target target);
+        public abstract bool Tick(EffectInstance triggeredAction, long ts);
 
         public Effect(JSONSerializer.EffectSerializer effect)
         {
@@ -24,6 +24,7 @@ namespace Pin80Server.Models.Effects
             id = effect.id;
             kind = effect.kind;
             colors = new List<PixelColor>();
+            fade = effect.fade;
 
             if (effect.colors != null)
             {

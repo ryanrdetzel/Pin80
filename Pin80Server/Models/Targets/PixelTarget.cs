@@ -28,19 +28,28 @@ namespace Pin80Server.Models
             }
         }
 
-        public void updatePixel(int number, PixelColor color, long effectStarted)
+        public void fadeAllPixels(int percent)
         {
-            lock (_valueLock)
+            // All pixels that are not off.
+            foreach (var pixel in pixels.Where(p => !p.isOff()))
             {
-                pixels[number].updateColor(color, effectStarted);
+                pixel.dimBy(percent);
             }
         }
 
-        public void updateAllPixels(PixelColor color, long effectStarted)
+        public void updatePixel(int number, PixelColor color, EffectInstance action)
+        {
+            lock (_valueLock)
+            {
+                pixels[number].updateColor(color, action);
+            }
+        }
+
+        public void updateAllPixels(PixelColor color, EffectInstance action)
         {
             foreach (var pixel in pixels)
             {
-                updatePixel(pixel.num, color, effectStarted);
+                updatePixel(pixel.num, color, action);
             }
         }
 
@@ -53,6 +62,16 @@ namespace Pin80Server.Models
                     pixel.needsUpdate = false;
                 }
             }
+        }
+
+        public Pixel pixelAt(int num)
+        {
+            return pixels[num];
+        }
+
+        public Pixel lastPixel()
+        {
+            return pixels[leds - 1];
         }
 
         private int updateCount()
@@ -74,6 +93,7 @@ namespace Pin80Server.Models
 
         public override void Run(SerialPort serialPort)
         {
+            //Debug.WriteLine(string.Format("serial -> {0}", DateTimeOffset.Now.ToUnixTimeMilliseconds()));
             if (updateAll() && allSameColor())
             {
                 int startRange = 0;
@@ -94,6 +114,7 @@ namespace Pin80Server.Models
                 foreach (var p in pixels.Where(p => p.needsUpdate))
                 {
                     var OnCmd = string.Format("{0} PX{1} {2}\n", port, p.num, p.color.hexValue);
+                    //Debug.WriteLine(OnCmd.Trim());
                     serialPort.Write(OnCmd);
                 }
                 serialPort.Write(string.Format("{0} PXEND\n", port));

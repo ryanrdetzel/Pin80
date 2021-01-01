@@ -1,4 +1,6 @@
-﻿using System.IO.Ports;
+﻿using Pin80Server.Models;
+using System.Collections.Generic;
+using System.IO.Ports;
 
 namespace Pin80Server.CommandProcessors
 {
@@ -8,11 +10,11 @@ namespace Pin80Server.CommandProcessors
         {
         }
 
-        public override bool processCommand(string command)
+        public override List<EffectInstance> processCommand(string command, long ts)
         {
             if (serial == null)
             {
-                return false;
+                return null;
             }
 
             string[] commandParts = command.Split(' ');
@@ -32,7 +34,7 @@ namespace Pin80Server.CommandProcessors
                 serial.Write(string.Format("{0} {1}\n", "S48", 0));
             }
 
-            return true;
+            return null;
         }
     }
 }

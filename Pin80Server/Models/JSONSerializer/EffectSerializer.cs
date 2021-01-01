@@ -16,6 +16,7 @@ namespace Pin80Server.Models.JSONSerializer
         public int speed { get; set; }
         public bool reverse { get; set; }
         public bool interpolate { get; set; } //TODO
+        public int fade { get; set; }
 
         public List<string> colors { get; set; }
     }

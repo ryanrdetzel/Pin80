@@ -1,4 +1,6 @@
-﻿using System.IO.Ports;
+﻿using Pin80Server.Models;
+using System.Collections.Generic;
+using System.IO.Ports;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,7 +19,7 @@ namespace Pin80Server.CommandProcessors
             dataProcessor = d;
         }
 
-        public abstract bool processCommand(string command);
+        public abstract List<EffectInstance> processCommand(string command, long ts);
         public void setMainForm(MainForm mf)
         {
             mainForm = mf;

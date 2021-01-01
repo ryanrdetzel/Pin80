@@ -1,50 +1,36 @@
-﻿using Pin80Server.CommandProcessors;
-using Pin80Server.Models.JSONSerializer;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Pin80Server.Models.JSONSerializer;
 
 namespace Pin80Server.Models.Effects
 {
     public class OnOffEffect : Effect
     {
-        public OnOffEffect(EffectSerializer effect) : base(effect)
+        public OnOffEffect(EffectSerializer effect) : base(effect) { }
+
+        public override bool Tick(EffectInstance triggeredAction, long ts)
         {
-        }
+            var ledTarget = (LEDTarget)triggeredAction.target;
 
-        public override ProcessorTask Handle(Target target)
-        {
-            var tokenSource = new CancellationTokenSource();
-            var token = tokenSource.Token;
-            var ledTarget = (LEDTarget)target;
+            bool runAgain = true;
+            int step;
+            triggeredAction.state.TryGetValue("step", out step);
 
-            var port = target.port;
-
-            var nextUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds() + duration;
-            bool running = true;
-
-            // TODO If there is a delay work with that first
-            var task = Task.Run(async delegate
+            switch (step)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(delay));
-                token.ThrowIfCancellationRequested();
+                case 0:
+                    triggeredAction.nextUpdate = ts + delay;  // This makes a very small delay, we could skip this if there is no delay
+                    break;
+                case 1:
+                    ledTarget.updatePortValue(1);
+                    triggeredAction.nextUpdate = ts + duration;
+                    break;
+                case 2:
+                    ledTarget.updatePortValue(0);
+                    runAgain = false;
+                    break;
+            }
 
-                ledTarget.updatePortValue(1);
-
-                while (running)
-                {
-                    var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
-                    if (now >= nextUpdate)
-                    {
-                        token.ThrowIfCancellationRequested();
-                        ledTarget.updatePortValue(0);
-                        running = false;
-                    }
-                }
-            }, token);
-
-            return new ProcessorTask(task, tokenSource);
+            triggeredAction.state["step"] = step + 1;
+            return runAgain;
         }
 
         public override string ToString()

@@ -1,8 +1,4 @@
-﻿using Pin80Server.CommandProcessors;
-using Pin80Server.Models.JSONSerializer;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Pin80Server.Models.JSONSerializer;
 
 namespace Pin80Server.Models.Effects
 {
@@ -12,81 +8,63 @@ namespace Pin80Server.Models.Effects
         {
         }
 
-        public override ProcessorTask Handle(Target target)
+        public override bool Tick(EffectInstance triggeredAction, long ts)
         {
-            PixelTarget pixelTarget = (PixelTarget)target;
+            PixelTarget pixelTarget = (PixelTarget)triggeredAction.target;
             PixelColor color = colors[0];
+            PixelColor reverseColor = (colors.Count == 2) ? colors[1] : PixelColor.Black;
 
             int numberOfLeds = pixelTarget.leds;
-
             int msEach = duration / numberOfLeds;
 
-            var tokenSource = new CancellationTokenSource();
-            var token = tokenSource.Token;
+            int step, onLedNumber;
+            triggeredAction.state.TryGetValue("step", out step);
+            triggeredAction.state.TryGetValue("onLedNumber", out onLedNumber);
 
-            var task = Task.Run(async delegate
+            bool runAgain = true;
+
+            switch (step)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(delay));
-                token.ThrowIfCancellationRequested();
+                case 0: // delay
+                    triggeredAction.nextUpdate = ts + delay;  // This makes a very small delay, we could skip this if there is no delay
+                    step = 1;
+                    break;
+                case 1:
+                    pixelTarget.updatePixel(onLedNumber, color, triggeredAction);
 
-                long effectStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
-                var nextUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-                bool running = true;
-
-                int onLedNumber = 0;
-
-                while (running)
-                {
-                    var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-                    if (now >= nextUpdate)
+                    if (onLedNumber++ >= numberOfLeds - 1)
                     {
-                        token.ThrowIfCancellationRequested();
-
-                        pixelTarget.updatePixel(onLedNumber, color, effectStarted);
-
-                        if (onLedNumber++ >= numberOfLeds - 1)
+                        if (reverse)
                         {
-                            running = false;
+                            onLedNumber = numberOfLeds - 1;
+                            step = 2;
                         }
-                        nextUpdate = now + msEach;
-                    }
-                }
-
-
-                if (reverse)
-                {
-                    running = true;
-                    color = (colors.Count == 2) ? colors[1] : PixelColor.Black;
-                    onLedNumber = numberOfLeds - 1;
-
-                    while (running)
-                    {
-                        var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-                        if (now >= nextUpdate)
+                        else
                         {
-                            token.ThrowIfCancellationRequested();
-
-                            pixelTarget.updatePixel(onLedNumber, color, effectStarted);
-
-                            if (onLedNumber-- <= 0)
-                            {
-                                running = false;
-                            }
-                            nextUpdate = now + msEach;
+                            step = 3;
                         }
                     }
-                    while (DateTimeOffset.Now.ToUnixTimeMilliseconds() < nextUpdate) { };
-                    pixelTarget.updateAllPixels(PixelColor.Black, effectStarted);
-                }
-                else
-                {
-                    while (DateTimeOffset.Now.ToUnixTimeMilliseconds() < nextUpdate) { };
-                    pixelTarget.updateAllPixels(PixelColor.Black, effectStarted);
-                }
-            }, token);
+                    triggeredAction.nextUpdate = ts + msEach;
+                    break;
+                case 2: // reverse
+                    pixelTarget.updatePixel(onLedNumber, reverseColor, triggeredAction);
 
-            return new ProcessorTask(task, tokenSource);
+                    if (onLedNumber-- <= 0)
+                    {
+                        step = 3;
+                    }
+                    triggeredAction.nextUpdate = ts + msEach;
+                    break;
+                case 3:
+                    pixelTarget.updateAllPixels(PixelColor.Black, triggeredAction);
+                    runAgain = false;
+                    break;
+            }
+
+            triggeredAction.state["step"] = step;
+            triggeredAction.state["onLedNumber"] = onLedNumber;
+
+            return runAgain;
         }
 
         public override string ToString()

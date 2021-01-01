@@ -87,6 +87,11 @@ namespace Pin80Server
 
         public void addLogEntry(string entry)
         {
+            if (entry == null)
+            {
+                return;
+            }
+
             if (loggingEnabled)
             {
                 if (filterTextBox.Text == "" || entry.StartsWith(filterTextBox.Text))

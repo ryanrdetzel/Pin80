@@ -1,6 +1,8 @@
 ﻿using Pin80Server.CommandProcessors;
+using Pin80Server.Models;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
@@ -186,47 +188,77 @@ namespace Pin80Server
 
         public static void HandleCommands()
         {
+
+            List<EffectInstance> runningActions = new List<EffectInstance>();
+            long now;
+            string cmd;
+
+            //var targetList = dataProcessor.targetsDict.Values.ToList();
+
             while (true)
             {
-                //var cmd = commandQueue.Take();
-                string cmd;
-                if (commandQueue.TryTake(out cmd, 1)) // try to take for 1ms
+                now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+                if (commandQueue.TryTake(out cmd))
                 {
-                    string[] commandParts = cmd.Split(' ');
-                    string source = commandParts[0];
+                    if (cmd != null)
+                    {
+                        string[] commandParts = cmd.Split(' ');
+                        string source = commandParts[0];
 
-                    if (mainForm.IsHandleCreated)
-                    {
-                        mainForm.BeginInvoke((MethodInvoker)delegate ()
-                        {
-                            mainForm.addLogEntry(cmd);
-                        });
-                    }
-
-                    // PinballY 
-                    if (source.StartsWith("PBY"))
-                    {
-                        vbyProcessor.processCommand(cmd);
-                    }
-                    // Virutal Pinball X
-                    else if (source == "VPX")
-                    {
-                        string command = string.Join(" ", commandParts.Skip(1)); // Don't care about the source
-                        vpxProcessor.processCommand(command);
-                    }
-                    else
-                    {
                         if (mainForm.IsHandleCreated)
                         {
                             mainForm.BeginInvoke((MethodInvoker)delegate ()
                             {
-                                mainForm.addLogEntry(string.Format("ERR Unknown command: {0}", cmd));
+                                mainForm.addLogEntry(cmd);
                             });
+                        }
+
+                        // PinballY 
+                        if (source.StartsWith("PBY"))
+                        {
+                            vbyProcessor.processCommand(cmd, now);
+                        }
+                        // Virutal Pinball X
+                        else if (source == "VPX")
+                        {
+                            string command = string.Join(" ", commandParts.Skip(1)); // Don't care about the source
+                            var list = vpxProcessor.processCommand(command, now);
+                            if (list != null)
+                            {
+                                runningActions.AddRange(list);
+                            }
+                        }
+                        else
+                        {
+                            if (mainForm.IsHandleCreated)
+                            {
+                                mainForm.BeginInvoke((MethodInvoker)delegate ()
+                                {
+                                    mainForm.addLogEntry(string.Format("ERR Unknown command: {0}", cmd));
+                                });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Debug.WriteLine("");
+                    }
+                }
+
+                // Process targets
+                foreach (EffectInstance ta in runningActions.ToList())
+                {
+                    if (now >= ta.nextUpdate)
+                    {
+                        if (!ta.effect.Tick(ta, now))
+                        {
+                            runningActions.Remove(ta);
                         }
                     }
                 }
-                // Process targets
-                foreach (Models.Target target in dataProcessor.targetsDict.Values)
+
+                foreach (Models.Target target in dataProcessor.targetsDict.Values.ToList())
                 {
                     if (target.hasUpdate)
                     {

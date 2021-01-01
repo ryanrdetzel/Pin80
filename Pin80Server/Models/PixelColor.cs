@@ -50,19 +50,6 @@
             }
         }
 
-        public void dimBy(int percent)
-        {
-            red = (int)((1 - (percent / 100.0)) * red);
-            green = (int)((1 - (percent / 100.0)) * green);
-            blue = (int)((1 - (percent / 100.0)) * blue);
-            //Debug.WriteLine(hexValue);
-        }
-
-        public bool isOff()
-        {
-            return red == 0 && green == 0 && blue == 0;
-        }
-
         public override string ToString()
         {
             return nameForColor;

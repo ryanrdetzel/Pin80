@@ -1,9 +1,4 @@
-﻿using Pin80Server.CommandProcessors;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Pin80Server.Models.Effects
+﻿namespace Pin80Server.Models.Effects
 {
     public class PixelEffect : Effect
     {
@@ -12,31 +7,35 @@ namespace Pin80Server.Models.Effects
         {
         }
 
-        public override ProcessorTask Handle(Target target)
+        public override bool Tick(EffectInstance triggeredAction, long ts)
         {
-            PixelTarget pixelTarget = (PixelTarget)target;
+            PixelTarget pixelTarget = (PixelTarget)triggeredAction.target;
             PixelColor color = colors[0];
 
-            var tokenSource = new CancellationTokenSource();
-            var token = tokenSource.Token;
+            int step;
+            triggeredAction.state.TryGetValue("step", out step);
 
-            var task = Task.Run(async delegate
+            bool runAgain = true;
+
+            switch (step)
             {
-                long effectStarted = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                case 0:
+                    triggeredAction.nextUpdate = ts + delay;  // This makes a very small delay, we could skip this if there is no delay
+                    break;
+                case 1:
+                    pixelTarget.updateAllPixels(color, triggeredAction);
+                    triggeredAction.nextUpdate = ts + duration;
+                    break;
+                case 2:
+                    pixelTarget.updateAllPixels(PixelColor.Black, triggeredAction);
+                    runAgain = false;
+                    break;
+            }
 
-                await Task.Delay(TimeSpan.FromMilliseconds(delay));
-                token.ThrowIfCancellationRequested();
-
-                pixelTarget.updateAllPixels(color, effectStarted);
-
-                await Task.Delay(TimeSpan.FromMilliseconds(duration)); //TODO CHANGE ME to loop so it's more accurate
-
-                token.ThrowIfCancellationRequested();
-                pixelTarget.updateAllPixels(PixelColor.Black, effectStarted);
-            }, token);
-
-            return new ProcessorTask(task, tokenSource);
+            triggeredAction.state["step"] = step + 1;
+            return runAgain;
         }
+
         public override string ToString()
         {
             PixelColor color = colors[0];
