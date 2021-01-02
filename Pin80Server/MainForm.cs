@@ -1,10 +1,10 @@
 ﻿using Pin80Server.CommandProcessors;
+using Pin80Server.Models.Effects;
 using Pin80Server.Models.JSONSerializer;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -36,7 +36,6 @@ namespace Pin80Server
             SetupDataGridView();
 
             loadAvailableTables();
-            tableComboBox.SelectedItem = Settings.ReadSetting(Constants.SettingLastTable);
 
             var itemFilter = Settings.ReadSetting(Constants.SettingItemFilter);
             if (itemFilter == "")
@@ -70,6 +69,37 @@ namespace Pin80Server
             }
         }
 
+        public void addItemsToDataGridView(List<ControlItem> controlItems)
+        {
+            controlDataGridView.SuspendLayout();
+
+            dataProcessor.controllerData.Clear();
+
+            foreach (ControlItem item in controlItems)
+            {
+                // Make sure effects and targets still exist for all the controlItems.
+                // If they don't, clear it and disable the item
+
+                Effect effect = dataProcessor.GetEffect(item.effectString);
+                Models.Target target = dataProcessor.GetTarget(item.targetString);
+
+                if (effect == null)
+                {
+                    item.effectString = null;
+                    item.enabled = false;
+                }
+
+                if (target == null)
+                {
+                    item.targetString = null;
+                    item.enabled = false;
+                }
+
+                dataProcessor.controllerData.Add(item);
+            }
+            controlDataGridView.ResumeLayout();
+        }
+
         public void sortRefresh()
         {
             if (controlDataGridView.SortOrder != SortOrder.None && controlDataGridView.SortedColumn != null)
@@ -93,6 +123,8 @@ namespace Pin80Server
         {
             dataProcessor = dp;
             controlDataGridView.DataSource = dp.bSource;
+
+            tableComboBox.SelectedItem = Settings.ReadSetting(Constants.SettingLastTable);
 
             statusStrip1.Items[1].Text = (dataProcessor.autoAddItems) ? "Auto add items enabled" : "Auto add items disabled";
             autoAddItemsCheckbox.Checked = dataProcessor.autoAddItems;
@@ -210,7 +242,7 @@ namespace Pin80Server
                 {
                     string effectId = (string)e.Value;
                     string friendlyName = dataProcessor.GetEffect(effectId).ToString();
-                    e.Value = friendlyName;
+                    e.Value = string.Format("  {0}  ", friendlyName);
                 }
             }
             else if (controlDataGridView.Columns[e.ColumnIndex].Name == "triggerString")
@@ -301,37 +333,35 @@ namespace Pin80Server
             var mainLocation = this.Location;
 
             editForm.SetQueueRef(ref commandQueue);
-            editForm.Show();
-            editForm.Location = new Point(mainLocation.X - editForm.Size.Width, mainLocation.Y);
 
             var row = controlDataGridView.CurrentCell.RowIndex;
             var item = dataProcessor.controllerData[row];
 
+            editForm.Show();
+            editForm.Location = new Point(mainLocation.X - editForm.Size.Width, mainLocation.Y);
             editForm.SetControlItem(dataProcessor, item);
+        }
+
+        private void disableLog()
+        {
+            if (loggingEnabled)
+            {
+                statusStrip1.Items[0].Text = "Logging is disabled";
+                loggingEnabled = false;
+
+                disableButton.Text = "Enable Logging";
+            }
+            else
+            {
+                statusStrip1.Items[0].Text = "Logging is enabled";
+                loggingEnabled = true;
+                disableButton.Text = "Disable Logging";
+            }
         }
 
         private void logMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            if (e.ClickedItem.Name == "clearLogItem")
-            {
-                logListViews.Items.Clear();
-            }
-            else if (e.ClickedItem.Tag != null && e.ClickedItem.Tag.ToString() == "disableLogItem")
-            {
-                if (e.ClickedItem.Text == "Disable Log")
-                {
-                    e.ClickedItem.Text = "Enable Log";
-                    statusStrip1.Items[0].Text = "Logging is disabled";
-                    loggingEnabled = false;
-                }
-                else
-                {
-                    e.ClickedItem.Text = "Disable Log";
-                    statusStrip1.Items[0].Text = "Logging is enabled";
-                    loggingEnabled = true;
-                }
-            }
-            else if (e.ClickedItem.Name == "addAsItem")
+            if (e.ClickedItem.Name == "addAsItem")
             {
                 if (logListViews.SelectedItem == null)
                 {
@@ -394,6 +424,11 @@ namespace Pin80Server
 
         private void tableComboBox_TextChanged(object sender, EventArgs e)
         {
+            if (dataProcessor == null)
+            {
+                return;
+            }
+
             var Romname = tableComboBox.Text;
             Settings.SaveSetting(Constants.SettingLastTable, Romname);
 
@@ -416,6 +451,16 @@ namespace Pin80Server
         private void ignoreDuplicatesCheckbox_CheckedChanged(object sender, EventArgs e)
         {
             Settings.SaveBoolSetting(Constants.SettingLogBlockDuplicates, ignoreDuplicatesCheckbox.Checked);
+        }
+
+        private void disableButton_Click(object sender, EventArgs e)
+        {
+            disableLog();
+        }
+
+        private void logMenuStrip_Opening(object sender, CancelEventArgs e)
+        {
+
         }
     }
 }

@@ -220,15 +220,6 @@ namespace Pin80Server
             targetsDict.Clear();
             triggersDict.Clear();
 
-            // This has to be handled on the main ui thread since it's binding
-            if (mainForm.IsHandleCreated)
-            {
-                mainForm.BeginInvoke((MethodInvoker)delegate ()
-                {
-                    controllerData.Clear();
-                });
-            }
-
             // TODO Search for various combinations of files.
 
             // TODO Can't continue unless we have effects and triggers.
@@ -245,27 +236,30 @@ namespace Pin80Server
             {
                 mainForm.BeginInvoke((MethodInvoker)delegate ()
                 {
-                    foreach (var item in controlItems)
-                    {
-                        // Make sure effects and targets still exist for all the controlItems.
-                        // If they don't, clear it and disable the item
-                        Effect effect = GetEffect(item.effectString);
-                        Models.Target target = GetTarget(item.targetString);
+                    //controllerData.Clear();
 
-                        if (effect == null)
-                        {
-                            item.effectString = null;
-                            item.enabled = false;
-                        }
+                    //foreach (var item in controlItems)
+                    //{
+                    //    // Make sure effects and targets still exist for all the controlItems.
+                    //    // If they don't, clear it and disable the item
+                    //    Effect effect = GetEffect(item.effectString);
+                    //    Models.Target target = GetTarget(item.targetString);
 
-                        if (target == null)
-                        {
-                            item.targetString = null;
-                            item.enabled = false;
-                        }
+                    //    if (effect == null)
+                    //    {
+                    //        item.effectString = null;
+                    //        item.enabled = false;
+                    //    }
 
-                        controllerData.Add(item);
-                    }
+                    //    if (target == null)
+                    //    {
+                    //        item.targetString = null;
+                    //        item.enabled = false;
+                    //    }
+
+                    //    //controllerData.Add(item);
+                    //}
+                    mainForm.addItemsToDataGridView(controlItems);
                     unsavedChanges = false;
 
                     var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();

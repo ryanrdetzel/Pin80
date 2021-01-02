@@ -91,7 +91,7 @@ namespace Pin80Server
             }
 
             mainForm = new MainForm();
-            mainForm.setDataProcessor(dataProcessor);
+            //mainForm.setDataProcessor(dataProcessor);
             mainForm.setQueueRef(ref commandQueue);
 
             dataProcessor.SetMainForm(mainForm);
@@ -100,7 +100,13 @@ namespace Pin80Server
             vpxProcessor.setMainForm(mainForm);
             vbyProcessor.setMainForm(mainForm);
 
+            mainForm.Shown += MainForm_Shown;
             Application.Run(mainForm);
+        }
+
+        private static void MainForm_Shown(object sender, EventArgs e)
+        {
+            mainForm.setDataProcessor(dataProcessor);
         }
 
         public static void HandleIncomingHttpConnections()
