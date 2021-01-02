@@ -200,8 +200,6 @@ namespace Pin80Server
             List<EffectInstance> runningActions = new List<EffectInstance>();
             long now;
 
-            //var targetList = dataProcessor.targetsDict.Values.ToList();
-
             while (true)
             {
                 now = DateTimeOffset.Now.ToUnixTimeMilliseconds();

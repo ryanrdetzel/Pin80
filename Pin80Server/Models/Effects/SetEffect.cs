@@ -2,17 +2,14 @@
 
 namespace Pin80Server.Models.Effects
 {
-    /*
-     * Sets a certain pint to a certain value. Nothing after that.
-     * 
-     */
-    public class OnOffEffect : Effect
+    public class SetEffect : Effect
     {
-        public OnOffEffect(EffectSerializer effect) : base(effect) { }
+        public SetEffect(EffectSerializer effect) : base(effect) { }
 
         public override bool Tick(EffectInstance triggeredAction, long ts)
         {
             var ledTarget = (LEDTarget)triggeredAction.target;
+            int value = triggeredAction.triggeredValue == "1" ? 1 : 0;
 
             bool runAgain = true;
             triggeredAction.state.TryGetValue(Constants.STEP, out int step);
@@ -23,11 +20,7 @@ namespace Pin80Server.Models.Effects
                     triggeredAction.nextUpdate = ts + delay;  // This makes a very small delay, we could skip this if there is no delay
                     break;
                 case 1:
-                    ledTarget.updatePortValue(1);
-                    triggeredAction.nextUpdate = ts + duration;
-                    break;
-                case 2:
-                    ledTarget.updatePortValue(0);
+                    ledTarget.updatePortValue(value);
                     runAgain = false;
                     break;
             }
@@ -45,7 +38,7 @@ namespace Pin80Server.Models.Effects
 
             string timeStr = timeString(duration);
 
-            string str = string.Format("On for {0} then off", timeStr);
+            string str = string.Format("Set Value", timeStr);
             if (delay > 0)
             {
                 str += string.Format(" w/ {0} delay", timeString(delay));

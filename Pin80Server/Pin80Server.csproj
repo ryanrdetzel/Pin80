@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\EffectInstance.cs" />
+    <Compile Include="Models\Effects\SetEffect.cs" />
     <Compile Include="Models\Effects\PixelRunEffect.cs" />
     <Compile Include="Models\Effects\PixelCometAction.cs" />
     <Compile Include="Models\Effects\PixelEffect.cs" />

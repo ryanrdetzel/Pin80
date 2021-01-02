@@ -159,6 +159,9 @@ namespace Pin80Server
                     case "ONOFF":
                         effectsDict[effect.id] = new OnOffEffect(effect);
                         break;
+                    case "SET":
+                        effectsDict[effect.id] = new SetEffect(effect);
+                        break;
                     case "PIXEL":
                         effectsDict[effect.id] = new PixelEffect(effect);
                         break;

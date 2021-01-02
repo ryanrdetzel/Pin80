@@ -8,6 +8,7 @@ namespace Pin80Server.Models
     {
         public Target target { get; }
         public Effect effect { get; }
+        public string triggeredValue { get; }
 
         public string dupeKey { get; }
         public long startedTimetamp { get; }
@@ -17,10 +18,11 @@ namespace Pin80Server.Models
         // Used to store anything need while running the effect
         public Dictionary<string, int> state = new Dictionary<string, int>();
 
-        public EffectInstance(Target target, Effect effect)
+        public EffectInstance(Target target, Effect effect, string triggeredValue)
         {
             this.target = target;
             this.effect = effect;
+            this.triggeredValue = triggeredValue;
 
             id = Guid.NewGuid().ToString("N");
             dupeKey = string.Format("{0}{1}", target.id, effect.delay);

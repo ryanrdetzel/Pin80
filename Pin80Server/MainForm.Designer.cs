@@ -499,10 +499,6 @@ namespace Pin80Server
             this.MinimumSize = new System.Drawing.Size(400, 400);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Load += new System.EventHandler(this.Form1_Load_1);
-            this.SizeChanged += new System.EventHandler(this.Form1_Move);
-            this.Move += new System.EventHandler(this.Form1_Move);
-            this.Resize += new System.EventHandler(this.Form1_Move);
             this.itemMenuStrip.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

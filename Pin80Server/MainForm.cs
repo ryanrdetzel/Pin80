@@ -50,6 +50,24 @@ namespace Pin80Server
 
             logListViews.LostFocus += (s, fe) => logListViews.SelectedIndices.Clear();
             controlDataGridView.LostFocus += (s, fe) => controlDataGridView.ClearSelection();
+
+            if (Properties.Settings.Default.F1Size.Width == 0 || Properties.Settings.Default.F1Size.Height == 0)
+            {
+
+            }
+            else
+            {
+                this.WindowState = Properties.Settings.Default.F1State;
+
+                // we don't want a minimized window at startup
+                if (this.WindowState == FormWindowState.Minimized)
+                {
+                    this.WindowState = FormWindowState.Normal;
+                }
+
+                this.Location = Properties.Settings.Default.F1Location;
+                this.Size = Properties.Settings.Default.F1Size;
+            }
         }
 
         public void sortRefresh()
@@ -112,6 +130,7 @@ namespace Pin80Server
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             saveWindowState();
+
             if (dataProcessor.unsavedChanges)
             {
                 if (MessageBox.Show("Do you want to save your changes?", "Unsaved Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -120,7 +139,6 @@ namespace Pin80Server
                     dataProcessor.SaveControllerData();
 
                     Application.Exit();
-                    //Environment.Exit(Environment.ExitCode);
                 }
             }
         }
@@ -134,26 +152,6 @@ namespace Pin80Server
             controlDataGridView.AllowUserToAddRows = false;
         }
 
-        private void Form1_Load_1(object sender, EventArgs e)
-        {
-            if (Properties.Settings.Default.F1Size.Width == 0 || Properties.Settings.Default.F1Size.Height == 0)
-            {
-
-            }
-            else
-            {
-                this.WindowState = Properties.Settings.Default.F1State;
-
-                // we don't want a minimized window at startup
-                if (this.WindowState == FormWindowState.Minimized)
-                {
-                    this.WindowState = FormWindowState.Normal;
-                }
-
-                this.Location = Properties.Settings.Default.F1Location;
-                this.Size = Properties.Settings.Default.F1Size;
-            }
-        }
 
         private void saveWindowState()
         {
@@ -175,10 +173,6 @@ namespace Pin80Server
             Properties.Settings.Default.Save();
         }
 
-        private void Form1_Move(object sender, EventArgs e)
-        {
-            saveWindowState();
-        }
 
         private void controlDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
@@ -346,7 +340,6 @@ namespace Pin80Server
                 var logValue = logListViews.SelectedItem.ToString();
                 if (logValue.StartsWith("VPX"))
                 {
-                    Debug.WriteLine(logListViews.SelectedItem.ToString());
                     var (success, triggerString, valueString, _) = VPXProcessor.splitCommandString(logValue.Replace("VPX ", ""));
                     if (success)
                     {
@@ -411,6 +404,7 @@ namespace Pin80Server
                     dataProcessor.SaveControllerData();
                 }
             }
+
             dataProcessor.LoadTableInformation(Romname);
         }
 

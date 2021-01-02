@@ -3,6 +3,7 @@ using Pin80Server.Models.JSONSerializer;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Windows.Forms;
@@ -118,7 +119,7 @@ namespace Pin80Server.CommandProcessors
                     var target = dataProcessor.GetTarget(item.targetString);
                     var effect = dataProcessor.GetEffect(item.effectString);
 
-                    EffectInstance action = new EffectInstance(target, effect);
+                    EffectInstance action = new EffectInstance(target, effect, valueString);
 
                     if (!action.isValid())
                     {
@@ -147,6 +148,7 @@ namespace Pin80Server.CommandProcessors
             catch (Exception e)
             {
                 Debug.WriteLine(string.Format("Could not process command: {0} {1}", command, e));
+                //throw e;
                 mainForm.addLogEntry(string.Format("ERR failed to process: {0}", command));
                 return null;
             }

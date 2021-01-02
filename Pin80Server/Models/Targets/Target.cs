@@ -48,6 +48,7 @@ namespace Pin80Server.Models
                     break;
                 case "LED":
                     list.Add("ONOFF");
+                    list.Add("SET");
                     break;
             }
             return list;
